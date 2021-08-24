@@ -37,10 +37,8 @@ abstract class IToken {
 
 abstract class ILexStream extends TokenStream
 {
-    IPrsStream getIPrsStream();
+    IPrsStream? getIPrsStream();
 
-    /// @deprecated replaced by {@link #getIPrsStream()}
-    IPrsStream getPrsStream();
     
     void setPrsStream(IPrsStream stream);
 
@@ -61,14 +59,14 @@ abstract class ILexStream extends TokenStream
     void makeToken(int startLoc, int endLoc, int kind);
     
     void setMessageHandler(IMessageHandler errMsg);
-    IMessageHandler getMessageHandler();
+    IMessageHandler? getMessageHandler();
 
     /// See IMessaageHandler for a description of the List<int> return value.
     List<int> getLocation(int left_loc, int right_loc);
 
 
-    void reportLexicalError(int left_loc, int right_loc,int? errorCode,  int? error_left_loc,
-    int? error_right_loc, List<String>? errorInfo);
+    void reportLexicalError(int left_loc, int right_loc,[int? errorCode,  int? error_left_loc,
+    int? error_right_loc, List<String>? errorInfo]);
 
 
     String toStringWithOffset(int startOffset, int endOffset);
@@ -242,28 +240,28 @@ class EscapeStrictPropertyInitializationLexStream implements ILexStream{
   }
 
   @override
-  void reportError(int errorCode, int leftToken, int rightToken, errorInfo, int? errorToken) {
-    // TODO: implement reportError
+  void reportError(int errorCode, int leftToken, int rightToken, errorInfo, [int errorToken=0]) {
+    throw UnimplementedError();
   }
 
   @override
-  void reportLexicalError(int left_loc, int right_loc, int? errorCode, int? error_left_loc, int? error_right_loc, List<String>? errorInfo) {
-    // TODO: implement reportLexicalError
+  void reportLexicalError(int left_loc, int right_loc,[int? errorCode, int? error_left_loc, int? error_right_loc, List<String>? errorInfo]) {
+    throw UnimplementedError();
   }
 
   @override
   void reset([int? i]) {
-    // TODO: implement reset
+    throw UnimplementedError();
   }
 
   @override
   void setMessageHandler(IMessageHandler errMsg) {
-    // TODO: implement setMessageHandler
+    throw UnimplementedError();
   }
 
   @override
   void setPrsStream(IPrsStream stream) {
-    // TODO: implement setPrsStream
+    throw UnimplementedError();
   }
 
   @override
@@ -275,7 +273,7 @@ class EscapeStrictPropertyInitializationLexStream implements ILexStream{
 }
 abstract class IPrsStream extends TokenStream
 {
-    IMessageHandler getMessageHandler();
+    IMessageHandler? getMessageHandler();
     void setMessageHandler(IMessageHandler errMsg);
 
     ILexStream getILexStream();
@@ -362,7 +360,7 @@ abstract class IPrsStream extends TokenStream
 
     int getTokenIndexAtCharacter(int offset);
     
-    IToken getTokenAtCharacter(int offset);
+    IToken? getTokenAtCharacter(int offset);
     
     IToken getTokenAt(int i);
     

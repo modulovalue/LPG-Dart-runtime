@@ -95,7 +95,7 @@ class IntSegmentedTuple {
   // argument n which indicates the new size or with no argument which
   // indicates that the size should be reset to 0.
   //
-  void reset({int n = 0}) {
+  void reset([int n = 0]) {
     top = n;
   }
 
@@ -159,7 +159,7 @@ class IntSegmentedTuple {
     var low = 0;
     var high = top;
     while (high > low) {
-      var mid = ((high + low) / 2) as int;
+      var mid = ((high + low) / 2).floor();
       var mid_element = get(mid);
       if (element == mid_element) {
         return mid;
@@ -176,7 +176,7 @@ class IntSegmentedTuple {
   //
   // Constructor of a Tuple
   //
-  IntSegmentedTuple(int? log_blksize_, int? base_size_) {
+  IntSegmentedTuple([int? log_blksize_, int? base_size_]) {
     if (log_blksize_ != null) log_blksize = log_blksize_;
     if (base_size_ != null) base_size = (base_size_ <= 0 ? 4 : base_size_);
 

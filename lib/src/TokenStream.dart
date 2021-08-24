@@ -34,5 +34,5 @@ abstract class TokenStream {
   int getLastRealToken(int i);
 
   void reportError(
-      int errorCode, int leftToken, int rightToken, errorInfo, int? errorToken);
+      int errorCode, int leftToken, int rightToken, errorInfo, [int errorToken=0]);
 }

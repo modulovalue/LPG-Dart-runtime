@@ -18,7 +18,7 @@ class IntTuple {
   // indicates that the size should be reset to 0.
   //
 
-  void reset({int n = 0}) {
+  void reset([int n = 0]) {
     top = n;
   }
 
@@ -28,7 +28,9 @@ class IntTuple {
   int size() {
     return top;
   }
-
+  int capacity(){
+    return array.length;
+  }
   //
   // Return a reference to the ith element of the dynamic array.
   //
@@ -71,7 +73,7 @@ class IntTuple {
   // Constructor of a Tuple
   //
 
-  IntTuple({int estimate = 10}) {
+  IntTuple([int estimate = 10]) {
     array = List.filled(estimate, 0);
   }
 }
