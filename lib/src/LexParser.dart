@@ -183,7 +183,7 @@ class LexParser {
       // if the parser needs to stop processing,
       // it may do so here.
       //
-      if (monitor != null && monitor!.isCancelled()) break ProcessTokens;
+      if (monitor != null && monitor.isCancelled()) break ProcessTokens;
 
       stateStackTop = -1;
       currentAction = START_STATE;

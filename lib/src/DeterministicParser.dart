@@ -168,7 +168,7 @@ class DeterministicParser extends Stacks {
       ERROR_ACTION = prs.getErrorAction();
 
       if (!prs.isValidForParser()) throw BadParseSymFileException();
-      if (!prs.getBacktrack()) throw NotDeterministicParseTableException();
+      if (prs.getBacktrack()) throw NotDeterministicParseTableException();
     }
     if (ra != null) {
       this.ra = ra;
@@ -192,7 +192,7 @@ class DeterministicParser extends Stacks {
   //
   //
   //
-  Object? parseEntry(int marker_kind) {
+  Object? parseEntry([int marker_kind = 0]) {
     //
     // Indicate that we are running the regular parser and that it's
     // ok to use the utility functions to query the parser.

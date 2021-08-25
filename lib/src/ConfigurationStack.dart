@@ -64,7 +64,7 @@ class ConfigurationStack {
 
     state_element_size++;
 
-    StateElement node = StateElement();
+    var node = StateElement();
     node.number = state_number;
     node.parent = root.parent;
     node.children = null;
@@ -118,7 +118,7 @@ class ConfigurationStack {
   //
   //
   ConfigurationElement? pop() {
-    ConfigurationElement? configuration;
+
     if (configuration_stack.size() > 0) {
       var index = configuration_stack.size() - 1;
       var configuration =
@@ -127,9 +127,10 @@ class ConfigurationStack {
       if (prs.baseAction(configuration.conflict_index) == 0) {
         configuration_stack.reset(index);
       }
+      return configuration;
     }
 
-    return configuration;
+    return null;
   }
 
   //

@@ -573,7 +573,7 @@ class DiagnoseParser {
         // At this stage, we have a recovery configuration. See how
         // far we can go with it.
         //
-        int next_token = tokStream.peek();
+        var next_token = tokStream.peek();
         tempStackTop = stateStackTop;
         List.copyRange(stateStack, 0, tempStack, 0, stateStackTop + 1);
         error_token = parseForError(current_kind);
@@ -700,7 +700,7 @@ class DiagnoseParser {
     //
     // Allocate configuration stack.
     //
-    ConfigurationStack configuration_stack = new ConfigurationStack(prs);
+    var configuration_stack = new ConfigurationStack(prs);
 
     //
     // Keep parsing until we reach the end of file and succeed or

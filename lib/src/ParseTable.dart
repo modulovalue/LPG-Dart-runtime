@@ -77,8 +77,6 @@ abstract class ParseTable {
 
   int getNumSymbols();
 
-  int getSegmentSize();
-
   int getStartState();
 
   int getStartSymbol();

@@ -53,11 +53,13 @@ class LexStream implements ILexStream {
   }
 
   void initialize(String fileName, String? inputChars,
-      IntSegmentedTuple? lineOffsets) async {
-    inputChars ??= await File(fileName).readAsString();
-    /*if(inputChars == null) {
+      IntSegmentedTuple? lineOffsets)
+  {
+    inputChars ??= File(fileName).readAsStringSync();
+
+    if(inputChars == null) {
         return;
-      }*/
+      }
     setInputChars(inputChars);
     setStreamLength(inputChars.length);
     setFileName(fileName);
@@ -71,8 +73,11 @@ class LexStream implements ILexStream {
   void computeLineOffsets() {
     lineOffsets.reset();
     setLineOffset(-1);
-    for (var i = 0; i < inputChars.length; i++)
-      if (inputChars[i] == 0x0A) setLineOffset(i);
+    for (var i = 0; i < inputChars.length; i++) {
+      if (inputChars.codeUnitAt(i) == 0x0A) {
+        setLineOffset(i);
+      }
+    }
   }
 
   void setInputChars(String inputChars) {
@@ -88,6 +93,7 @@ class LexStream implements ILexStream {
     this.fileName = fileName;
   }
 
+  @override
   String getFileName() {
     return fileName;
   }
@@ -440,12 +446,12 @@ class LexStream implements ILexStream {
 
   @override
   String toStringWithOffset(int startOffset, int endOffset) {
-    // TODO: implement toStringWithOffset
+
     var length = endOffset - startOffset + 1;
     return (endOffset >= inputChars.length
         ? '\$EOF'
         : length <= 0
             ? ''
-            : inputChars.substring(startOffset, length));
+            : inputChars.substring(startOffset, endOffset+1));
   }
 }

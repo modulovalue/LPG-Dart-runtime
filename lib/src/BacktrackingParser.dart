@@ -13,7 +13,7 @@ import 'RuleAction.dart';
 import 'Stacks.dart';
 import 'TokenStream.dart';
 import 'TokenStreamNotIPrsStreamException.dart';
-import 'package:dart_numerics/dart_numerics.dart' as numerics;
+import 'dart:math';
 
 class BacktrackingParser extends Stacks {
   Monitor? monitor;
@@ -189,8 +189,9 @@ class BacktrackingParser extends Stacks {
   // Recover up to max_error_count times and then quit
   //
   Object? fuzzyParse([int? max_error_count]) {
-    if (null == max_error_count) {
-      max_error_count = numerics.int64MaxValue;
+    if (null == max_error_count)
+    {
+      max_error_count = pow(2, 32).floor();
     }
     return fuzzyParseEntry(0, max_error_count);
   }
@@ -200,7 +201,7 @@ class BacktrackingParser extends Stacks {
   //
   Object? fuzzyParseEntry(int marker_kind, [int? max_error_count]) {
     if (null == max_error_count) {
-      max_error_count = numerics.int64MaxValue;
+      max_error_count = pow(2, 32).floor();
     }
     action.reset();
     tokStream.reset(); // Position at first token.
@@ -488,9 +489,9 @@ class BacktrackingParser extends Stacks {
         error_token = (error_token > curtok ? error_token : curtok);
 
         var configuration = configuration_stack.pop();
-        if (configuration == null)
+        if (configuration == null) {
           act = ERROR_ACTION;
-        else {
+        } else {
           action.reset(configuration.action_length);
           act = configuration.act;
           curtok = configuration.curtok;
@@ -505,9 +506,9 @@ class BacktrackingParser extends Stacks {
         break;
       } else if (act > ACCEPT_ACTION) {
         if (configuration_stack.findConfiguration(
-            stateStack, stateStackTop, curtok))
+            stateStack, stateStackTop, curtok)) {
           act = ERROR_ACTION;
-        else {
+        } else {
           configuration_stack.push(
               stateStack, stateStackTop, act + 1, curtok, action.size());
           act = prs.baseAction(act);
@@ -515,8 +516,9 @@ class BacktrackingParser extends Stacks {
               stateStackTop > maxStackTop ? stateStackTop : maxStackTop;
         }
         continue;
-      } else
-        break; // assert(act == ACCEPT_ACTION);
+      } else {
+        break;
+      } // assert(act == ACCEPT_ACTION);
       try {
         stateStack[++stateStackTop] = act;
       } on RangeError {
@@ -527,23 +529,6 @@ class BacktrackingParser extends Stacks {
       act = tAction(act, current_kind);
     }
 
-    // System.out.println("****Max Number of configurations: " + configuration_stack.maxConfigurationSize());
-    // for (var configuration = configuration_stack.pop();
-    //      configuration != null;
-    //      configuration = configuration_stack.pop())
-//        {
-//System.out.println("    restart at position " + configuration.action_length +
-//		           " on action " + configuration.act +
-//		           " and token " + configuration.curtok +
-//		           " with kind " + tokStream.getKind(configuration.curtok)
-//		          );
-//        }
-//
-    // System.out.println("****Number of elements in stack tree: " + configuration_stack.numStateElements());
-    // System.out.println("****Number of elements in stacks: " + configuration_stack.stacksSize());
-    // System.out.println("****Number of actions: " + action.size());
-    // System.out.println("****Max Stack Size = " + maxStackTop);
-    // System.out.flush();
     return (act == ERROR_ACTION ? error_token : 0);
   }
 
