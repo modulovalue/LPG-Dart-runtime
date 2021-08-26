@@ -1,9 +1,10 @@
 import 'IAst.dart';
+import 'Util.dart';
 
 abstract class IAbstractArrayList<T extends IAst> {
   int size();
   T getElementAt(int i);
-  List<T> getList();
+  ArrayList getList();
   bool add(T elt);
-  List<T> getAllChildren();
+  ArrayList getAllChildren();
 }
