@@ -6241,147 +6241,6 @@ class JavaParser extends Object implements RuleAction
         return;
     }
 }
-abstract class Ast implements IAst
-    {
-        IAst? getNextAst(){ return null; }
-         late IToken leftIToken ;
-         late IToken rightIToken ;
-         IAst? parent;
-         void setParent(IAst p){ parent = p; }
-         IAst? getParent(){ return parent; }
-
-         IToken getLeftIToken()  { return leftIToken; }
-         IToken getRightIToken()  { return rightIToken; }
-          List<IToken> getPrecedingAdjuncts() { return leftIToken.getPrecedingAdjuncts(); }
-          List<IToken> getFollowingAdjuncts() { return rightIToken.getFollowingAdjuncts(); }
-
-        String  toString()  
-        {
-          var  lex = leftIToken.getILexStream();
-          if( lex != null)
-            return lex.toStringWithOffset(leftIToken.getStartOffset(), rightIToken.getEndOffset());
-          return  '';
-        }
-
-    Ast(IToken leftIToken ,[ IToken? rightIToken ])
-        {
-            this.leftIToken = leftIToken;
-            if(rightIToken != null) this.rightIToken = rightIToken;
-            else            this.rightIToken = leftIToken;
-        }
-
-        void initialize(){}
-
-        /**
-         * A list of all children of this node, excluding the null ones.
-         */
-          ArrayList getChildren() 
-        {
-             var list = getAllChildren() ;
-            var k = -1;
-            for (var i = 0; i < list.size(); i++)
-            {
-                var element = list.get(i);
-                if (null==element)
-                {
-                    if (++k != i)
-                        list.set(k, element);
-                }
-            }
-            for (var i = list.size() - 1; i > k; i--) // remove extraneous elements
-                list.remove(i);
-            return list;
-        }
-
-        /**
-         * A list of all children of this node, don't including the null ones.
-         */
-         ArrayList getAllChildren() ;
-
-         void accept(IAstVisitor v );
-    }
-
-abstract class AbstractAstList extends Ast implements IAbstractArrayList<Ast>
-    {
-         late bool leftRecursive  ;
-          var list  =  ArrayList();
-         int size()   { return list.size(); }
-         ArrayList getList(){ return list; }
-         Ast getElementAt(int i) { return list.get(leftRecursive ? i : list.size() - 1 - i); }
-         ArrayList getArrayList()
-        {
-            if (! leftRecursive) // reverse the list 
-            {
-                for (var i = 0, n = list.size() - 1; i < n; i++, n--)
-                {
-                    var ith = list.get(i),
-                           nth = list.get(n);
-                    list.set(i, nth);
-                    list.set(n, ith);
-                }
-                leftRecursive = true;
-            }
-            return list;
-        }
-        /**
-         * @deprecated replaced by {@link #addElement()}
-         *
-         */
-         bool add(Ast element)
-        {
-            addElement(element);
-            return true;
-        }
-
-         void addElement(Ast element)
-        {
-            list.add(element);
-            if (leftRecursive)
-                 rightIToken = element.getRightIToken();
-            else leftIToken = element.getLeftIToken();
-        }
-
-          AbstractAstList(IToken leftToken, IToken rightToken , bool leftRecursive  ):super(leftToken, rightToken){
-              this.leftRecursive = leftRecursive;
-        }
-
-        /**
-         * Make a copy of the list and return it. Note that we obtain the local list by
-         * invoking getArrayList so as to make sure that the list we return is in proper order.
-         */
-            ArrayList getAllChildren() 
-        {
-            return getArrayList().clone();
-        }
-
-    }
-
-class AstToken extends Ast implements IAstToken
-    {
-        AstToken(IToken token   ):super(token){  }
-         IToken getIToken()  { return leftIToken; }
-         String toString(){ return leftIToken.toString(); }
-
-        /**
-         * A token class has no children. So, we return the empty list.
-         */
-            ArrayList getAllChildren()  { return  ArrayList(); }
-
-
-         void  accept(IAstVisitor v )
-        {
-            if (! v.preVisit(this)) return;
-            enter(v as Visitor);
-            v.postVisit(this);
-        }
-
-          void enter(Visitor v)
-        {
-            v.visitAstToken(this);
-            v.endVisitAstToken(this);
-        }
-    }
-
 abstract class IRootForJavaParser
     {
          IToken getLeftIToken() ;
@@ -6536,16 +6395,6 @@ abstract class IAstToken implements IRootForJavaParser    {
     }
 
     /***
-     ** is always implemented by <b>AstToken</b>. It is also implemented by <b>Commaopt</b>
-     **/
-abstract class ICommaopt implements IAstToken {}
-
-    /***
-     ** is always implemented by <b>AstToken</b>. It is also implemented by <b>Ellipsisopt</b>
-     **/
-abstract class IEllipsisopt implements IAstToken {}
-
-    /***
      ** is implemented by <b>CompilationUnit</b>
      **/
 abstract class ICompilationUnit implements IRootForJavaParser    {
@@ -6573,212 +6422,10 @@ abstract class IClassBodyDeclarationsopt implements IRootForJavaParser    {
     }
 
     /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>EnumDeclaration
-     **<li>Block
-     **<li>BlockStatements
-     **<li>LocalVariableDeclarationStatement
-     **<li>IfThenStatement
-     **<li>IfThenElseStatement
-     **<li>EmptyStatement
-     **<li>LabeledStatement
-     **<li>ExpressionStatement
-     **<li>SwitchStatement
-     **<li>WhileStatement
-     **<li>DoStatement
-     **<li>BasicForStatement
-     **<li>EnhancedForStatement
-     **<li>BreakStatement
-     **<li>ContinueStatement
-     **<li>ReturnStatement
-     **<li>ThrowStatement
-     **<li>SynchronizedStatement
-     **<li>LPGUserAction0
-     **<li>LPGUserAction1
-     **<li>LPGUserAction2
-     **<li>LPGUserAction3
-     **<li>LPGUserAction4
-     **<li>AssertStatement0
-     **<li>AssertStatement1
-     **<li>TryStatement0
-     **<li>TryStatement1
-     **</ul>
-     **</b>
-     **/
-abstract class ILPGUserAction implements IAstToken {}
-
-    /***
-     ** is always implemented by <b>AstToken</b>. It is also implemented by <b>identifier</b>
-     **/
-abstract class Iidentifier implements IAstToken, ITypeName, ITypeVariable, IPackageName, IExpressionName, IMethodName, IPackageOrTypeName, IAmbiguousName, IVariableDeclaratorId, ISimpleTypeName, ISimpleName, IEnumConstant, Iidentifieropt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>EnumDeclaration
-     **<li>Block
-     **<li>BlockStatements
-     **<li>LocalVariableDeclarationStatement
-     **<li>IfThenStatement
-     **<li>IfThenElseStatement
-     **<li>EmptyStatement
-     **<li>LabeledStatement
-     **<li>ExpressionStatement
-     **<li>SwitchStatement
-     **<li>WhileStatement
-     **<li>DoStatement
-     **<li>BasicForStatement
-     **<li>EnhancedForStatement
-     **<li>BreakStatement
-     **<li>ContinueStatement
-     **<li>ReturnStatement
-     **<li>ThrowStatement
-     **<li>SynchronizedStatement
-     **<li>AssertStatement0
-     **<li>AssertStatement1
-     **<li>TryStatement0
-     **<li>TryStatement1
-     **</ul>
-     **</b>
-     **/
-abstract class IBlockStatementsopt implements ILPGUserAction {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>PrimitiveType
-     **<li>ClassType
-     **<li>ArrayType
-     **<li>IntegralType0
-     **<li>IntegralType1
-     **<li>IntegralType2
-     **<li>IntegralType3
-     **<li>IntegralType4
-     **<li>FloatingPointType0
-     **<li>FloatingPointType1
-     **</ul>
-     **</b>
-     **/
-abstract class IType implements IResultType {}
-
-    /***
-     ** is always implemented by <b>AstToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>PrimitiveType
-     **<li>IntegralType0
-     **<li>IntegralType1
-     **<li>IntegralType2
-     **<li>IntegralType3
-     **<li>IntegralType4
-     **<li>FloatingPointType0
-     **<li>FloatingPointType1
-     **</ul>
-     **</b>
-     **/
-abstract class IPrimitiveType implements IType, IAstToken {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>ClassType
-     **<li>ArrayType
-     **</ul>
-     **</b>
-     **/
-abstract class IReferenceType implements IType, IActualTypeArgument {}
-
-    /***
-     ** is always implemented by <b>AstToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>IntegralType0
-     **<li>IntegralType1
-     **<li>IntegralType2
-     **<li>IntegralType3
-     **<li>IntegralType4
-     **<li>FloatingPointType0
-     **<li>FloatingPointType1
-     **</ul>
-     **</b>
-     **/
-abstract class INumericType implements IPrimitiveType {}
-
-    /***
-     ** is always implemented by <b>AstToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>IntegralType0
-     **<li>IntegralType1
-     **<li>IntegralType2
-     **<li>IntegralType3
-     **<li>IntegralType4
-     **</ul>
-     **</b>
-     **/
-abstract class IIntegralType implements INumericType, IAstToken {}
-
-    /***
-     ** is always implemented by <b>AstToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>FloatingPointType0
-     **<li>FloatingPointType1
-     **</ul>
-     **</b>
-     **/
-abstract class IFloatingPointType implements INumericType, IAstToken {}
-
-    /***
-     ** is implemented by <b>ClassType</b>
-     **/
-abstract class IClassOrInterfaceType implements IReferenceType {}
-
-    /***
-     ** is always implemented by <b>AstToken</b>. It is also implemented by <b>identifier</b>
-     **/
-abstract class ITypeVariable implements IReferenceType, IExceptionType {}
-
-    /***
-     ** is implemented by <b>ArrayType</b>
-     **/
-abstract class IArrayType implements IReferenceType {}
-
-    /***
-     ** is implemented by <b>ClassType</b>
-     **/
-abstract class IClassType implements IClassOrInterfaceType, IExceptionType {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>TypeName
-     **</ul>
-     **</b>
-     **/
-abstract class ITypeName implements IClassName {}
-
-    /***
      ** is implemented by <b>TypeArguments</b>
      **/
 abstract class ITypeArgumentsopt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by <b>InterfaceType</b>
-     **/
-abstract class IInterfaceType implements IInterfaceTypeList {}
 
     /***
      ** is implemented by:
@@ -6793,20 +6440,10 @@ abstract class IClassName implements IRootForJavaParser    {
     }
 
     /***
-     ** is implemented by <b>TypeParameter</b>
-     **/
-abstract class ITypeParameter implements ITypeParameterList {}
-
-    /***
      ** is implemented by <b>TypeBound</b>
      **/
 abstract class ITypeBoundopt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by <b>TypeBound</b>
-     **/
-abstract class ITypeBound implements ITypeBoundopt {}
 
     /***
      ** is implemented by:
@@ -6819,27 +6456,6 @@ abstract class ITypeBound implements ITypeBoundopt {}
      **/
 abstract class IAdditionalBoundListopt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>AdditionalBoundList
-     **<li>AdditionalBound
-     **</ul>
-     **</b>
-     **/
-abstract class IAdditionalBoundList implements IAdditionalBoundListopt {}
-
-    /***
-     ** is implemented by <b>AdditionalBound</b>
-     **/
-abstract class IAdditionalBound implements IAdditionalBoundList {}
-
-    /***
-     ** is implemented by <b>TypeArguments</b>
-     **/
-abstract class ITypeArguments implements ITypeArgumentsopt {}
 
     /***
      ** is implemented by:
@@ -6860,24 +6476,6 @@ abstract class IActualTypeArgumentList implements IRootForJavaParser    {
      ** is implemented by:
      **<b>
      **<ul>
-     **<li>identifier
-     **<li>ClassType
-     **<li>ArrayType
-     **<li>Wildcard
-     **</ul>
-     **</b>
-     **/
-abstract class IActualTypeArgument implements IActualTypeArgumentList {}
-
-    /***
-     ** is implemented by <b>Wildcard</b>
-     **/
-abstract class IWildcard implements IActualTypeArgument {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
      **<li>WildcardBounds0
      **<li>WildcardBounds1
      **</ul>
@@ -6890,17 +6488,6 @@ abstract class IWildcardBoundsOpt implements IRootForJavaParser    {
      ** is implemented by:
      **<b>
      **<ul>
-     **<li>WildcardBounds0
-     **<li>WildcardBounds1
-     **</ul>
-     **</b>
-     **/
-abstract class IWildcardBounds implements IWildcardBoundsOpt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
      **<li>identifier
      **<li>PackageName
      **</ul>
@@ -6908,17 +6495,6 @@ abstract class IWildcardBounds implements IWildcardBoundsOpt {}
      **/
 abstract class IPackageName implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>ExpressionName
-     **</ul>
-     **</b>
-     **/
-abstract class IExpressionName implements IPostfixExpression, ILeftHandSide {}
 
     /***
      ** is implemented by:
@@ -6997,67 +6573,6 @@ abstract class ITypeDeclarationsopt implements IRootForJavaParser    {
      ** is implemented by:
      **<b>
      **<ul>
-     **<li>ImportDeclarations
-     **<li>SingleTypeImportDeclaration
-     **<li>TypeImportOnDemandDeclaration
-     **<li>SingleStaticImportDeclaration
-     **<li>StaticImportOnDemandDeclaration
-     **</ul>
-     **</b>
-     **/
-abstract class IImportDeclarations implements IImportDeclarationsopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>SingleTypeImportDeclaration
-     **<li>TypeImportOnDemandDeclaration
-     **<li>SingleStaticImportDeclaration
-     **<li>StaticImportOnDemandDeclaration
-     **</ul>
-     **</b>
-     **/
-abstract class IImportDeclaration implements IImportDeclarations {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>TypeDeclarations
-     **<li>TypeDeclaration
-     **<li>NormalClassDeclaration
-     **<li>EnumDeclaration
-     **<li>NormalInterfaceDeclaration
-     **<li>AnnotationTypeDeclaration
-     **</ul>
-     **</b>
-     **/
-abstract class ITypeDeclarations implements ITypeDeclarationsopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>TypeDeclaration
-     **<li>NormalClassDeclaration
-     **<li>EnumDeclaration
-     **<li>NormalInterfaceDeclaration
-     **<li>AnnotationTypeDeclaration
-     **</ul>
-     **</b>
-     **/
-abstract class ITypeDeclaration implements ITypeDeclarations, IAstToken {}
-
-    /***
-     ** is implemented by <b>PackageDeclaration</b>
-     **/
-abstract class IPackageDeclaration implements IPackageDeclarationopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
      **<li>Annotations
      **<li>NormalAnnotation
      **<li>MarkerAnnotation
@@ -7067,58 +6582,6 @@ abstract class IPackageDeclaration implements IPackageDeclarationopt {}
      **/
 abstract class IAnnotationsopt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by <b>SingleTypeImportDeclaration</b>
-     **/
-abstract class ISingleTypeImportDeclaration implements IImportDeclaration {}
-
-    /***
-     ** is implemented by <b>TypeImportOnDemandDeclaration</b>
-     **/
-abstract class ITypeImportOnDemandDeclaration implements IImportDeclaration {}
-
-    /***
-     ** is implemented by <b>SingleStaticImportDeclaration</b>
-     **/
-abstract class ISingleStaticImportDeclaration implements IImportDeclaration {}
-
-    /***
-     ** is implemented by <b>StaticImportOnDemandDeclaration</b>
-     **/
-abstract class IStaticImportOnDemandDeclaration implements IImportDeclaration {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>EnumDeclaration
-     **</ul>
-     **</b>
-     **/
-abstract class IClassDeclaration implements ITypeDeclaration, IClassMemberDeclaration, IInterfaceMemberDeclaration, IAnnotationTypeElementDeclaration, IBlockStatement {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalInterfaceDeclaration
-     **<li>AnnotationTypeDeclaration
-     **</ul>
-     **</b>
-     **/
-abstract class IInterfaceDeclaration implements ITypeDeclaration, IClassMemberDeclaration, IInterfaceMemberDeclaration, IAnnotationTypeElementDeclaration {}
-
-    /***
-     ** is implemented by <b>NormalClassDeclaration</b>
-     **/
-abstract class INormalClassDeclaration implements IClassDeclaration {}
-
-    /***
-     ** is implemented by <b>EnumDeclaration</b>
-     **/
-abstract class IEnumDeclaration implements IClassDeclaration, IAnnotationTypeElementDeclaration {}
 
     /***
      ** is implemented by:
@@ -7160,67 +6623,6 @@ abstract class IInterfacesopt implements IRootForJavaParser    {
     }
 
     /***
-     ** is implemented by <b>ClassBody</b>
-     **/
-abstract class IClassBody implements IClassBodyopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>ClassModifiers
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>ClassModifier0
-     **<li>ClassModifier1
-     **<li>ClassModifier2
-     **<li>ClassModifier3
-     **<li>ClassModifier4
-     **<li>ClassModifier5
-     **<li>ClassModifier6
-     **</ul>
-     **</b>
-     **/
-abstract class IClassModifiers implements IClassModifiersopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>ClassModifier0
-     **<li>ClassModifier1
-     **<li>ClassModifier2
-     **<li>ClassModifier3
-     **<li>ClassModifier4
-     **<li>ClassModifier5
-     **<li>ClassModifier6
-     **</ul>
-     **</b>
-     **/
-abstract class IClassModifier implements IClassModifiers, IAstToken {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **</ul>
-     **</b>
-     **/
-abstract class IAnnotation implements IClassModifier, IFieldModifier, IInterfaceModifier, IConstantModifier, IAnnotations, IElementValue {}
-
-    /***
-     ** is implemented by <b>TypeParameters</b>
-     **/
-abstract class ITypeParameters implements ITypeParametersopt {}
-
-    /***
      ** is implemented by:
      **<b>
      **<ul>
@@ -7233,16 +6635,6 @@ abstract class ITypeParameterList implements IRootForJavaParser    {
     }
 
     /***
-     ** is implemented by <b>Super</b>
-     **/
-abstract class ISuper implements ISuperopt {}
-
-    /***
-     ** is implemented by <b>Interfaces</b>
-     **/
-abstract class IInterfaces implements IInterfacesopt {}
-
-    /***
      ** is implemented by:
      **<b>
      **<ul>
@@ -7253,86 +6645,6 @@ abstract class IInterfaces implements IInterfacesopt {}
      **/
 abstract class IInterfaceTypeList implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>ClassBodyDeclarations
-     **<li>ClassMemberDeclaration
-     **<li>FieldDeclaration
-     **<li>MethodDeclaration
-     **<li>StaticInitializer
-     **<li>ConstructorDeclaration
-     **<li>EnumDeclaration
-     **<li>NormalInterfaceDeclaration
-     **<li>AnnotationTypeDeclaration
-     **<li>Block
-     **</ul>
-     **</b>
-     **/
-abstract class IClassBodyDeclarations implements IClassBodyDeclarationsopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>ClassMemberDeclaration
-     **<li>FieldDeclaration
-     **<li>MethodDeclaration
-     **<li>StaticInitializer
-     **<li>ConstructorDeclaration
-     **<li>EnumDeclaration
-     **<li>NormalInterfaceDeclaration
-     **<li>AnnotationTypeDeclaration
-     **<li>Block
-     **</ul>
-     **</b>
-     **/
-abstract class IClassBodyDeclaration implements IClassBodyDeclarations {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>ClassMemberDeclaration
-     **<li>FieldDeclaration
-     **<li>MethodDeclaration
-     **<li>EnumDeclaration
-     **<li>NormalInterfaceDeclaration
-     **<li>AnnotationTypeDeclaration
-     **</ul>
-     **</b>
-     **/
-abstract class IClassMemberDeclaration implements IClassBodyDeclaration, IAstToken {}
-
-    /***
-     ** is implemented by <b>Block</b>
-     **/
-abstract class IInstanceInitializer implements IClassBodyDeclaration {}
-
-    /***
-     ** is implemented by <b>StaticInitializer</b>
-     **/
-abstract class IStaticInitializer implements IClassBodyDeclaration {}
-
-    /***
-     ** is implemented by <b>ConstructorDeclaration</b>
-     **/
-abstract class IConstructorDeclaration implements IClassBodyDeclaration {}
-
-    /***
-     ** is implemented by <b>FieldDeclaration</b>
-     **/
-abstract class IFieldDeclaration implements IClassMemberDeclaration {}
-
-    /***
-     ** is implemented by <b>MethodDeclaration</b>
-     **/
-abstract class IMethodDeclaration implements IClassMemberDeclaration {}
 
     /***
      ** is implemented by:
@@ -7370,235 +6682,10 @@ abstract class IVariableDeclarators implements IRootForJavaParser    {
     }
 
     /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>VariableDeclarator
-     **<li>VariableDeclaratorId
-     **</ul>
-     **</b>
-     **/
-abstract class IVariableDeclarator implements IVariableDeclarators {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>VariableDeclaratorId
-     **</ul>
-     **</b>
-     **/
-abstract class IVariableDeclaratorId implements IVariableDeclarator {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>ExpressionName
-     **<li>ArrayInitializer
-     **<li>PostIncrementExpression
-     **<li>PostDecrementExpression
-     **<li>PreIncrementExpression
-     **<li>PreDecrementExpression
-     **<li>AndExpression
-     **<li>ExclusiveOrExpression
-     **<li>InclusiveOrExpression
-     **<li>ConditionalAndExpression
-     **<li>ConditionalOrExpression
-     **<li>ConditionalExpression
-     **<li>Assignment
-     **<li>PrimaryNoNewArray0
-     **<li>PrimaryNoNewArray1
-     **<li>PrimaryNoNewArray2
-     **<li>PrimaryNoNewArray3
-     **<li>PrimaryNoNewArray4
-     **<li>Literal0
-     **<li>Literal1
-     **<li>Literal2
-     **<li>Literal3
-     **<li>Literal4
-     **<li>Literal5
-     **<li>Literal6
-     **<li>BooleanLiteral0
-     **<li>BooleanLiteral1
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **<li>ArrayCreationExpression0
-     **<li>ArrayCreationExpression1
-     **<li>ArrayCreationExpression2
-     **<li>ArrayCreationExpression3
-     **<li>FieldAccess0
-     **<li>FieldAccess1
-     **<li>FieldAccess2
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **<li>ArrayAccess0
-     **<li>ArrayAccess1
-     **<li>UnaryExpression0
-     **<li>UnaryExpression1
-     **<li>UnaryExpressionNotPlusMinus0
-     **<li>UnaryExpressionNotPlusMinus1
-     **<li>CastExpression0
-     **<li>CastExpression1
-     **<li>MultiplicativeExpression0
-     **<li>MultiplicativeExpression1
-     **<li>MultiplicativeExpression2
-     **<li>AdditiveExpression0
-     **<li>AdditiveExpression1
-     **<li>ShiftExpression0
-     **<li>ShiftExpression1
-     **<li>ShiftExpression2
-     **<li>RelationalExpression0
-     **<li>RelationalExpression1
-     **<li>RelationalExpression2
-     **<li>RelationalExpression3
-     **<li>RelationalExpression4
-     **<li>EqualityExpression0
-     **<li>EqualityExpression1
-     **</ul>
-     **</b>
-     **/
-abstract class IVariableInitializer implements IVariableInitializers {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>ExpressionName
-     **<li>PostIncrementExpression
-     **<li>PostDecrementExpression
-     **<li>PreIncrementExpression
-     **<li>PreDecrementExpression
-     **<li>AndExpression
-     **<li>ExclusiveOrExpression
-     **<li>InclusiveOrExpression
-     **<li>ConditionalAndExpression
-     **<li>ConditionalOrExpression
-     **<li>ConditionalExpression
-     **<li>Assignment
-     **<li>PrimaryNoNewArray0
-     **<li>PrimaryNoNewArray1
-     **<li>PrimaryNoNewArray2
-     **<li>PrimaryNoNewArray3
-     **<li>PrimaryNoNewArray4
-     **<li>Literal0
-     **<li>Literal1
-     **<li>Literal2
-     **<li>Literal3
-     **<li>Literal4
-     **<li>Literal5
-     **<li>Literal6
-     **<li>BooleanLiteral0
-     **<li>BooleanLiteral1
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **<li>ArrayCreationExpression0
-     **<li>ArrayCreationExpression1
-     **<li>ArrayCreationExpression2
-     **<li>ArrayCreationExpression3
-     **<li>FieldAccess0
-     **<li>FieldAccess1
-     **<li>FieldAccess2
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **<li>ArrayAccess0
-     **<li>ArrayAccess1
-     **<li>UnaryExpression0
-     **<li>UnaryExpression1
-     **<li>UnaryExpressionNotPlusMinus0
-     **<li>UnaryExpressionNotPlusMinus1
-     **<li>CastExpression0
-     **<li>CastExpression1
-     **<li>MultiplicativeExpression0
-     **<li>MultiplicativeExpression1
-     **<li>MultiplicativeExpression2
-     **<li>AdditiveExpression0
-     **<li>AdditiveExpression1
-     **<li>ShiftExpression0
-     **<li>ShiftExpression1
-     **<li>ShiftExpression2
-     **<li>RelationalExpression0
-     **<li>RelationalExpression1
-     **<li>RelationalExpression2
-     **<li>RelationalExpression3
-     **<li>RelationalExpression4
-     **<li>EqualityExpression0
-     **<li>EqualityExpression1
-     **</ul>
-     **</b>
-     **/
-abstract class IExpression implements IVariableInitializer, IArgumentList, IConstantExpression, IExpressionopt {}
-
-    /***
-     ** is implemented by <b>ArrayInitializer</b>
-     **/
-abstract class IArrayInitializer implements IVariableInitializer {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>FieldModifiers
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>FieldModifier0
-     **<li>FieldModifier1
-     **<li>FieldModifier2
-     **<li>FieldModifier3
-     **<li>FieldModifier4
-     **<li>FieldModifier5
-     **<li>FieldModifier6
-     **</ul>
-     **</b>
-     **/
-abstract class IFieldModifiers implements IFieldModifiersopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>FieldModifier0
-     **<li>FieldModifier1
-     **<li>FieldModifier2
-     **<li>FieldModifier3
-     **<li>FieldModifier4
-     **<li>FieldModifier5
-     **<li>FieldModifier6
-     **</ul>
-     **</b>
-     **/
-abstract class IFieldModifier implements IFieldModifiers, IAstToken {}
-
-    /***
      ** is implemented by <b>MethodHeader</b>
      **/
 abstract class IMethodHeader implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>MethodBody
-     **<li>Block
-     **</ul>
-     **</b>
-     **/
-abstract class IMethodBody implements IAstToken {}
 
     /***
      ** is implemented by:
@@ -7623,27 +6710,6 @@ abstract class IMethodBody implements IAstToken {}
      **/
 abstract class IMethodModifiersopt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>PrimitiveType
-     **<li>ClassType
-     **<li>ArrayType
-     **<li>ResultType
-     **<li>IntegralType0
-     **<li>IntegralType1
-     **<li>IntegralType2
-     **<li>IntegralType3
-     **<li>IntegralType4
-     **<li>FloatingPointType0
-     **<li>FloatingPointType1
-     **</ul>
-     **</b>
-     **/
-abstract class IResultType implements IAstToken {}
 
     /***
      ** is implemented by:
@@ -7679,22 +6745,6 @@ abstract class IFormalParameterListopt implements IRootForJavaParser    {
      ** is implemented by:
      **<b>
      **<ul>
-     **<li>FormalParameterList
-     **<li>LastFormalParameter
-     **</ul>
-     **</b>
-     **/
-abstract class IFormalParameterList implements IFormalParameterListopt {}
-
-    /***
-     ** is implemented by <b>LastFormalParameter</b>
-     **/
-abstract class ILastFormalParameter implements IFormalParameterList {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
      **<li>FormalParameters
      **<li>FormalParameter
      **</ul>
@@ -7702,11 +6752,6 @@ abstract class ILastFormalParameter implements IFormalParameterList {}
      **/
 abstract class IFormalParameters implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by <b>FormalParameter</b>
-     **/
-abstract class IFormalParameter implements IFormalParameters {}
 
     /***
      ** is implemented by:
@@ -7728,98 +6773,6 @@ abstract class IVariableModifiersopt implements IRootForJavaParser    {
      ** is implemented by:
      **<b>
      **<ul>
-     **<li>VariableModifiers
-     **<li>VariableModifier
-     **<li>Annotations
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **</ul>
-     **</b>
-     **/
-abstract class IVariableModifiers implements IVariableModifiersopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>VariableModifier
-     **<li>Annotations
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **</ul>
-     **</b>
-     **/
-abstract class IVariableModifier implements IVariableModifiers, IAstToken {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>Annotations
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **</ul>
-     **</b>
-     **/
-abstract class IAnnotations implements IVariableModifier, IMethodModifier, IConstructorModifier, IAbstractMethodModifier, IAnnotationsopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>MethodModifiers
-     **<li>Annotations
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>MethodModifier0
-     **<li>MethodModifier1
-     **<li>MethodModifier2
-     **<li>MethodModifier3
-     **<li>MethodModifier4
-     **<li>MethodModifier5
-     **<li>MethodModifier6
-     **<li>MethodModifier7
-     **<li>MethodModifier8
-     **</ul>
-     **</b>
-     **/
-abstract class IMethodModifiers implements IMethodModifiersopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>Annotations
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>MethodModifier0
-     **<li>MethodModifier1
-     **<li>MethodModifier2
-     **<li>MethodModifier3
-     **<li>MethodModifier4
-     **<li>MethodModifier5
-     **<li>MethodModifier6
-     **<li>MethodModifier7
-     **<li>MethodModifier8
-     **</ul>
-     **</b>
-     **/
-abstract class IMethodModifier implements IMethodModifiers, IAstToken {}
-
-    /***
-     ** is implemented by <b>Throws</b>
-     **/
-abstract class IThrows implements IThrowsopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
      **<li>identifier
      **<li>ClassType
      **<li>ExceptionTypeList
@@ -7828,22 +6781,6 @@ abstract class IThrows implements IThrowsopt {}
      **/
 abstract class IExceptionTypeList implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>ClassType
-     **</ul>
-     **</b>
-     **/
-abstract class IExceptionType implements IExceptionTypeList {}
-
-    /***
-     ** is implemented by <b>Block</b>
-     **/
-abstract class IBlock implements IMethodBody, IInstanceInitializer, IStatementWithoutTrailingSubstatement {}
 
     /***
      ** is implemented by:
@@ -7885,39 +6822,6 @@ abstract class ISimpleTypeName implements IRootForJavaParser    {
      ** is implemented by:
      **<b>
      **<ul>
-     **<li>ConstructorModifiers
-     **<li>Annotations
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>ConstructorModifier0
-     **<li>ConstructorModifier1
-     **<li>ConstructorModifier2
-     **</ul>
-     **</b>
-     **/
-abstract class IConstructorModifiers implements IConstructorModifiersopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>Annotations
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>ConstructorModifier0
-     **<li>ConstructorModifier1
-     **<li>ConstructorModifier2
-     **</ul>
-     **</b>
-     **/
-abstract class IConstructorModifier implements IConstructorModifiers, IAstToken {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
      **<li>ExplicitConstructorInvocation0
      **<li>ExplicitConstructorInvocation1
      **<li>ExplicitConstructorInvocation2
@@ -7926,18 +6830,6 @@ abstract class IConstructorModifier implements IConstructorModifiers, IAstToken 
      **/
 abstract class IExplicitConstructorInvocationopt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>ExplicitConstructorInvocation0
-     **<li>ExplicitConstructorInvocation1
-     **<li>ExplicitConstructorInvocation2
-     **</ul>
-     **</b>
-     **/
-abstract class IExplicitConstructorInvocation implements IExplicitConstructorInvocationopt {}
 
     /***
      ** is implemented by:
@@ -8015,45 +6907,6 @@ abstract class IArgumentListopt implements IRootForJavaParser    {
     }
 
     /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>PrimaryNoNewArray0
-     **<li>PrimaryNoNewArray1
-     **<li>PrimaryNoNewArray2
-     **<li>PrimaryNoNewArray3
-     **<li>PrimaryNoNewArray4
-     **<li>Literal0
-     **<li>Literal1
-     **<li>Literal2
-     **<li>Literal3
-     **<li>Literal4
-     **<li>Literal5
-     **<li>Literal6
-     **<li>BooleanLiteral0
-     **<li>BooleanLiteral1
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **<li>ArrayCreationExpression0
-     **<li>ArrayCreationExpression1
-     **<li>ArrayCreationExpression2
-     **<li>ArrayCreationExpression3
-     **<li>FieldAccess0
-     **<li>FieldAccess1
-     **<li>FieldAccess2
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **<li>ArrayAccess0
-     **<li>ArrayAccess1
-     **</ul>
-     **</b>
-     **/
-abstract class IPrimary implements IPostfixExpression {}
-
-    /***
      ** is implemented by <b>EnumBody</b>
      **/
 abstract class IEnumBody implements IRootForJavaParser    {
@@ -8079,29 +6932,6 @@ abstract class IEnumBodyDeclarationsopt implements IRootForJavaParser    {
     }
 
     /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>EnumConstants
-     **<li>EnumConstant
-     **</ul>
-     **</b>
-     **/
-abstract class IEnumConstants implements IEnumConstantsopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>EnumConstant
-     **</ul>
-     **</b>
-     **/
-abstract class IEnumConstant implements IEnumConstants {}
-
-    /***
      ** is implemented by <b>Arguments</b>
      **/
 abstract class IArgumentsopt implements IRootForJavaParser    {
@@ -8112,26 +6942,6 @@ abstract class IArgumentsopt implements IRootForJavaParser    {
      **/
 abstract class IClassBodyopt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by <b>Arguments</b>
-     **/
-abstract class IArguments implements IArgumentsopt {}
-
-    /***
-     ** is implemented by <b>EnumBodyDeclarations</b>
-     **/
-abstract class IEnumBodyDeclarations implements IEnumBodyDeclarationsopt {}
-
-    /***
-     ** is implemented by <b>NormalInterfaceDeclaration</b>
-     **/
-abstract class INormalInterfaceDeclaration implements IInterfaceDeclaration {}
-
-    /***
-     ** is implemented by <b>AnnotationTypeDeclaration</b>
-     **/
-abstract class IAnnotationTypeDeclaration implements IInterfaceDeclaration, IAnnotationTypeElementDeclaration {}
 
     /***
      ** is implemented by:
@@ -8175,54 +6985,6 @@ abstract class IInterfaceBody implements IRootForJavaParser    {
      ** is implemented by:
      **<b>
      **<ul>
-     **<li>InterfaceModifiers
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>InterfaceModifier0
-     **<li>InterfaceModifier1
-     **<li>InterfaceModifier2
-     **<li>InterfaceModifier3
-     **<li>InterfaceModifier4
-     **<li>InterfaceModifier5
-     **</ul>
-     **</b>
-     **/
-abstract class IInterfaceModifiers implements IInterfaceModifiersopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>InterfaceModifier0
-     **<li>InterfaceModifier1
-     **<li>InterfaceModifier2
-     **<li>InterfaceModifier3
-     **<li>InterfaceModifier4
-     **<li>InterfaceModifier5
-     **</ul>
-     **</b>
-     **/
-abstract class IInterfaceModifier implements IInterfaceModifiers, IAstToken {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>ExtendsInterfaces0
-     **<li>ExtendsInterfaces1
-     **</ul>
-     **</b>
-     **/
-abstract class IExtendsInterfaces implements IExtendsInterfacesopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
      **<li>NormalClassDeclaration
      **<li>EnumDeclaration
      **<li>NormalInterfaceDeclaration
@@ -8236,49 +6998,6 @@ abstract class IExtendsInterfaces implements IExtendsInterfacesopt {}
      **/
 abstract class IInterfaceMemberDeclarationsopt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>EnumDeclaration
-     **<li>NormalInterfaceDeclaration
-     **<li>InterfaceMemberDeclarations
-     **<li>InterfaceMemberDeclaration
-     **<li>ConstantDeclaration
-     **<li>AbstractMethodDeclaration
-     **<li>AnnotationTypeDeclaration
-     **</ul>
-     **</b>
-     **/
-abstract class IInterfaceMemberDeclarations implements IInterfaceMemberDeclarationsopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>EnumDeclaration
-     **<li>NormalInterfaceDeclaration
-     **<li>InterfaceMemberDeclaration
-     **<li>ConstantDeclaration
-     **<li>AbstractMethodDeclaration
-     **<li>AnnotationTypeDeclaration
-     **</ul>
-     **</b>
-     **/
-abstract class IInterfaceMemberDeclaration implements IInterfaceMemberDeclarations, IAstToken {}
-
-    /***
-     ** is implemented by <b>ConstantDeclaration</b>
-     **/
-abstract class IConstantDeclaration implements IInterfaceMemberDeclaration, IAnnotationTypeElementDeclaration {}
-
-    /***
-     ** is implemented by <b>AbstractMethodDeclaration</b>
-     **/
-abstract class IAbstractMethodDeclaration implements IInterfaceMemberDeclaration {}
 
     /***
      ** is implemented by:
@@ -8301,37 +7020,6 @@ abstract class IConstantModifiersopt implements IRootForJavaParser    {
      ** is implemented by:
      **<b>
      **<ul>
-     **<li>ConstantModifiers
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>ConstantModifier0
-     **<li>ConstantModifier1
-     **<li>ConstantModifier2
-     **</ul>
-     **</b>
-     **/
-abstract class IConstantModifiers implements IConstantModifiersopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>ConstantModifier0
-     **<li>ConstantModifier1
-     **<li>ConstantModifier2
-     **</ul>
-     **</b>
-     **/
-abstract class IConstantModifier implements IConstantModifiers, IAstToken {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
      **<li>AbstractMethodModifiers
      **<li>Annotations
      **<li>NormalAnnotation
@@ -8344,37 +7032,6 @@ abstract class IConstantModifier implements IConstantModifiers, IAstToken {}
      **/
 abstract class IAbstractMethodModifiersopt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>AbstractMethodModifiers
-     **<li>Annotations
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>AbstractMethodModifier0
-     **<li>AbstractMethodModifier1
-     **</ul>
-     **</b>
-     **/
-abstract class IAbstractMethodModifiers implements IAbstractMethodModifiersopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>Annotations
-     **<li>NormalAnnotation
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>AbstractMethodModifier0
-     **<li>AbstractMethodModifier1
-     **</ul>
-     **</b>
-     **/
-abstract class IAbstractMethodModifier implements IAbstractMethodModifiers, IAstToken {}
 
     /***
      ** is implemented by <b>AnnotationTypeBody</b>
@@ -8401,139 +7058,10 @@ abstract class IAnnotationTypeElementDeclarationsopt implements IRootForJavaPars
     }
 
     /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>EnumDeclaration
-     **<li>NormalInterfaceDeclaration
-     **<li>ConstantDeclaration
-     **<li>AnnotationTypeDeclaration
-     **<li>AnnotationTypeElementDeclarations
-     **<li>AnnotationTypeElementDeclaration0
-     **<li>AnnotationTypeElementDeclaration1
-     **</ul>
-     **</b>
-     **/
-abstract class IAnnotationTypeElementDeclarations implements IAnnotationTypeElementDeclarationsopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>EnumDeclaration
-     **<li>NormalInterfaceDeclaration
-     **<li>ConstantDeclaration
-     **<li>AnnotationTypeDeclaration
-     **<li>AnnotationTypeElementDeclaration0
-     **<li>AnnotationTypeElementDeclaration1
-     **</ul>
-     **</b>
-     **/
-abstract class IAnnotationTypeElementDeclaration implements IAnnotationTypeElementDeclarations, IAstToken {}
-
-    /***
      ** is implemented by <b>DefaultValue</b>
      **/
 abstract class IDefaultValueopt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by <b>DefaultValue</b>
-     **/
-abstract class IDefaultValue implements IDefaultValueopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>ExpressionName
-     **<li>NormalAnnotation
-     **<li>ElementValueArrayInitializer
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>PostIncrementExpression
-     **<li>PostDecrementExpression
-     **<li>PreIncrementExpression
-     **<li>PreDecrementExpression
-     **<li>AndExpression
-     **<li>ExclusiveOrExpression
-     **<li>InclusiveOrExpression
-     **<li>ConditionalAndExpression
-     **<li>ConditionalOrExpression
-     **<li>ConditionalExpression
-     **<li>PrimaryNoNewArray0
-     **<li>PrimaryNoNewArray1
-     **<li>PrimaryNoNewArray2
-     **<li>PrimaryNoNewArray3
-     **<li>PrimaryNoNewArray4
-     **<li>Literal0
-     **<li>Literal1
-     **<li>Literal2
-     **<li>Literal3
-     **<li>Literal4
-     **<li>Literal5
-     **<li>Literal6
-     **<li>BooleanLiteral0
-     **<li>BooleanLiteral1
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **<li>ArrayCreationExpression0
-     **<li>ArrayCreationExpression1
-     **<li>ArrayCreationExpression2
-     **<li>ArrayCreationExpression3
-     **<li>FieldAccess0
-     **<li>FieldAccess1
-     **<li>FieldAccess2
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **<li>ArrayAccess0
-     **<li>ArrayAccess1
-     **<li>UnaryExpression0
-     **<li>UnaryExpression1
-     **<li>UnaryExpressionNotPlusMinus0
-     **<li>UnaryExpressionNotPlusMinus1
-     **<li>CastExpression0
-     **<li>CastExpression1
-     **<li>MultiplicativeExpression0
-     **<li>MultiplicativeExpression1
-     **<li>MultiplicativeExpression2
-     **<li>AdditiveExpression0
-     **<li>AdditiveExpression1
-     **<li>ShiftExpression0
-     **<li>ShiftExpression1
-     **<li>ShiftExpression2
-     **<li>RelationalExpression0
-     **<li>RelationalExpression1
-     **<li>RelationalExpression2
-     **<li>RelationalExpression3
-     **<li>RelationalExpression4
-     **<li>EqualityExpression0
-     **<li>EqualityExpression1
-     **</ul>
-     **</b>
-     **/
-abstract class IElementValue implements IElementValues {}
-
-    /***
-     ** is implemented by <b>NormalAnnotation</b>
-     **/
-abstract class INormalAnnotation implements IAnnotation {}
-
-    /***
-     ** is implemented by <b>MarkerAnnotation</b>
-     **/
-abstract class IMarkerAnnotation implements IAnnotation {}
-
-    /***
-     ** is implemented by <b>SingleElementAnnotation</b>
-     **/
-abstract class ISingleElementAnnotation implements IAnnotation {}
 
     /***
      ** is implemented by:
@@ -8548,103 +7076,10 @@ abstract class IElementValuePairsopt implements IRootForJavaParser    {
     }
 
     /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>ElementValuePairs
-     **<li>ElementValuePair
-     **</ul>
-     **</b>
-     **/
-abstract class IElementValuePairs implements IElementValuePairsopt {}
-
-    /***
-     ** is implemented by <b>ElementValuePair</b>
-     **/
-abstract class IElementValuePair implements IElementValuePairs {}
-
-    /***
      ** is always implemented by <b>AstToken</b>. It is also implemented by <b>identifier</b>
      **/
 abstract class ISimpleName implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>ExpressionName
-     **<li>PostIncrementExpression
-     **<li>PostDecrementExpression
-     **<li>PreIncrementExpression
-     **<li>PreDecrementExpression
-     **<li>AndExpression
-     **<li>ExclusiveOrExpression
-     **<li>InclusiveOrExpression
-     **<li>ConditionalAndExpression
-     **<li>ConditionalOrExpression
-     **<li>ConditionalExpression
-     **<li>PrimaryNoNewArray0
-     **<li>PrimaryNoNewArray1
-     **<li>PrimaryNoNewArray2
-     **<li>PrimaryNoNewArray3
-     **<li>PrimaryNoNewArray4
-     **<li>Literal0
-     **<li>Literal1
-     **<li>Literal2
-     **<li>Literal3
-     **<li>Literal4
-     **<li>Literal5
-     **<li>Literal6
-     **<li>BooleanLiteral0
-     **<li>BooleanLiteral1
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **<li>ArrayCreationExpression0
-     **<li>ArrayCreationExpression1
-     **<li>ArrayCreationExpression2
-     **<li>ArrayCreationExpression3
-     **<li>FieldAccess0
-     **<li>FieldAccess1
-     **<li>FieldAccess2
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **<li>ArrayAccess0
-     **<li>ArrayAccess1
-     **<li>UnaryExpression0
-     **<li>UnaryExpression1
-     **<li>UnaryExpressionNotPlusMinus0
-     **<li>UnaryExpressionNotPlusMinus1
-     **<li>CastExpression0
-     **<li>CastExpression1
-     **<li>MultiplicativeExpression0
-     **<li>MultiplicativeExpression1
-     **<li>MultiplicativeExpression2
-     **<li>AdditiveExpression0
-     **<li>AdditiveExpression1
-     **<li>ShiftExpression0
-     **<li>ShiftExpression1
-     **<li>ShiftExpression2
-     **<li>RelationalExpression0
-     **<li>RelationalExpression1
-     **<li>RelationalExpression2
-     **<li>RelationalExpression3
-     **<li>RelationalExpression4
-     **<li>EqualityExpression0
-     **<li>EqualityExpression1
-     **</ul>
-     **</b>
-     **/
-abstract class IConditionalExpression implements IElementValue, IAssignmentExpression {}
-
-    /***
-     ** is implemented by <b>ElementValueArrayInitializer</b>
-     **/
-abstract class IElementValueArrayInitializer implements IElementValue {}
 
     /***
      ** is implemented by:
@@ -8730,83 +7165,6 @@ abstract class IElementValuesopt implements IRootForJavaParser    {
      **<ul>
      **<li>identifier
      **<li>ExpressionName
-     **<li>NormalAnnotation
-     **<li>ElementValueArrayInitializer
-     **<li>ElementValues
-     **<li>MarkerAnnotation
-     **<li>SingleElementAnnotation
-     **<li>PostIncrementExpression
-     **<li>PostDecrementExpression
-     **<li>PreIncrementExpression
-     **<li>PreDecrementExpression
-     **<li>AndExpression
-     **<li>ExclusiveOrExpression
-     **<li>InclusiveOrExpression
-     **<li>ConditionalAndExpression
-     **<li>ConditionalOrExpression
-     **<li>ConditionalExpression
-     **<li>PrimaryNoNewArray0
-     **<li>PrimaryNoNewArray1
-     **<li>PrimaryNoNewArray2
-     **<li>PrimaryNoNewArray3
-     **<li>PrimaryNoNewArray4
-     **<li>Literal0
-     **<li>Literal1
-     **<li>Literal2
-     **<li>Literal3
-     **<li>Literal4
-     **<li>Literal5
-     **<li>Literal6
-     **<li>BooleanLiteral0
-     **<li>BooleanLiteral1
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **<li>ArrayCreationExpression0
-     **<li>ArrayCreationExpression1
-     **<li>ArrayCreationExpression2
-     **<li>ArrayCreationExpression3
-     **<li>FieldAccess0
-     **<li>FieldAccess1
-     **<li>FieldAccess2
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **<li>ArrayAccess0
-     **<li>ArrayAccess1
-     **<li>UnaryExpression0
-     **<li>UnaryExpression1
-     **<li>UnaryExpressionNotPlusMinus0
-     **<li>UnaryExpressionNotPlusMinus1
-     **<li>CastExpression0
-     **<li>CastExpression1
-     **<li>MultiplicativeExpression0
-     **<li>MultiplicativeExpression1
-     **<li>MultiplicativeExpression2
-     **<li>AdditiveExpression0
-     **<li>AdditiveExpression1
-     **<li>ShiftExpression0
-     **<li>ShiftExpression1
-     **<li>ShiftExpression2
-     **<li>RelationalExpression0
-     **<li>RelationalExpression1
-     **<li>RelationalExpression2
-     **<li>RelationalExpression3
-     **<li>RelationalExpression4
-     **<li>EqualityExpression0
-     **<li>EqualityExpression1
-     **</ul>
-     **</b>
-     **/
-abstract class IElementValues implements IElementValuesopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>ExpressionName
      **<li>ArrayInitializer
      **<li>VariableInitializers
      **<li>PostIncrementExpression
@@ -8881,306 +7239,6 @@ abstract class IVariableInitializersopt implements IRootForJavaParser    {
      ** is implemented by:
      **<b>
      **<ul>
-     **<li>identifier
-     **<li>ExpressionName
-     **<li>ArrayInitializer
-     **<li>VariableInitializers
-     **<li>PostIncrementExpression
-     **<li>PostDecrementExpression
-     **<li>PreIncrementExpression
-     **<li>PreDecrementExpression
-     **<li>AndExpression
-     **<li>ExclusiveOrExpression
-     **<li>InclusiveOrExpression
-     **<li>ConditionalAndExpression
-     **<li>ConditionalOrExpression
-     **<li>ConditionalExpression
-     **<li>Assignment
-     **<li>PrimaryNoNewArray0
-     **<li>PrimaryNoNewArray1
-     **<li>PrimaryNoNewArray2
-     **<li>PrimaryNoNewArray3
-     **<li>PrimaryNoNewArray4
-     **<li>Literal0
-     **<li>Literal1
-     **<li>Literal2
-     **<li>Literal3
-     **<li>Literal4
-     **<li>Literal5
-     **<li>Literal6
-     **<li>BooleanLiteral0
-     **<li>BooleanLiteral1
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **<li>ArrayCreationExpression0
-     **<li>ArrayCreationExpression1
-     **<li>ArrayCreationExpression2
-     **<li>ArrayCreationExpression3
-     **<li>FieldAccess0
-     **<li>FieldAccess1
-     **<li>FieldAccess2
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **<li>ArrayAccess0
-     **<li>ArrayAccess1
-     **<li>UnaryExpression0
-     **<li>UnaryExpression1
-     **<li>UnaryExpressionNotPlusMinus0
-     **<li>UnaryExpressionNotPlusMinus1
-     **<li>CastExpression0
-     **<li>CastExpression1
-     **<li>MultiplicativeExpression0
-     **<li>MultiplicativeExpression1
-     **<li>MultiplicativeExpression2
-     **<li>AdditiveExpression0
-     **<li>AdditiveExpression1
-     **<li>ShiftExpression0
-     **<li>ShiftExpression1
-     **<li>ShiftExpression2
-     **<li>RelationalExpression0
-     **<li>RelationalExpression1
-     **<li>RelationalExpression2
-     **<li>RelationalExpression3
-     **<li>RelationalExpression4
-     **<li>EqualityExpression0
-     **<li>EqualityExpression1
-     **</ul>
-     **</b>
-     **/
-abstract class IVariableInitializers implements IVariableInitializersopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>EnumDeclaration
-     **<li>Block
-     **<li>BlockStatements
-     **<li>LocalVariableDeclarationStatement
-     **<li>IfThenStatement
-     **<li>IfThenElseStatement
-     **<li>EmptyStatement
-     **<li>LabeledStatement
-     **<li>ExpressionStatement
-     **<li>SwitchStatement
-     **<li>WhileStatement
-     **<li>DoStatement
-     **<li>BasicForStatement
-     **<li>EnhancedForStatement
-     **<li>BreakStatement
-     **<li>ContinueStatement
-     **<li>ReturnStatement
-     **<li>ThrowStatement
-     **<li>SynchronizedStatement
-     **<li>AssertStatement0
-     **<li>AssertStatement1
-     **<li>TryStatement0
-     **<li>TryStatement1
-     **</ul>
-     **</b>
-     **/
-abstract class IBlockStatements implements IBlockStatementsopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>NormalClassDeclaration
-     **<li>EnumDeclaration
-     **<li>Block
-     **<li>LocalVariableDeclarationStatement
-     **<li>IfThenStatement
-     **<li>IfThenElseStatement
-     **<li>EmptyStatement
-     **<li>LabeledStatement
-     **<li>ExpressionStatement
-     **<li>SwitchStatement
-     **<li>WhileStatement
-     **<li>DoStatement
-     **<li>BasicForStatement
-     **<li>EnhancedForStatement
-     **<li>BreakStatement
-     **<li>ContinueStatement
-     **<li>ReturnStatement
-     **<li>ThrowStatement
-     **<li>SynchronizedStatement
-     **<li>AssertStatement0
-     **<li>AssertStatement1
-     **<li>TryStatement0
-     **<li>TryStatement1
-     **</ul>
-     **</b>
-     **/
-abstract class IBlockStatement implements IBlockStatements {}
-
-    /***
-     ** is implemented by <b>LocalVariableDeclarationStatement</b>
-     **/
-abstract class ILocalVariableDeclarationStatement implements IBlockStatement {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>Block
-     **<li>IfThenStatement
-     **<li>IfThenElseStatement
-     **<li>EmptyStatement
-     **<li>LabeledStatement
-     **<li>ExpressionStatement
-     **<li>SwitchStatement
-     **<li>WhileStatement
-     **<li>DoStatement
-     **<li>BasicForStatement
-     **<li>EnhancedForStatement
-     **<li>BreakStatement
-     **<li>ContinueStatement
-     **<li>ReturnStatement
-     **<li>ThrowStatement
-     **<li>SynchronizedStatement
-     **<li>AssertStatement0
-     **<li>AssertStatement1
-     **<li>TryStatement0
-     **<li>TryStatement1
-     **</ul>
-     **</b>
-     **/
-abstract class IStatement implements IBlockStatement {}
-
-    /***
-     ** is implemented by <b>LocalVariableDeclaration</b>
-     **/
-abstract class ILocalVariableDeclaration implements IForInit {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>Block
-     **<li>EmptyStatement
-     **<li>ExpressionStatement
-     **<li>SwitchStatement
-     **<li>DoStatement
-     **<li>BreakStatement
-     **<li>ContinueStatement
-     **<li>ReturnStatement
-     **<li>ThrowStatement
-     **<li>SynchronizedStatement
-     **<li>AssertStatement0
-     **<li>AssertStatement1
-     **<li>TryStatement0
-     **<li>TryStatement1
-     **</ul>
-     **</b>
-     **/
-abstract class IStatementWithoutTrailingSubstatement implements IStatement, IStatementNoShortIf {}
-
-    /***
-     ** is implemented by <b>LabeledStatement</b>
-     **/
-abstract class ILabeledStatement implements IStatement {}
-
-    /***
-     ** is implemented by <b>IfThenStatement</b>
-     **/
-abstract class IIfThenStatement implements IStatement {}
-
-    /***
-     ** is implemented by <b>IfThenElseStatement</b>
-     **/
-abstract class IIfThenElseStatement implements IStatement {}
-
-    /***
-     ** is implemented by <b>WhileStatement</b>
-     **/
-abstract class IWhileStatement implements IStatement {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>BasicForStatement
-     **<li>EnhancedForStatement
-     **</ul>
-     **</b>
-     **/
-abstract class IForStatement implements IStatement {}
-
-    /***
-     ** is always implemented by <b>AstToken</b>. It is also implemented by <b>EmptyStatement</b>
-     **/
-abstract class IEmptyStatement implements IStatementWithoutTrailingSubstatement, IAstToken {}
-
-    /***
-     ** is implemented by <b>ExpressionStatement</b>
-     **/
-abstract class IExpressionStatement implements IStatementWithoutTrailingSubstatement {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>AssertStatement0
-     **<li>AssertStatement1
-     **</ul>
-     **</b>
-     **/
-abstract class IAssertStatement implements IStatementWithoutTrailingSubstatement {}
-
-    /***
-     ** is implemented by <b>SwitchStatement</b>
-     **/
-abstract class ISwitchStatement implements IStatementWithoutTrailingSubstatement {}
-
-    /***
-     ** is implemented by <b>DoStatement</b>
-     **/
-abstract class IDoStatement implements IStatementWithoutTrailingSubstatement {}
-
-    /***
-     ** is implemented by <b>BreakStatement</b>
-     **/
-abstract class IBreakStatement implements IStatementWithoutTrailingSubstatement {}
-
-    /***
-     ** is implemented by <b>ContinueStatement</b>
-     **/
-abstract class IContinueStatement implements IStatementWithoutTrailingSubstatement {}
-
-    /***
-     ** is implemented by <b>ReturnStatement</b>
-     **/
-abstract class IReturnStatement implements IStatementWithoutTrailingSubstatement {}
-
-    /***
-     ** is implemented by <b>SynchronizedStatement</b>
-     **/
-abstract class ISynchronizedStatement implements IStatementWithoutTrailingSubstatement {}
-
-    /***
-     ** is implemented by <b>ThrowStatement</b>
-     **/
-abstract class IThrowStatement implements IStatementWithoutTrailingSubstatement {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>TryStatement0
-     **<li>TryStatement1
-     **</ul>
-     **</b>
-     **/
-abstract class ITryStatement implements IStatementWithoutTrailingSubstatement {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
      **<li>Block
      **<li>IfThenElseStatementNoShortIf
      **<li>EmptyStatement
@@ -9204,97 +7262,6 @@ abstract class ITryStatement implements IStatementWithoutTrailingSubstatement {}
      **/
 abstract class IStatementNoShortIf implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by <b>LabeledStatementNoShortIf</b>
-     **/
-abstract class ILabeledStatementNoShortIf implements IStatementNoShortIf {}
-
-    /***
-     ** is implemented by <b>IfThenElseStatementNoShortIf</b>
-     **/
-abstract class IIfThenElseStatementNoShortIf implements IStatementNoShortIf {}
-
-    /***
-     ** is implemented by <b>WhileStatementNoShortIf</b>
-     **/
-abstract class IWhileStatementNoShortIf implements IStatementNoShortIf {}
-
-    /***
-     ** is implemented by <b>ForStatementNoShortIf</b>
-     **/
-abstract class IForStatementNoShortIf implements IStatementNoShortIf {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>PostIncrementExpression
-     **<li>PostDecrementExpression
-     **<li>PreIncrementExpression
-     **<li>PreDecrementExpression
-     **<li>Assignment
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **</ul>
-     **</b>
-     **/
-abstract class IStatementExpression implements IStatementExpressionList {}
-
-    /***
-     ** is implemented by <b>Assignment</b>
-     **/
-abstract class IAssignment implements IStatementExpression, IAssignmentExpression {}
-
-    /***
-     ** is implemented by <b>PreIncrementExpression</b>
-     **/
-abstract class IPreIncrementExpression implements IStatementExpression, IUnaryExpression {}
-
-    /***
-     ** is implemented by <b>PreDecrementExpression</b>
-     **/
-abstract class IPreDecrementExpression implements IStatementExpression, IUnaryExpression {}
-
-    /***
-     ** is implemented by <b>PostIncrementExpression</b>
-     **/
-abstract class IPostIncrementExpression implements IStatementExpression, IPostfixExpression {}
-
-    /***
-     ** is implemented by <b>PostDecrementExpression</b>
-     **/
-abstract class IPostDecrementExpression implements IStatementExpression, IPostfixExpression {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **</ul>
-     **</b>
-     **/
-abstract class IMethodInvocation implements IStatementExpression, IPrimaryNoNewArray {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **</ul>
-     **</b>
-     **/
-abstract class IClassInstanceCreationExpression implements IStatementExpression, IPrimaryNoNewArray {}
 
     /***
      ** is implemented by <b>SwitchBlock</b>
@@ -9327,47 +7294,6 @@ abstract class ISwitchBlockStatementGroupsopt implements IRootForJavaParser    {
      **/
 abstract class ISwitchLabelsopt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>SwitchBlockStatementGroups
-     **<li>SwitchBlockStatementGroup
-     **</ul>
-     **</b>
-     **/
-abstract class ISwitchBlockStatementGroups implements ISwitchBlockStatementGroupsopt {}
-
-    /***
-     ** is implemented by <b>SwitchBlockStatementGroup</b>
-     **/
-abstract class ISwitchBlockStatementGroup implements ISwitchBlockStatementGroups {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>SwitchLabels
-     **<li>SwitchLabel0
-     **<li>SwitchLabel1
-     **<li>SwitchLabel2
-     **</ul>
-     **</b>
-     **/
-abstract class ISwitchLabels implements ISwitchLabelsopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>SwitchLabel0
-     **<li>SwitchLabel1
-     **<li>SwitchLabel2
-     **</ul>
-     **</b>
-     **/
-abstract class ISwitchLabel implements ISwitchLabels {}
 
     /***
      ** is implemented by:
@@ -9442,16 +7368,6 @@ abstract class ISwitchLabel implements ISwitchLabels {}
      **/
 abstract class IConstantExpression implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by <b>BasicForStatement</b>
-     **/
-abstract class IBasicForStatement implements IForStatement {}
-
-    /***
-     ** is implemented by <b>EnhancedForStatement</b>
-     **/
-abstract class IEnhancedForStatement implements IForStatement {}
 
     /***
      ** is implemented by:
@@ -9575,88 +7491,10 @@ abstract class IForUpdateopt implements IRootForJavaParser    {
     }
 
     /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>LocalVariableDeclaration
-     **<li>StatementExpressionList
-     **<li>PostIncrementExpression
-     **<li>PostDecrementExpression
-     **<li>PreIncrementExpression
-     **<li>PreDecrementExpression
-     **<li>Assignment
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **</ul>
-     **</b>
-     **/
-abstract class IForInit implements IForInitopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>StatementExpressionList
-     **<li>PostIncrementExpression
-     **<li>PostDecrementExpression
-     **<li>PreIncrementExpression
-     **<li>PreDecrementExpression
-     **<li>Assignment
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **</ul>
-     **</b>
-     **/
-abstract class IStatementExpressionList implements IForInit, IForUpdate {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>StatementExpressionList
-     **<li>PostIncrementExpression
-     **<li>PostDecrementExpression
-     **<li>PreIncrementExpression
-     **<li>PreDecrementExpression
-     **<li>Assignment
-     **<li>ClassInstanceCreationExpression0
-     **<li>ClassInstanceCreationExpression1
-     **<li>MethodInvocation0
-     **<li>MethodInvocation1
-     **<li>MethodInvocation2
-     **<li>MethodInvocation3
-     **<li>MethodInvocation4
-     **</ul>
-     **</b>
-     **/
-abstract class IForUpdate implements IForUpdateopt {}
-
-    /***
      ** is always implemented by <b>AstToken</b>. It is also implemented by <b>identifier</b>
      **/
 abstract class Iidentifieropt implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>Catches
-     **<li>CatchClause
-     **</ul>
-     **</b>
-     **/
-abstract class ICatches implements ICatchesopt {}
 
     /***
      ** is implemented by:
@@ -9677,9 +7515,2224 @@ abstract class IFinally implements IRootForJavaParser    {
     }
 
     /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>DimExprs
+     **<li>DimExpr
+     **</ul>
+     **</b>
+     **/
+abstract class IDimExprs implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>Dims0
+     **<li>Dims1
+     **</ul>
+     **</b>
+     **/
+abstract class IDimsopt implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>ExpressionName
+     **<li>FieldAccess0
+     **<li>FieldAccess1
+     **<li>FieldAccess2
+     **<li>ArrayAccess0
+     **<li>ArrayAccess1
+     **</ul>
+     **</b>
+     **/
+abstract class ILeftHandSide implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is always implemented by <b>AstToken</b>. It is also implemented by <b>Commaopt</b>
+     **/
+abstract class ICommaopt implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is always implemented by <b>AstToken</b>. It is also implemented by <b>Ellipsisopt</b>
+     **/
+abstract class IEllipsisopt implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>EnumDeclaration
+     **<li>Block
+     **<li>BlockStatements
+     **<li>LocalVariableDeclarationStatement
+     **<li>IfThenStatement
+     **<li>IfThenElseStatement
+     **<li>EmptyStatement
+     **<li>LabeledStatement
+     **<li>ExpressionStatement
+     **<li>SwitchStatement
+     **<li>WhileStatement
+     **<li>DoStatement
+     **<li>BasicForStatement
+     **<li>EnhancedForStatement
+     **<li>BreakStatement
+     **<li>ContinueStatement
+     **<li>ReturnStatement
+     **<li>ThrowStatement
+     **<li>SynchronizedStatement
+     **<li>LPGUserAction0
+     **<li>LPGUserAction1
+     **<li>LPGUserAction2
+     **<li>LPGUserAction3
+     **<li>LPGUserAction4
+     **<li>AssertStatement0
+     **<li>AssertStatement1
+     **<li>TryStatement0
+     **<li>TryStatement1
+     **</ul>
+     **</b>
+     **/
+abstract class ILPGUserAction implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is always implemented by <b>AstToken</b>. It is also implemented by <b>identifier</b>
+     **/
+abstract class Iidentifier implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>EnumDeclaration
+     **<li>Block
+     **<li>BlockStatements
+     **<li>LocalVariableDeclarationStatement
+     **<li>IfThenStatement
+     **<li>IfThenElseStatement
+     **<li>EmptyStatement
+     **<li>LabeledStatement
+     **<li>ExpressionStatement
+     **<li>SwitchStatement
+     **<li>WhileStatement
+     **<li>DoStatement
+     **<li>BasicForStatement
+     **<li>EnhancedForStatement
+     **<li>BreakStatement
+     **<li>ContinueStatement
+     **<li>ReturnStatement
+     **<li>ThrowStatement
+     **<li>SynchronizedStatement
+     **<li>AssertStatement0
+     **<li>AssertStatement1
+     **<li>TryStatement0
+     **<li>TryStatement1
+     **</ul>
+     **</b>
+     **/
+abstract class IBlockStatementsopt implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>PrimitiveType
+     **<li>ClassType
+     **<li>ArrayType
+     **<li>IntegralType0
+     **<li>IntegralType1
+     **<li>IntegralType2
+     **<li>IntegralType3
+     **<li>IntegralType4
+     **<li>FloatingPointType0
+     **<li>FloatingPointType1
+     **</ul>
+     **</b>
+     **/
+abstract class IType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is always implemented by <b>AstToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>PrimitiveType
+     **<li>IntegralType0
+     **<li>IntegralType1
+     **<li>IntegralType2
+     **<li>IntegralType3
+     **<li>IntegralType4
+     **<li>FloatingPointType0
+     **<li>FloatingPointType1
+     **</ul>
+     **</b>
+     **/
+abstract class IPrimitiveType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>ClassType
+     **<li>ArrayType
+     **</ul>
+     **</b>
+     **/
+abstract class IReferenceType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is always implemented by <b>AstToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>IntegralType0
+     **<li>IntegralType1
+     **<li>IntegralType2
+     **<li>IntegralType3
+     **<li>IntegralType4
+     **<li>FloatingPointType0
+     **<li>FloatingPointType1
+     **</ul>
+     **</b>
+     **/
+abstract class INumericType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is always implemented by <b>AstToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>IntegralType0
+     **<li>IntegralType1
+     **<li>IntegralType2
+     **<li>IntegralType3
+     **<li>IntegralType4
+     **</ul>
+     **</b>
+     **/
+abstract class IIntegralType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is always implemented by <b>AstToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>FloatingPointType0
+     **<li>FloatingPointType1
+     **</ul>
+     **</b>
+     **/
+abstract class IFloatingPointType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ClassType</b>
+     **/
+abstract class IClassOrInterfaceType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is always implemented by <b>AstToken</b>. It is also implemented by <b>identifier</b>
+     **/
+abstract class ITypeVariable implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ArrayType</b>
+     **/
+abstract class IArrayType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ClassType</b>
+     **/
+abstract class IClassType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>TypeName
+     **</ul>
+     **</b>
+     **/
+abstract class ITypeName implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>InterfaceType</b>
+     **/
+abstract class IInterfaceType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>TypeParameter</b>
+     **/
+abstract class ITypeParameter implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>TypeBound</b>
+     **/
+abstract class ITypeBound implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>AdditionalBoundList
+     **<li>AdditionalBound
+     **</ul>
+     **</b>
+     **/
+abstract class IAdditionalBoundList implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>AdditionalBound</b>
+     **/
+abstract class IAdditionalBound implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>TypeArguments</b>
+     **/
+abstract class ITypeArguments implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>ClassType
+     **<li>ArrayType
+     **<li>Wildcard
+     **</ul>
+     **</b>
+     **/
+abstract class IActualTypeArgument implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>Wildcard</b>
+     **/
+abstract class IWildcard implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>WildcardBounds0
+     **<li>WildcardBounds1
+     **</ul>
+     **</b>
+     **/
+abstract class IWildcardBounds implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>ExpressionName
+     **</ul>
+     **</b>
+     **/
+abstract class IExpressionName implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>ImportDeclarations
+     **<li>SingleTypeImportDeclaration
+     **<li>TypeImportOnDemandDeclaration
+     **<li>SingleStaticImportDeclaration
+     **<li>StaticImportOnDemandDeclaration
+     **</ul>
+     **</b>
+     **/
+abstract class IImportDeclarations implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>SingleTypeImportDeclaration
+     **<li>TypeImportOnDemandDeclaration
+     **<li>SingleStaticImportDeclaration
+     **<li>StaticImportOnDemandDeclaration
+     **</ul>
+     **</b>
+     **/
+abstract class IImportDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>TypeDeclarations
+     **<li>TypeDeclaration
+     **<li>NormalClassDeclaration
+     **<li>EnumDeclaration
+     **<li>NormalInterfaceDeclaration
+     **<li>AnnotationTypeDeclaration
+     **</ul>
+     **</b>
+     **/
+abstract class ITypeDeclarations implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>TypeDeclaration
+     **<li>NormalClassDeclaration
+     **<li>EnumDeclaration
+     **<li>NormalInterfaceDeclaration
+     **<li>AnnotationTypeDeclaration
+     **</ul>
+     **</b>
+     **/
+abstract class ITypeDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>PackageDeclaration</b>
+     **/
+abstract class IPackageDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>SingleTypeImportDeclaration</b>
+     **/
+abstract class ISingleTypeImportDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>TypeImportOnDemandDeclaration</b>
+     **/
+abstract class ITypeImportOnDemandDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>SingleStaticImportDeclaration</b>
+     **/
+abstract class ISingleStaticImportDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>StaticImportOnDemandDeclaration</b>
+     **/
+abstract class IStaticImportOnDemandDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>EnumDeclaration
+     **</ul>
+     **</b>
+     **/
+abstract class IClassDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalInterfaceDeclaration
+     **<li>AnnotationTypeDeclaration
+     **</ul>
+     **</b>
+     **/
+abstract class IInterfaceDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>NormalClassDeclaration</b>
+     **/
+abstract class INormalClassDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>EnumDeclaration</b>
+     **/
+abstract class IEnumDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ClassBody</b>
+     **/
+abstract class IClassBody implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>ClassModifiers
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>ClassModifier0
+     **<li>ClassModifier1
+     **<li>ClassModifier2
+     **<li>ClassModifier3
+     **<li>ClassModifier4
+     **<li>ClassModifier5
+     **<li>ClassModifier6
+     **</ul>
+     **</b>
+     **/
+abstract class IClassModifiers implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>ClassModifier0
+     **<li>ClassModifier1
+     **<li>ClassModifier2
+     **<li>ClassModifier3
+     **<li>ClassModifier4
+     **<li>ClassModifier5
+     **<li>ClassModifier6
+     **</ul>
+     **</b>
+     **/
+abstract class IClassModifier implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **</ul>
+     **</b>
+     **/
+abstract class IAnnotation implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>TypeParameters</b>
+     **/
+abstract class ITypeParameters implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>Super</b>
+     **/
+abstract class ISuper implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>Interfaces</b>
+     **/
+abstract class IInterfaces implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>ClassBodyDeclarations
+     **<li>ClassMemberDeclaration
+     **<li>FieldDeclaration
+     **<li>MethodDeclaration
+     **<li>StaticInitializer
+     **<li>ConstructorDeclaration
+     **<li>EnumDeclaration
+     **<li>NormalInterfaceDeclaration
+     **<li>AnnotationTypeDeclaration
+     **<li>Block
+     **</ul>
+     **</b>
+     **/
+abstract class IClassBodyDeclarations implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>ClassMemberDeclaration
+     **<li>FieldDeclaration
+     **<li>MethodDeclaration
+     **<li>StaticInitializer
+     **<li>ConstructorDeclaration
+     **<li>EnumDeclaration
+     **<li>NormalInterfaceDeclaration
+     **<li>AnnotationTypeDeclaration
+     **<li>Block
+     **</ul>
+     **</b>
+     **/
+abstract class IClassBodyDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>ClassMemberDeclaration
+     **<li>FieldDeclaration
+     **<li>MethodDeclaration
+     **<li>EnumDeclaration
+     **<li>NormalInterfaceDeclaration
+     **<li>AnnotationTypeDeclaration
+     **</ul>
+     **</b>
+     **/
+abstract class IClassMemberDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>Block</b>
+     **/
+abstract class IInstanceInitializer implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>StaticInitializer</b>
+     **/
+abstract class IStaticInitializer implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ConstructorDeclaration</b>
+     **/
+abstract class IConstructorDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>FieldDeclaration</b>
+     **/
+abstract class IFieldDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>MethodDeclaration</b>
+     **/
+abstract class IMethodDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>VariableDeclarator
+     **<li>VariableDeclaratorId
+     **</ul>
+     **</b>
+     **/
+abstract class IVariableDeclarator implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>VariableDeclaratorId
+     **</ul>
+     **</b>
+     **/
+abstract class IVariableDeclaratorId implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>ExpressionName
+     **<li>ArrayInitializer
+     **<li>PostIncrementExpression
+     **<li>PostDecrementExpression
+     **<li>PreIncrementExpression
+     **<li>PreDecrementExpression
+     **<li>AndExpression
+     **<li>ExclusiveOrExpression
+     **<li>InclusiveOrExpression
+     **<li>ConditionalAndExpression
+     **<li>ConditionalOrExpression
+     **<li>ConditionalExpression
+     **<li>Assignment
+     **<li>PrimaryNoNewArray0
+     **<li>PrimaryNoNewArray1
+     **<li>PrimaryNoNewArray2
+     **<li>PrimaryNoNewArray3
+     **<li>PrimaryNoNewArray4
+     **<li>Literal0
+     **<li>Literal1
+     **<li>Literal2
+     **<li>Literal3
+     **<li>Literal4
+     **<li>Literal5
+     **<li>Literal6
+     **<li>BooleanLiteral0
+     **<li>BooleanLiteral1
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **<li>ArrayCreationExpression0
+     **<li>ArrayCreationExpression1
+     **<li>ArrayCreationExpression2
+     **<li>ArrayCreationExpression3
+     **<li>FieldAccess0
+     **<li>FieldAccess1
+     **<li>FieldAccess2
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **<li>ArrayAccess0
+     **<li>ArrayAccess1
+     **<li>UnaryExpression0
+     **<li>UnaryExpression1
+     **<li>UnaryExpressionNotPlusMinus0
+     **<li>UnaryExpressionNotPlusMinus1
+     **<li>CastExpression0
+     **<li>CastExpression1
+     **<li>MultiplicativeExpression0
+     **<li>MultiplicativeExpression1
+     **<li>MultiplicativeExpression2
+     **<li>AdditiveExpression0
+     **<li>AdditiveExpression1
+     **<li>ShiftExpression0
+     **<li>ShiftExpression1
+     **<li>ShiftExpression2
+     **<li>RelationalExpression0
+     **<li>RelationalExpression1
+     **<li>RelationalExpression2
+     **<li>RelationalExpression3
+     **<li>RelationalExpression4
+     **<li>EqualityExpression0
+     **<li>EqualityExpression1
+     **</ul>
+     **</b>
+     **/
+abstract class IVariableInitializer implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>ExpressionName
+     **<li>PostIncrementExpression
+     **<li>PostDecrementExpression
+     **<li>PreIncrementExpression
+     **<li>PreDecrementExpression
+     **<li>AndExpression
+     **<li>ExclusiveOrExpression
+     **<li>InclusiveOrExpression
+     **<li>ConditionalAndExpression
+     **<li>ConditionalOrExpression
+     **<li>ConditionalExpression
+     **<li>Assignment
+     **<li>PrimaryNoNewArray0
+     **<li>PrimaryNoNewArray1
+     **<li>PrimaryNoNewArray2
+     **<li>PrimaryNoNewArray3
+     **<li>PrimaryNoNewArray4
+     **<li>Literal0
+     **<li>Literal1
+     **<li>Literal2
+     **<li>Literal3
+     **<li>Literal4
+     **<li>Literal5
+     **<li>Literal6
+     **<li>BooleanLiteral0
+     **<li>BooleanLiteral1
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **<li>ArrayCreationExpression0
+     **<li>ArrayCreationExpression1
+     **<li>ArrayCreationExpression2
+     **<li>ArrayCreationExpression3
+     **<li>FieldAccess0
+     **<li>FieldAccess1
+     **<li>FieldAccess2
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **<li>ArrayAccess0
+     **<li>ArrayAccess1
+     **<li>UnaryExpression0
+     **<li>UnaryExpression1
+     **<li>UnaryExpressionNotPlusMinus0
+     **<li>UnaryExpressionNotPlusMinus1
+     **<li>CastExpression0
+     **<li>CastExpression1
+     **<li>MultiplicativeExpression0
+     **<li>MultiplicativeExpression1
+     **<li>MultiplicativeExpression2
+     **<li>AdditiveExpression0
+     **<li>AdditiveExpression1
+     **<li>ShiftExpression0
+     **<li>ShiftExpression1
+     **<li>ShiftExpression2
+     **<li>RelationalExpression0
+     **<li>RelationalExpression1
+     **<li>RelationalExpression2
+     **<li>RelationalExpression3
+     **<li>RelationalExpression4
+     **<li>EqualityExpression0
+     **<li>EqualityExpression1
+     **</ul>
+     **</b>
+     **/
+abstract class IExpression implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ArrayInitializer</b>
+     **/
+abstract class IArrayInitializer implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>FieldModifiers
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>FieldModifier0
+     **<li>FieldModifier1
+     **<li>FieldModifier2
+     **<li>FieldModifier3
+     **<li>FieldModifier4
+     **<li>FieldModifier5
+     **<li>FieldModifier6
+     **</ul>
+     **</b>
+     **/
+abstract class IFieldModifiers implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>FieldModifier0
+     **<li>FieldModifier1
+     **<li>FieldModifier2
+     **<li>FieldModifier3
+     **<li>FieldModifier4
+     **<li>FieldModifier5
+     **<li>FieldModifier6
+     **</ul>
+     **</b>
+     **/
+abstract class IFieldModifier implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>MethodBody
+     **<li>Block
+     **</ul>
+     **</b>
+     **/
+abstract class IMethodBody implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>PrimitiveType
+     **<li>ClassType
+     **<li>ArrayType
+     **<li>ResultType
+     **<li>IntegralType0
+     **<li>IntegralType1
+     **<li>IntegralType2
+     **<li>IntegralType3
+     **<li>IntegralType4
+     **<li>FloatingPointType0
+     **<li>FloatingPointType1
+     **</ul>
+     **</b>
+     **/
+abstract class IResultType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>FormalParameterList
+     **<li>LastFormalParameter
+     **</ul>
+     **</b>
+     **/
+abstract class IFormalParameterList implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>LastFormalParameter</b>
+     **/
+abstract class ILastFormalParameter implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>FormalParameter</b>
+     **/
+abstract class IFormalParameter implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>VariableModifiers
+     **<li>VariableModifier
+     **<li>Annotations
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **</ul>
+     **</b>
+     **/
+abstract class IVariableModifiers implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>VariableModifier
+     **<li>Annotations
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **</ul>
+     **</b>
+     **/
+abstract class IVariableModifier implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>Annotations
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **</ul>
+     **</b>
+     **/
+abstract class IAnnotations implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>MethodModifiers
+     **<li>Annotations
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>MethodModifier0
+     **<li>MethodModifier1
+     **<li>MethodModifier2
+     **<li>MethodModifier3
+     **<li>MethodModifier4
+     **<li>MethodModifier5
+     **<li>MethodModifier6
+     **<li>MethodModifier7
+     **<li>MethodModifier8
+     **</ul>
+     **</b>
+     **/
+abstract class IMethodModifiers implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>Annotations
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>MethodModifier0
+     **<li>MethodModifier1
+     **<li>MethodModifier2
+     **<li>MethodModifier3
+     **<li>MethodModifier4
+     **<li>MethodModifier5
+     **<li>MethodModifier6
+     **<li>MethodModifier7
+     **<li>MethodModifier8
+     **</ul>
+     **</b>
+     **/
+abstract class IMethodModifier implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>Throws</b>
+     **/
+abstract class IThrows implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>ClassType
+     **</ul>
+     **</b>
+     **/
+abstract class IExceptionType implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>Block</b>
+     **/
+abstract class IBlock implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>ConstructorModifiers
+     **<li>Annotations
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>ConstructorModifier0
+     **<li>ConstructorModifier1
+     **<li>ConstructorModifier2
+     **</ul>
+     **</b>
+     **/
+abstract class IConstructorModifiers implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>Annotations
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>ConstructorModifier0
+     **<li>ConstructorModifier1
+     **<li>ConstructorModifier2
+     **</ul>
+     **</b>
+     **/
+abstract class IConstructorModifier implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>ExplicitConstructorInvocation0
+     **<li>ExplicitConstructorInvocation1
+     **<li>ExplicitConstructorInvocation2
+     **</ul>
+     **</b>
+     **/
+abstract class IExplicitConstructorInvocation implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>PrimaryNoNewArray0
+     **<li>PrimaryNoNewArray1
+     **<li>PrimaryNoNewArray2
+     **<li>PrimaryNoNewArray3
+     **<li>PrimaryNoNewArray4
+     **<li>Literal0
+     **<li>Literal1
+     **<li>Literal2
+     **<li>Literal3
+     **<li>Literal4
+     **<li>Literal5
+     **<li>Literal6
+     **<li>BooleanLiteral0
+     **<li>BooleanLiteral1
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **<li>ArrayCreationExpression0
+     **<li>ArrayCreationExpression1
+     **<li>ArrayCreationExpression2
+     **<li>ArrayCreationExpression3
+     **<li>FieldAccess0
+     **<li>FieldAccess1
+     **<li>FieldAccess2
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **<li>ArrayAccess0
+     **<li>ArrayAccess1
+     **</ul>
+     **</b>
+     **/
+abstract class IPrimary implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>EnumConstants
+     **<li>EnumConstant
+     **</ul>
+     **</b>
+     **/
+abstract class IEnumConstants implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>EnumConstant
+     **</ul>
+     **</b>
+     **/
+abstract class IEnumConstant implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>Arguments</b>
+     **/
+abstract class IArguments implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>EnumBodyDeclarations</b>
+     **/
+abstract class IEnumBodyDeclarations implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>NormalInterfaceDeclaration</b>
+     **/
+abstract class INormalInterfaceDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>AnnotationTypeDeclaration</b>
+     **/
+abstract class IAnnotationTypeDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>InterfaceModifiers
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>InterfaceModifier0
+     **<li>InterfaceModifier1
+     **<li>InterfaceModifier2
+     **<li>InterfaceModifier3
+     **<li>InterfaceModifier4
+     **<li>InterfaceModifier5
+     **</ul>
+     **</b>
+     **/
+abstract class IInterfaceModifiers implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>InterfaceModifier0
+     **<li>InterfaceModifier1
+     **<li>InterfaceModifier2
+     **<li>InterfaceModifier3
+     **<li>InterfaceModifier4
+     **<li>InterfaceModifier5
+     **</ul>
+     **</b>
+     **/
+abstract class IInterfaceModifier implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>ExtendsInterfaces0
+     **<li>ExtendsInterfaces1
+     **</ul>
+     **</b>
+     **/
+abstract class IExtendsInterfaces implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>EnumDeclaration
+     **<li>NormalInterfaceDeclaration
+     **<li>InterfaceMemberDeclarations
+     **<li>InterfaceMemberDeclaration
+     **<li>ConstantDeclaration
+     **<li>AbstractMethodDeclaration
+     **<li>AnnotationTypeDeclaration
+     **</ul>
+     **</b>
+     **/
+abstract class IInterfaceMemberDeclarations implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>EnumDeclaration
+     **<li>NormalInterfaceDeclaration
+     **<li>InterfaceMemberDeclaration
+     **<li>ConstantDeclaration
+     **<li>AbstractMethodDeclaration
+     **<li>AnnotationTypeDeclaration
+     **</ul>
+     **</b>
+     **/
+abstract class IInterfaceMemberDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ConstantDeclaration</b>
+     **/
+abstract class IConstantDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>AbstractMethodDeclaration</b>
+     **/
+abstract class IAbstractMethodDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>ConstantModifiers
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>ConstantModifier0
+     **<li>ConstantModifier1
+     **<li>ConstantModifier2
+     **</ul>
+     **</b>
+     **/
+abstract class IConstantModifiers implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>ConstantModifier0
+     **<li>ConstantModifier1
+     **<li>ConstantModifier2
+     **</ul>
+     **</b>
+     **/
+abstract class IConstantModifier implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>AbstractMethodModifiers
+     **<li>Annotations
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>AbstractMethodModifier0
+     **<li>AbstractMethodModifier1
+     **</ul>
+     **</b>
+     **/
+abstract class IAbstractMethodModifiers implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>Annotations
+     **<li>NormalAnnotation
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>AbstractMethodModifier0
+     **<li>AbstractMethodModifier1
+     **</ul>
+     **</b>
+     **/
+abstract class IAbstractMethodModifier implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>EnumDeclaration
+     **<li>NormalInterfaceDeclaration
+     **<li>ConstantDeclaration
+     **<li>AnnotationTypeDeclaration
+     **<li>AnnotationTypeElementDeclarations
+     **<li>AnnotationTypeElementDeclaration0
+     **<li>AnnotationTypeElementDeclaration1
+     **</ul>
+     **</b>
+     **/
+abstract class IAnnotationTypeElementDeclarations implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>EnumDeclaration
+     **<li>NormalInterfaceDeclaration
+     **<li>ConstantDeclaration
+     **<li>AnnotationTypeDeclaration
+     **<li>AnnotationTypeElementDeclaration0
+     **<li>AnnotationTypeElementDeclaration1
+     **</ul>
+     **</b>
+     **/
+abstract class IAnnotationTypeElementDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>DefaultValue</b>
+     **/
+abstract class IDefaultValue implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>ExpressionName
+     **<li>NormalAnnotation
+     **<li>ElementValueArrayInitializer
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>PostIncrementExpression
+     **<li>PostDecrementExpression
+     **<li>PreIncrementExpression
+     **<li>PreDecrementExpression
+     **<li>AndExpression
+     **<li>ExclusiveOrExpression
+     **<li>InclusiveOrExpression
+     **<li>ConditionalAndExpression
+     **<li>ConditionalOrExpression
+     **<li>ConditionalExpression
+     **<li>PrimaryNoNewArray0
+     **<li>PrimaryNoNewArray1
+     **<li>PrimaryNoNewArray2
+     **<li>PrimaryNoNewArray3
+     **<li>PrimaryNoNewArray4
+     **<li>Literal0
+     **<li>Literal1
+     **<li>Literal2
+     **<li>Literal3
+     **<li>Literal4
+     **<li>Literal5
+     **<li>Literal6
+     **<li>BooleanLiteral0
+     **<li>BooleanLiteral1
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **<li>ArrayCreationExpression0
+     **<li>ArrayCreationExpression1
+     **<li>ArrayCreationExpression2
+     **<li>ArrayCreationExpression3
+     **<li>FieldAccess0
+     **<li>FieldAccess1
+     **<li>FieldAccess2
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **<li>ArrayAccess0
+     **<li>ArrayAccess1
+     **<li>UnaryExpression0
+     **<li>UnaryExpression1
+     **<li>UnaryExpressionNotPlusMinus0
+     **<li>UnaryExpressionNotPlusMinus1
+     **<li>CastExpression0
+     **<li>CastExpression1
+     **<li>MultiplicativeExpression0
+     **<li>MultiplicativeExpression1
+     **<li>MultiplicativeExpression2
+     **<li>AdditiveExpression0
+     **<li>AdditiveExpression1
+     **<li>ShiftExpression0
+     **<li>ShiftExpression1
+     **<li>ShiftExpression2
+     **<li>RelationalExpression0
+     **<li>RelationalExpression1
+     **<li>RelationalExpression2
+     **<li>RelationalExpression3
+     **<li>RelationalExpression4
+     **<li>EqualityExpression0
+     **<li>EqualityExpression1
+     **</ul>
+     **</b>
+     **/
+abstract class IElementValue implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>NormalAnnotation</b>
+     **/
+abstract class INormalAnnotation implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>MarkerAnnotation</b>
+     **/
+abstract class IMarkerAnnotation implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>SingleElementAnnotation</b>
+     **/
+abstract class ISingleElementAnnotation implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>ElementValuePairs
+     **<li>ElementValuePair
+     **</ul>
+     **</b>
+     **/
+abstract class IElementValuePairs implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ElementValuePair</b>
+     **/
+abstract class IElementValuePair implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>ExpressionName
+     **<li>PostIncrementExpression
+     **<li>PostDecrementExpression
+     **<li>PreIncrementExpression
+     **<li>PreDecrementExpression
+     **<li>AndExpression
+     **<li>ExclusiveOrExpression
+     **<li>InclusiveOrExpression
+     **<li>ConditionalAndExpression
+     **<li>ConditionalOrExpression
+     **<li>ConditionalExpression
+     **<li>PrimaryNoNewArray0
+     **<li>PrimaryNoNewArray1
+     **<li>PrimaryNoNewArray2
+     **<li>PrimaryNoNewArray3
+     **<li>PrimaryNoNewArray4
+     **<li>Literal0
+     **<li>Literal1
+     **<li>Literal2
+     **<li>Literal3
+     **<li>Literal4
+     **<li>Literal5
+     **<li>Literal6
+     **<li>BooleanLiteral0
+     **<li>BooleanLiteral1
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **<li>ArrayCreationExpression0
+     **<li>ArrayCreationExpression1
+     **<li>ArrayCreationExpression2
+     **<li>ArrayCreationExpression3
+     **<li>FieldAccess0
+     **<li>FieldAccess1
+     **<li>FieldAccess2
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **<li>ArrayAccess0
+     **<li>ArrayAccess1
+     **<li>UnaryExpression0
+     **<li>UnaryExpression1
+     **<li>UnaryExpressionNotPlusMinus0
+     **<li>UnaryExpressionNotPlusMinus1
+     **<li>CastExpression0
+     **<li>CastExpression1
+     **<li>MultiplicativeExpression0
+     **<li>MultiplicativeExpression1
+     **<li>MultiplicativeExpression2
+     **<li>AdditiveExpression0
+     **<li>AdditiveExpression1
+     **<li>ShiftExpression0
+     **<li>ShiftExpression1
+     **<li>ShiftExpression2
+     **<li>RelationalExpression0
+     **<li>RelationalExpression1
+     **<li>RelationalExpression2
+     **<li>RelationalExpression3
+     **<li>RelationalExpression4
+     **<li>EqualityExpression0
+     **<li>EqualityExpression1
+     **</ul>
+     **</b>
+     **/
+abstract class IConditionalExpression implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ElementValueArrayInitializer</b>
+     **/
+abstract class IElementValueArrayInitializer implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>ExpressionName
+     **<li>NormalAnnotation
+     **<li>ElementValueArrayInitializer
+     **<li>ElementValues
+     **<li>MarkerAnnotation
+     **<li>SingleElementAnnotation
+     **<li>PostIncrementExpression
+     **<li>PostDecrementExpression
+     **<li>PreIncrementExpression
+     **<li>PreDecrementExpression
+     **<li>AndExpression
+     **<li>ExclusiveOrExpression
+     **<li>InclusiveOrExpression
+     **<li>ConditionalAndExpression
+     **<li>ConditionalOrExpression
+     **<li>ConditionalExpression
+     **<li>PrimaryNoNewArray0
+     **<li>PrimaryNoNewArray1
+     **<li>PrimaryNoNewArray2
+     **<li>PrimaryNoNewArray3
+     **<li>PrimaryNoNewArray4
+     **<li>Literal0
+     **<li>Literal1
+     **<li>Literal2
+     **<li>Literal3
+     **<li>Literal4
+     **<li>Literal5
+     **<li>Literal6
+     **<li>BooleanLiteral0
+     **<li>BooleanLiteral1
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **<li>ArrayCreationExpression0
+     **<li>ArrayCreationExpression1
+     **<li>ArrayCreationExpression2
+     **<li>ArrayCreationExpression3
+     **<li>FieldAccess0
+     **<li>FieldAccess1
+     **<li>FieldAccess2
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **<li>ArrayAccess0
+     **<li>ArrayAccess1
+     **<li>UnaryExpression0
+     **<li>UnaryExpression1
+     **<li>UnaryExpressionNotPlusMinus0
+     **<li>UnaryExpressionNotPlusMinus1
+     **<li>CastExpression0
+     **<li>CastExpression1
+     **<li>MultiplicativeExpression0
+     **<li>MultiplicativeExpression1
+     **<li>MultiplicativeExpression2
+     **<li>AdditiveExpression0
+     **<li>AdditiveExpression1
+     **<li>ShiftExpression0
+     **<li>ShiftExpression1
+     **<li>ShiftExpression2
+     **<li>RelationalExpression0
+     **<li>RelationalExpression1
+     **<li>RelationalExpression2
+     **<li>RelationalExpression3
+     **<li>RelationalExpression4
+     **<li>EqualityExpression0
+     **<li>EqualityExpression1
+     **</ul>
+     **</b>
+     **/
+abstract class IElementValues implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>identifier
+     **<li>ExpressionName
+     **<li>ArrayInitializer
+     **<li>VariableInitializers
+     **<li>PostIncrementExpression
+     **<li>PostDecrementExpression
+     **<li>PreIncrementExpression
+     **<li>PreDecrementExpression
+     **<li>AndExpression
+     **<li>ExclusiveOrExpression
+     **<li>InclusiveOrExpression
+     **<li>ConditionalAndExpression
+     **<li>ConditionalOrExpression
+     **<li>ConditionalExpression
+     **<li>Assignment
+     **<li>PrimaryNoNewArray0
+     **<li>PrimaryNoNewArray1
+     **<li>PrimaryNoNewArray2
+     **<li>PrimaryNoNewArray3
+     **<li>PrimaryNoNewArray4
+     **<li>Literal0
+     **<li>Literal1
+     **<li>Literal2
+     **<li>Literal3
+     **<li>Literal4
+     **<li>Literal5
+     **<li>Literal6
+     **<li>BooleanLiteral0
+     **<li>BooleanLiteral1
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **<li>ArrayCreationExpression0
+     **<li>ArrayCreationExpression1
+     **<li>ArrayCreationExpression2
+     **<li>ArrayCreationExpression3
+     **<li>FieldAccess0
+     **<li>FieldAccess1
+     **<li>FieldAccess2
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **<li>ArrayAccess0
+     **<li>ArrayAccess1
+     **<li>UnaryExpression0
+     **<li>UnaryExpression1
+     **<li>UnaryExpressionNotPlusMinus0
+     **<li>UnaryExpressionNotPlusMinus1
+     **<li>CastExpression0
+     **<li>CastExpression1
+     **<li>MultiplicativeExpression0
+     **<li>MultiplicativeExpression1
+     **<li>MultiplicativeExpression2
+     **<li>AdditiveExpression0
+     **<li>AdditiveExpression1
+     **<li>ShiftExpression0
+     **<li>ShiftExpression1
+     **<li>ShiftExpression2
+     **<li>RelationalExpression0
+     **<li>RelationalExpression1
+     **<li>RelationalExpression2
+     **<li>RelationalExpression3
+     **<li>RelationalExpression4
+     **<li>EqualityExpression0
+     **<li>EqualityExpression1
+     **</ul>
+     **</b>
+     **/
+abstract class IVariableInitializers implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>EnumDeclaration
+     **<li>Block
+     **<li>BlockStatements
+     **<li>LocalVariableDeclarationStatement
+     **<li>IfThenStatement
+     **<li>IfThenElseStatement
+     **<li>EmptyStatement
+     **<li>LabeledStatement
+     **<li>ExpressionStatement
+     **<li>SwitchStatement
+     **<li>WhileStatement
+     **<li>DoStatement
+     **<li>BasicForStatement
+     **<li>EnhancedForStatement
+     **<li>BreakStatement
+     **<li>ContinueStatement
+     **<li>ReturnStatement
+     **<li>ThrowStatement
+     **<li>SynchronizedStatement
+     **<li>AssertStatement0
+     **<li>AssertStatement1
+     **<li>TryStatement0
+     **<li>TryStatement1
+     **</ul>
+     **</b>
+     **/
+abstract class IBlockStatements implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>NormalClassDeclaration
+     **<li>EnumDeclaration
+     **<li>Block
+     **<li>LocalVariableDeclarationStatement
+     **<li>IfThenStatement
+     **<li>IfThenElseStatement
+     **<li>EmptyStatement
+     **<li>LabeledStatement
+     **<li>ExpressionStatement
+     **<li>SwitchStatement
+     **<li>WhileStatement
+     **<li>DoStatement
+     **<li>BasicForStatement
+     **<li>EnhancedForStatement
+     **<li>BreakStatement
+     **<li>ContinueStatement
+     **<li>ReturnStatement
+     **<li>ThrowStatement
+     **<li>SynchronizedStatement
+     **<li>AssertStatement0
+     **<li>AssertStatement1
+     **<li>TryStatement0
+     **<li>TryStatement1
+     **</ul>
+     **</b>
+     **/
+abstract class IBlockStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>LocalVariableDeclarationStatement</b>
+     **/
+abstract class ILocalVariableDeclarationStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>Block
+     **<li>IfThenStatement
+     **<li>IfThenElseStatement
+     **<li>EmptyStatement
+     **<li>LabeledStatement
+     **<li>ExpressionStatement
+     **<li>SwitchStatement
+     **<li>WhileStatement
+     **<li>DoStatement
+     **<li>BasicForStatement
+     **<li>EnhancedForStatement
+     **<li>BreakStatement
+     **<li>ContinueStatement
+     **<li>ReturnStatement
+     **<li>ThrowStatement
+     **<li>SynchronizedStatement
+     **<li>AssertStatement0
+     **<li>AssertStatement1
+     **<li>TryStatement0
+     **<li>TryStatement1
+     **</ul>
+     **</b>
+     **/
+abstract class IStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>LocalVariableDeclaration</b>
+     **/
+abstract class ILocalVariableDeclaration implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>Block
+     **<li>EmptyStatement
+     **<li>ExpressionStatement
+     **<li>SwitchStatement
+     **<li>DoStatement
+     **<li>BreakStatement
+     **<li>ContinueStatement
+     **<li>ReturnStatement
+     **<li>ThrowStatement
+     **<li>SynchronizedStatement
+     **<li>AssertStatement0
+     **<li>AssertStatement1
+     **<li>TryStatement0
+     **<li>TryStatement1
+     **</ul>
+     **</b>
+     **/
+abstract class IStatementWithoutTrailingSubstatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>LabeledStatement</b>
+     **/
+abstract class ILabeledStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>IfThenStatement</b>
+     **/
+abstract class IIfThenStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>IfThenElseStatement</b>
+     **/
+abstract class IIfThenElseStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>WhileStatement</b>
+     **/
+abstract class IWhileStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>BasicForStatement
+     **<li>EnhancedForStatement
+     **</ul>
+     **</b>
+     **/
+abstract class IForStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is always implemented by <b>AstToken</b>. It is also implemented by <b>EmptyStatement</b>
+     **/
+abstract class IEmptyStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ExpressionStatement</b>
+     **/
+abstract class IExpressionStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>AssertStatement0
+     **<li>AssertStatement1
+     **</ul>
+     **</b>
+     **/
+abstract class IAssertStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>SwitchStatement</b>
+     **/
+abstract class ISwitchStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>DoStatement</b>
+     **/
+abstract class IDoStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>BreakStatement</b>
+     **/
+abstract class IBreakStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ContinueStatement</b>
+     **/
+abstract class IContinueStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ReturnStatement</b>
+     **/
+abstract class IReturnStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>SynchronizedStatement</b>
+     **/
+abstract class ISynchronizedStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ThrowStatement</b>
+     **/
+abstract class IThrowStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>TryStatement0
+     **<li>TryStatement1
+     **</ul>
+     **</b>
+     **/
+abstract class ITryStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>LabeledStatementNoShortIf</b>
+     **/
+abstract class ILabeledStatementNoShortIf implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>IfThenElseStatementNoShortIf</b>
+     **/
+abstract class IIfThenElseStatementNoShortIf implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>WhileStatementNoShortIf</b>
+     **/
+abstract class IWhileStatementNoShortIf implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>ForStatementNoShortIf</b>
+     **/
+abstract class IForStatementNoShortIf implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>PostIncrementExpression
+     **<li>PostDecrementExpression
+     **<li>PreIncrementExpression
+     **<li>PreDecrementExpression
+     **<li>Assignment
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **</ul>
+     **</b>
+     **/
+abstract class IStatementExpression implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>Assignment</b>
+     **/
+abstract class IAssignment implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>PreIncrementExpression</b>
+     **/
+abstract class IPreIncrementExpression implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>PreDecrementExpression</b>
+     **/
+abstract class IPreDecrementExpression implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>PostIncrementExpression</b>
+     **/
+abstract class IPostIncrementExpression implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>PostDecrementExpression</b>
+     **/
+abstract class IPostDecrementExpression implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **</ul>
+     **</b>
+     **/
+abstract class IMethodInvocation implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **</ul>
+     **</b>
+     **/
+abstract class IClassInstanceCreationExpression implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>SwitchBlockStatementGroups
+     **<li>SwitchBlockStatementGroup
+     **</ul>
+     **</b>
+     **/
+abstract class ISwitchBlockStatementGroups implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>SwitchBlockStatementGroup</b>
+     **/
+abstract class ISwitchBlockStatementGroup implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>SwitchLabels
+     **<li>SwitchLabel0
+     **<li>SwitchLabel1
+     **<li>SwitchLabel2
+     **</ul>
+     **</b>
+     **/
+abstract class ISwitchLabels implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>SwitchLabel0
+     **<li>SwitchLabel1
+     **<li>SwitchLabel2
+     **</ul>
+     **</b>
+     **/
+abstract class ISwitchLabel implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>BasicForStatement</b>
+     **/
+abstract class IBasicForStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by <b>EnhancedForStatement</b>
+     **/
+abstract class IEnhancedForStatement implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>LocalVariableDeclaration
+     **<li>StatementExpressionList
+     **<li>PostIncrementExpression
+     **<li>PostDecrementExpression
+     **<li>PreIncrementExpression
+     **<li>PreDecrementExpression
+     **<li>Assignment
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **</ul>
+     **</b>
+     **/
+abstract class IForInit implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>StatementExpressionList
+     **<li>PostIncrementExpression
+     **<li>PostDecrementExpression
+     **<li>PreIncrementExpression
+     **<li>PreDecrementExpression
+     **<li>Assignment
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **</ul>
+     **</b>
+     **/
+abstract class IStatementExpressionList implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>StatementExpressionList
+     **<li>PostIncrementExpression
+     **<li>PostDecrementExpression
+     **<li>PreIncrementExpression
+     **<li>PreDecrementExpression
+     **<li>Assignment
+     **<li>ClassInstanceCreationExpression0
+     **<li>ClassInstanceCreationExpression1
+     **<li>MethodInvocation0
+     **<li>MethodInvocation1
+     **<li>MethodInvocation2
+     **<li>MethodInvocation3
+     **<li>MethodInvocation4
+     **</ul>
+     **</b>
+     **/
+abstract class IForUpdate implements IRootForJavaParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>Catches
+     **<li>CatchClause
+     **</ul>
+     **</b>
+     **/
+abstract class ICatches implements IRootForJavaParser    {
+    }
+
+    /***
      ** is implemented by <b>CatchClause</b>
      **/
-abstract class ICatchClause implements ICatches {}
+abstract class ICatchClause implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -9714,7 +9767,8 @@ abstract class ICatchClause implements ICatches {}
      **</ul>
      **</b>
      **/
-abstract class IPrimaryNoNewArray implements IPrimary, IAstToken {}
+abstract class IPrimaryNoNewArray implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -9727,7 +9781,8 @@ abstract class IPrimaryNoNewArray implements IPrimary, IAstToken {}
      **</ul>
      **</b>
      **/
-abstract class IArrayCreationExpression implements IPrimary {}
+abstract class IArrayCreationExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is always implemented by <b>AstToken</b>. It is also implemented by:
@@ -9745,7 +9800,8 @@ abstract class IArrayCreationExpression implements IPrimary {}
      **</ul>
      **</b>
      **/
-abstract class ILiteral implements IPrimaryNoNewArray, IAstToken {}
+abstract class ILiteral implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -9757,7 +9813,8 @@ abstract class ILiteral implements IPrimaryNoNewArray, IAstToken {}
      **</ul>
      **</b>
      **/
-abstract class IFieldAccess implements IPrimaryNoNewArray, ILeftHandSide {}
+abstract class IFieldAccess implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -9768,7 +9825,8 @@ abstract class IFieldAccess implements IPrimaryNoNewArray, ILeftHandSide {}
      **</ul>
      **</b>
      **/
-abstract class IArrayAccess implements IPrimaryNoNewArray, ILeftHandSide {}
+abstract class IArrayAccess implements IRootForJavaParser    {
+    }
 
     /***
      ** is always implemented by <b>AstToken</b>. It is also implemented by:
@@ -9779,7 +9837,8 @@ abstract class IArrayAccess implements IPrimaryNoNewArray, ILeftHandSide {}
      **</ul>
      **</b>
      **/
-abstract class IBooleanLiteral implements ILiteral, IAstToken {}
+abstract class IBooleanLiteral implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -9853,18 +9912,7 @@ abstract class IBooleanLiteral implements ILiteral, IAstToken {}
      **</ul>
      **</b>
      **/
-abstract class IArgumentList implements IArgumentListopt {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>DimExprs
-     **<li>DimExpr
-     **</ul>
-     **</b>
-     **/
-abstract class IDimExprs implements IRootForJavaParser    {
+abstract class IArgumentList implements IRootForJavaParser    {
     }
 
     /***
@@ -9876,24 +9924,14 @@ abstract class IDimExprs implements IRootForJavaParser    {
      **</ul>
      **</b>
      **/
-abstract class IDimsopt implements IRootForJavaParser    {
+abstract class IDims implements IRootForJavaParser    {
     }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>Dims0
-     **<li>Dims1
-     **</ul>
-     **</b>
-     **/
-abstract class IDims implements IDimsopt {}
 
     /***
      ** is implemented by <b>DimExpr</b>
      **/
-abstract class IDimExpr implements IDimExprs {}
+abstract class IDimExpr implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -9936,7 +9974,8 @@ abstract class IDimExpr implements IDimExprs {}
      **</ul>
      **</b>
      **/
-abstract class IPostfixExpression implements IUnaryExpressionNotPlusMinus {}
+abstract class IPostfixExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -9987,7 +10026,8 @@ abstract class IPostfixExpression implements IUnaryExpressionNotPlusMinus {}
      **</ul>
      **</b>
      **/
-abstract class IUnaryExpression implements IMultiplicativeExpression {}
+abstract class IUnaryExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10034,7 +10074,8 @@ abstract class IUnaryExpression implements IMultiplicativeExpression {}
      **</ul>
      **</b>
      **/
-abstract class IUnaryExpressionNotPlusMinus implements IUnaryExpression {}
+abstract class IUnaryExpressionNotPlusMinus implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10045,7 +10086,8 @@ abstract class IUnaryExpressionNotPlusMinus implements IUnaryExpression {}
      **</ul>
      **</b>
      **/
-abstract class ICastExpression implements IUnaryExpressionNotPlusMinus {}
+abstract class ICastExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10099,7 +10141,8 @@ abstract class ICastExpression implements IUnaryExpressionNotPlusMinus {}
      **</ul>
      **</b>
      **/
-abstract class IMultiplicativeExpression implements IAdditiveExpression {}
+abstract class IMultiplicativeExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10155,7 +10198,8 @@ abstract class IMultiplicativeExpression implements IAdditiveExpression {}
      **</ul>
      **</b>
      **/
-abstract class IAdditiveExpression implements IShiftExpression {}
+abstract class IAdditiveExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10214,7 +10258,8 @@ abstract class IAdditiveExpression implements IShiftExpression {}
      **</ul>
      **</b>
      **/
-abstract class IShiftExpression implements IRelationalExpression {}
+abstract class IShiftExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10278,7 +10323,8 @@ abstract class IShiftExpression implements IRelationalExpression {}
      **</ul>
      **</b>
      **/
-abstract class IRelationalExpression implements IEqualityExpression {}
+abstract class IRelationalExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10344,7 +10390,8 @@ abstract class IRelationalExpression implements IEqualityExpression {}
      **</ul>
      **</b>
      **/
-abstract class IEqualityExpression implements IAndExpression {}
+abstract class IEqualityExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10411,7 +10458,8 @@ abstract class IEqualityExpression implements IAndExpression {}
      **</ul>
      **</b>
      **/
-abstract class IAndExpression implements IExclusiveOrExpression {}
+abstract class IAndExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10479,7 +10527,8 @@ abstract class IAndExpression implements IExclusiveOrExpression {}
      **</ul>
      **</b>
      **/
-abstract class IExclusiveOrExpression implements IInclusiveOrExpression {}
+abstract class IExclusiveOrExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10548,7 +10597,8 @@ abstract class IExclusiveOrExpression implements IInclusiveOrExpression {}
      **</ul>
      **</b>
      **/
-abstract class IInclusiveOrExpression implements IConditionalAndExpression {}
+abstract class IInclusiveOrExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10618,7 +10668,8 @@ abstract class IInclusiveOrExpression implements IConditionalAndExpression {}
      **</ul>
      **</b>
      **/
-abstract class IConditionalAndExpression implements IConditionalOrExpression {}
+abstract class IConditionalAndExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10689,7 +10740,8 @@ abstract class IConditionalAndExpression implements IConditionalOrExpression {}
      **</ul>
      **</b>
      **/
-abstract class IConditionalOrExpression implements IConditionalExpression {}
+abstract class IConditionalOrExpression implements IRootForJavaParser    {
+    }
 
     /***
      ** is implemented by:
@@ -10762,23 +10814,7 @@ abstract class IConditionalOrExpression implements IConditionalExpression {}
      **</ul>
      **</b>
      **/
-abstract class IAssignmentExpression implements IExpression {}
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>identifier
-     **<li>ExpressionName
-     **<li>FieldAccess0
-     **<li>FieldAccess1
-     **<li>FieldAccess2
-     **<li>ArrayAccess0
-     **<li>ArrayAccess1
-     **</ul>
-     **</b>
-     **/
-abstract class ILeftHandSide implements IRootForJavaParser    {
+abstract class IAssignmentExpression implements IRootForJavaParser    {
     }
 
     /***
@@ -10800,7 +10836,149 @@ abstract class ILeftHandSide implements IRootForJavaParser    {
      **</ul>
      **</b>
      **/
-abstract class IAssignmentOperator implements IAstToken {}
+abstract class IAssignmentOperator implements IRootForJavaParser    {
+    }
+
+abstract class Ast implements IAst
+    {
+        IAst? getNextAst(){ return null; }
+         late IToken leftIToken ;
+         late IToken rightIToken ;
+         IAst? parent;
+         void setParent(IAst p){ parent = p; }
+         IAst? getParent(){ return parent; }
+
+         IToken getLeftIToken()  { return leftIToken; }
+         IToken getRightIToken()  { return rightIToken; }
+          List<IToken> getPrecedingAdjuncts() { return leftIToken.getPrecedingAdjuncts(); }
+          List<IToken> getFollowingAdjuncts() { return rightIToken.getFollowingAdjuncts(); }
+
+        String  toString()  
+        {
+          var  lex = leftIToken.getILexStream();
+          if( lex != null)
+            return lex.toStringWithOffset(leftIToken.getStartOffset(), rightIToken.getEndOffset());
+          return  '';
+        }
+
+    Ast(IToken leftIToken ,[ IToken? rightIToken ])
+        {
+            this.leftIToken = leftIToken;
+            if(rightIToken != null) this.rightIToken = rightIToken;
+            else            this.rightIToken = leftIToken;
+        }
+
+        void initialize(){}
+
+        /**
+         * A list of all children of this node, excluding the null ones.
+         */
+          ArrayList getChildren() 
+        {
+             var list = getAllChildren() ;
+            var k = -1;
+            for (var i = 0; i < list.size(); i++)
+            {
+                var element = list.get(i);
+                if (null==element)
+                {
+                    if (++k != i)
+                        list.set(k, element);
+                }
+            }
+            for (var i = list.size() - 1; i > k; i--) // remove extraneous elements
+                list.remove(i);
+            return list;
+        }
+
+        /**
+         * A list of all children of this node, don't including the null ones.
+         */
+         ArrayList getAllChildren() ;
+
+         void accept(IAstVisitor v );
+    }
+
+abstract class AbstractAstList extends Ast implements IAbstractArrayList<Ast>
+    {
+         late bool leftRecursive  ;
+          var list  =  ArrayList();
+         int size()   { return list.size(); }
+         ArrayList getList(){ return list; }
+         Ast getElementAt(int i) { return list.get(leftRecursive ? i : list.size() - 1 - i); }
+         ArrayList getArrayList()
+        {
+            if (! leftRecursive) // reverse the list 
+            {
+                for (var i = 0, n = list.size() - 1; i < n; i++, n--)
+                {
+                    var ith = list.get(i),
+                           nth = list.get(n);
+                    list.set(i, nth);
+                    list.set(n, ith);
+                }
+                leftRecursive = true;
+            }
+            return list;
+        }
+        /**
+         * @deprecated replaced by {@link #addElement()}
+         *
+         */
+         bool add(Ast element)
+        {
+            addElement(element);
+            return true;
+        }
+
+         void addElement(Ast element)
+        {
+            list.add(element);
+            if (leftRecursive)
+                 rightIToken = element.getRightIToken();
+            else leftIToken = element.getLeftIToken();
+        }
+
+          AbstractAstList(IToken leftToken, IToken rightToken , bool leftRecursive  ):super(leftToken, rightToken){
+              this.leftRecursive = leftRecursive;
+        }
+
+        /**
+         * Make a copy of the list and return it. Note that we obtain the local list by
+         * invoking getArrayList so as to make sure that the list we return is in proper order.
+         */
+            ArrayList getAllChildren() 
+        {
+            return getArrayList().clone();
+        }
+
+    }
+
+class AstToken extends Ast implements IAstToken
+    {
+        AstToken(IToken token   ):super(token){  }
+         IToken getIToken()  { return leftIToken; }
+         String toString(){ return leftIToken.toString(); }
+
+        /**
+         * A token class has no children. So, we return the empty list.
+         */
+            ArrayList getAllChildren()  { return  ArrayList(); }
+
+
+         void  accept(IAstVisitor v )
+        {
+            if (! v.preVisit(this)) return;
+            enter(v as Visitor);
+            v.postVisit(this);
+        }
+
+          void enter(Visitor v)
+        {
+            v.visitAstToken(this);
+            v.endVisitAstToken(this);
+        }
+    }
 
 /**
  *<b>
