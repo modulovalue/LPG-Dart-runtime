@@ -10,6 +10,6 @@ class UnavailableParserInformationException implements Exception {
 
   @override
   String toString() {
-    return str??'Unavailable parser Information Exception';;
+    return str??'Unavailable parser Information Exception';
   }
 }

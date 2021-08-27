@@ -258,7 +258,7 @@ class DiagnoseParser {
   List<StateInfo?> statePool = [];
 
   void reallocateStacks() {
-    int old_stack_length = (stateStack == null ? 0 : stateStack.length),
+    var old_stack_length = (stateStack.isEmpty ? 0 : stateStack.length),
         stack_length = old_stack_length + STACK_INCREMENT;
 
     if (stateStack.isEmpty) {
@@ -318,7 +318,7 @@ class DiagnoseParser {
       current_kind = marker_kind;
     }
 
-    int error_token = parseForError(current_kind);
+    var error_token = parseForError(current_kind);
 
     //
     // If an error was found, start the diagnosis and recovery.
@@ -333,9 +333,9 @@ class DiagnoseParser {
   }
 
   void diagnoseEntry2(int marker_kind, int error_token) {
-    IntTuple action = IntTuple(1 << 18);
+    var action = IntTuple(1 << 18);
     var startTime = currentTimeMillis();
-    int errorCount = 0;
+    var errorCount = 0;
 
     //
     // Compute sequence of actions that leads us to the
@@ -385,17 +385,17 @@ class DiagnoseParser {
       //
       // Synchronize state stacks and update the location stack
       //
-      int prev_pos = -1;
+      var prev_pos = -1;
       prevStackTop = -1;
 
-      int next_pos = -1;
+      var next_pos = -1;
       nextStackTop = -1;
 
-      int pos = stateStackTop;
+      var pos = stateStackTop;
       tempStackTop = stateStackTop - 1;
       List.copyRange(stateStack, 0, tempStack, 0, stateStackTop + 1);
 
-      int action_index = 0;
+      var action_index = 0;
       act = action.get(action_index++); // tAction(act, current_kind);
 
       //
@@ -441,11 +441,13 @@ class DiagnoseParser {
         }
 
         nextStackTop = tempStackTop + 1;
-        for (int i = next_pos + 1; i <= nextStackTop; i++)
+        for (var i = next_pos + 1; i <= nextStackTop; i++) {
           nextStack[i] = tempStack[i];
+        }
 
-        for (int k = pos + 1; k <= nextStackTop; k++)
+        for (var k = pos + 1; k <= nextStackTop; k++) {
           locationStack[k] = locationStack[stateStackTop];
+        }
 
         //
         // If we have a shift-reduce, process it as well as
@@ -479,7 +481,7 @@ class DiagnoseParser {
           // reduction, until a goto action is computed ...
           //
           do {
-            int lhs_symbol = lhs(act);
+            var lhs_symbol = lhs(act);
             tempStackTop -= (rhs(act) - 1);
             act = (tempStackTop > next_pos
                 ? tempStack[tempStackTop]
@@ -506,13 +508,15 @@ class DiagnoseParser {
         //
         if (act != ERROR_ACTION) {
           prevStackTop = stateStackTop;
-          for (int i = prev_pos + 1; i <= prevStackTop; i++)
+          for (var i = prev_pos + 1; i <= prevStackTop; i++) {
             prevStack[i] = stateStack[i];
+          }
           prev_pos = pos;
 
           stateStackTop = nextStackTop;
-          for (int k = pos + 1; k <= stateStackTop; k++)
+          for (var k = pos + 1; k <= stateStackTop; k++) {
             stateStack[k] = nextStack[k];
+          }
           locationStack[stateStackTop] = current_token;
           pos = next_pos;
         }
@@ -537,7 +541,7 @@ class DiagnoseParser {
           if (maxTime > 0 && currentTimeMillis() - startTime > maxTime) break;
         }
 
-        RepairCandidate candidate = errorRecovery(current_token);
+        var candidate = errorRecovery(current_token);
 
         //
         // if the parser needs to stop processing,
@@ -551,10 +555,10 @@ class DiagnoseParser {
         // If the recovery was successful on a nonterminal candidate,
         // parse through that candidate and "read" the next token.
         //
-        if (candidate.symbol == 0)
+        if (candidate.symbol == 0) {
           break;
-        else if (candidate.symbol > NT_OFFSET) {
-          int lhs_symbol = candidate.symbol - NT_OFFSET;
+        } else if (candidate.symbol > NT_OFFSET) {
+          var lhs_symbol = candidate.symbol - NT_OFFSET;
           act = ntAction(act, lhs_symbol);
           while (act <= NUM_RULES) {
             stateStackTop -= (rhs(act) - 1);
@@ -588,8 +592,9 @@ class DiagnoseParser {
           List.copyRange(stateStack, 0, tempStack, 0, stateStackTop + 1);
           parseUpToError(action, current_kind, error_token);
           tokStream.reset(next_token);
-        } else
+        } else {
           act = ACCEPT_ACTION;
+        }
       }
     } while (act != ACCEPT_ACTION);
 
@@ -605,18 +610,18 @@ class DiagnoseParser {
   // encountered. Otherwise, we return 0.
   //
   int parseForError(int current_kind) {
-    int error_token = 0;
+    var error_token = 0;
 
     //
     // Get next token in stream and compute initial action
     //
-    int curtok = tokStream.getPrevious(tokStream.peek()),
+    var curtok = tokStream.getPrevious(tokStream.peek()),
         act = tAction(tempStack[tempStackTop], current_kind);
 
     //
     // Allocate configuration stack.
     //
-    ConfigurationStack configuration_stack = new ConfigurationStack(prs);
+    var configuration_stack = ConfigurationStack(prs);
 
     //
     // Keep parsing until we reach the end of file and succeed or
@@ -647,9 +652,9 @@ class DiagnoseParser {
         error_token = (error_token > curtok ? error_token : curtok);
 
         var configuration = configuration_stack.pop();
-        if (configuration == null)
+        if (configuration == null) {
           act = ERROR_ACTION;
-        else {
+        } else {
           tempStackTop = configuration.stack_top;
           configuration.retrieveStack(tempStack);
           act = configuration.act;
@@ -662,19 +667,20 @@ class DiagnoseParser {
         break;
       } else if (act > ACCEPT_ACTION) {
         if (configuration_stack.findConfiguration(
-            tempStack, tempStackTop, curtok))
+            tempStack, tempStackTop, curtok)) {
           act = ERROR_ACTION;
-        else {
+        } else {
           configuration_stack.push(tempStack, tempStackTop, act + 1, curtok, 0);
           act = baseAction(act);
         }
         continue;
-      } else
-        break; // assert(act == ACCEPT_ACTION);
+      } else {
+        break;
+      } // assert(act == ACCEPT_ACTION);
 
       try {
         tempStack[++tempStackTop] = act;
-      } on RangeError catch (e) {
+      } on RangeError {
         reallocateStacks();
         tempStack[tempStackTop] = act;
       }
@@ -694,13 +700,13 @@ class DiagnoseParser {
     //
     // Assume predecessor of next token and compute initial action
     //
-    int curtok = tokStream.getPrevious(tokStream.peek());
-    int act = tAction(tempStack[tempStackTop], current_kind);
+    var curtok = tokStream.getPrevious(tokStream.peek());
+    var act = tAction(tempStack[tempStackTop], current_kind);
 
     //
     // Allocate configuration stack.
     //
-    var configuration_stack = new ConfigurationStack(prs);
+    var configuration_stack = ConfigurationStack(prs);
 
     //
     // Keep parsing until we reach the end of file and succeed or
@@ -734,9 +740,9 @@ class DiagnoseParser {
       } else if (act == ERROR_ACTION) {
         if (curtok != error_token) {
           var configuration = configuration_stack.pop();
-          if (configuration == null)
+          if (configuration == null) {
             act = ERROR_ACTION;
-          else {
+          } else {
             tempStackTop = configuration.stack_top;
             configuration.retrieveStack(tempStack);
             act = configuration.act;
@@ -750,16 +756,17 @@ class DiagnoseParser {
         break;
       } else if (act > ACCEPT_ACTION) {
         if (configuration_stack.findConfiguration(
-            tempStack, tempStackTop, curtok))
+            tempStack, tempStackTop, curtok)) {
           act = ERROR_ACTION;
-        else {
+        } else {
           configuration_stack.push(
               tempStack, tempStackTop, act + 1, curtok, action.size());
           act = baseAction(act);
         }
         continue;
-      } else
-        break; // assert(act == ACCEPT_ACTION);
+      } else {
+        break;
+      } // assert(act == ACCEPT_ACTION);
 
       try {
         tempStack[++tempStackTop] = act;
@@ -785,17 +792,19 @@ class DiagnoseParser {
     int buffer_index, current_kind;
 
     var local_stack = List<int>.filled(stack.length, 0);
-    int local_stack_top = stack_top;
-    for (int i = 0; i <= stack_top; i++) local_stack[i] = stack[i];
+    var local_stack_top = stack_top;
+    for (var i = 0; i <= stack_top; i++) {
+      local_stack[i] = stack[i];
+    }
 
-    ConfigurationStack configuration_stack = new ConfigurationStack(prs);
+    var configuration_stack = ConfigurationStack(prs);
 
     //
     // If the first symbol is a nonterminal, process it here.
     //
-    int act = local_stack[local_stack_top];
+    var act = local_stack[local_stack_top];
     if (first_symbol > NT_OFFSET) {
-      int lhs_symbol = first_symbol - NT_OFFSET;
+      var lhs_symbol = first_symbol - NT_OFFSET;
       buffer_index = buffer_position;
       current_kind = tokStream.getKind(buffer[buffer_index]);
       tokStream.reset(tokStream.getNext(buffer[buffer_index]));
@@ -814,8 +823,9 @@ class DiagnoseParser {
     //
     // Start parsing the remaining symbols in the buffer
     //
-    if (++local_stack_top >= local_stack.length) // Stack overflow!!!
+    if (++local_stack_top >= local_stack.length) {
       return buffer_index;
+    }
     local_stack[local_stack_top] = act;
 
     act = tAction(act, current_kind);
@@ -848,9 +858,9 @@ class DiagnoseParser {
         tokStream.reset(tokStream.getNext(buffer[buffer_index]));
       } else if (act == ERROR_ACTION) {
         var configuration = configuration_stack.pop();
-        if (configuration == null)
+        if (configuration == null) {
           act = ERROR_ACTION;
-        else {
+        } else {
           local_stack_top = configuration.stack_top;
           configuration.retrieveStack(local_stack);
           act = configuration.act;
@@ -863,19 +873,21 @@ class DiagnoseParser {
         break;
       } else if (act > ACCEPT_ACTION) {
         if (configuration_stack.findConfiguration(
-            local_stack, local_stack_top, buffer_index))
+            local_stack, local_stack_top, buffer_index)) {
           act = ERROR_ACTION;
-        else {
+        } else {
           configuration_stack.push(
               local_stack, local_stack_top, act + 1, buffer_index, 0);
           act = baseAction(act);
         }
         continue;
-      } else
+      } else {
         break;
+      }
 
-      if (++local_stack_top >= local_stack.length) // Stack overflow!!!
-        break;
+      if (++local_stack_top >= local_stack.length) {
+        break; // Stack overflow!!!
+      }
       local_stack[local_stack_top] = act;
 
       act = tAction(act, current_kind);
@@ -901,14 +913,14 @@ class DiagnoseParser {
   // action on the successor of current_token.
   //
   RepairCandidate errorRecovery(int error_token) {
-    int prevtok = tokStream.getPrevious(error_token);
+    var prevtok = tokStream.getPrevious(error_token);
 
     //
     // Try primary phase recoveries. If not successful, try secondary
     // phase recoveries.  If not successful and we are at end of the
     // file, we issue the end-of-file error and quit. Otherwise, ...
     //
-    RepairCandidate candidate = primaryPhase(error_token);
+    var candidate = primaryPhase(error_token);
     if (candidate.symbol != 0) return candidate;
 
     candidate = secondaryPhase(error_token);
@@ -934,9 +946,9 @@ class DiagnoseParser {
     // applicable at the end of the file after discarding some
     // states.
     //
-    PrimaryRepairInfo scope_repair = new PrimaryRepairInfo();
+    var scope_repair = PrimaryRepairInfo();
     scope_repair.bufferPosition = BUFF_UBOUND;
-    for (int top = stateStackTop; top >= 0; top--) {
+    for (var top = stateStackTop; top >= 0; top--) {
       scopeTrial(scope_repair, stateStack, top);
 
       if (scope_repair.distance > 0) break;
@@ -945,7 +957,7 @@ class DiagnoseParser {
     //
     // If any scope repair was successful, emit the message now
     //
-    for (int i = 0; i < scopeStackTop; i++) {
+    for (var i = 0; i < scopeStackTop; i++) {
       emitError(SCOPE_CODE, -scopeIndex[i], locationStack[scopePosition[i]],
           buffer[1], nonterminalIndex(scopeLhs(scopeIndex[i])));
     }
@@ -960,8 +972,10 @@ class DiagnoseParser {
       // We reached the end of the file while panicking. Delete all
       // remaining tokens in the input.
       //
-      int i;
-      for (i = BUFF_UBOUND; tokStream.getKind(buffer[i]) == EOFT_SYMBOL; i--);
+      var i = 0;
+      for (i = BUFF_UBOUND; tokStream.getKind(buffer[i]) == EOFT_SYMBOL; i--) {
+        ;
+      }
 
       emitError(DELETION_CODE, terminalIndex(tokStream.getKind(error_token)),
           error_token, buffer[i]);
@@ -987,14 +1001,16 @@ class DiagnoseParser {
     //
     // Initialize the buffer.
     //
-    int i = (nextStackTop >= 0 ? 3 : 2);
+    var i = (nextStackTop >= 0 ? 3 : 2);
     buffer[i] = error_token;
 
-    for (int j = i; j > 0; j--)
+    for (var j = i; j > 0; j--) {
       buffer[j - 1] = tokStream.getPrevious(buffer[j]);
+    }
 
-    for (int k = i + 1; k < BUFF_SIZE; k++)
+    for (var k = i + 1; k < BUFF_SIZE; k++) {
       buffer[k] = tokStream.getNext(buffer[k - 1]);
+    }
 
     //
     // If NEXT_STACK_TOP > 0 then the parse was successful on CURRENT_TOKEN
@@ -1002,7 +1018,7 @@ class DiagnoseParser {
     // that case, first check whether or not primary recovery is
     // possible on next_stack ...
     //
-    PrimaryRepairInfo repair = new PrimaryRepairInfo();
+    var repair = PrimaryRepairInfo();
     if (nextStackTop >= 0) {
       repair.bufferPosition = 3;
       checkPrimaryDistance(repair, nextStack, nextStackTop);
@@ -1012,7 +1028,7 @@ class DiagnoseParser {
     // ... Try primary recovery on the current token and compare
     // the quality of this recovery to the one on the next token...
     //
-    PrimaryRepairInfo base_repair = new PrimaryRepairInfo(repair);
+    var base_repair = PrimaryRepairInfo(repair);
     base_repair.bufferPosition = 2;
     checkPrimaryDistance(base_repair, stateStack, stateStackTop);
     if (base_repair.distance > repair.distance ||
@@ -1024,12 +1040,13 @@ class DiagnoseParser {
     // recovery computed thus far.
     //
     if (prevStackTop >= 0) {
-      PrimaryRepairInfo prev_repair = new PrimaryRepairInfo(repair);
+      var prev_repair = PrimaryRepairInfo(repair);
       prev_repair.bufferPosition = 1;
       checkPrimaryDistance(prev_repair, prevStack, prevStackTop);
       if (prev_repair.distance > repair.distance ||
-          prev_repair.misspellIndex > repair.misspellIndex)
+          prev_repair.misspellIndex > repair.misspellIndex) {
         repair = prev_repair;
+      }
     }
 
     //
@@ -1037,13 +1054,15 @@ class DiagnoseParser {
     // ensure that we cannot do better with a similar secondary
     // phase recovery.
     //
-    RepairCandidate candidate = new RepairCandidate();
+    var candidate = RepairCandidate();
     if (nextStackTop >= 0) // next_stack available
     {
-      if (secondaryCheck(nextStack, nextStackTop, 3, repair.distance))
+      if (secondaryCheck(nextStack, nextStackTop, 3, repair.distance)) {
         return candidate;
-    } else if (secondaryCheck(stateStack, stateStackTop, 2, repair.distance))
+      }
+    } else if (secondaryCheck(stateStack, stateStackTop, 2, repair.distance)) {
       return candidate;
+    }
 
     //
     // First, adjust distance if the recovery is on the error token;
@@ -1078,8 +1097,9 @@ class DiagnoseParser {
     // the error token.
     //
     if (repair.code == INSERTION_CODE) {
-      if (tokStream.getKind(buffer[repair.bufferPosition - 1]) == 0)
+      if (tokStream.getKind(buffer[repair.bufferPosition - 1]) == 0) {
         repair.code = BEFORE_CODE;
+      }
     }
 
     //
@@ -1106,10 +1126,10 @@ class DiagnoseParser {
   // otherwise it returns 0.
   //
   int mergeCandidate(int state, int buffer_position) {
-    String str = tokStream.getName(buffer[buffer_position]) +
+    var str = tokStream.getName(buffer[buffer_position]) +
         tokStream.getName(buffer[buffer_position + 1]);
-    for (int k = asi(state); asr(k) != 0; k++) {
-      int i = terminalIndex(asr(k));
+    for (var k = asi(state); asr(k) != 0; k++) {
+      var i = terminalIndex(asr(k));
       if (str.length == name(i).length) {
         if (str.toLowerCase() == (name(i).toLowerCase())) return asr(k);
       }
@@ -1141,16 +1161,16 @@ class DiagnoseParser {
     //
     //  First, try scope recovery.
     //
-    PrimaryRepairInfo scope_repair = new PrimaryRepairInfo(repair);
+    var scope_repair = PrimaryRepairInfo(repair);
     scopeTrial(scope_repair, stck, stack_top);
     if (scope_repair.distance > repair.distance) repair.copy(scope_repair);
 
     //
     //  Next, try merging the error token with its successor.
     //
-    int symbol = mergeCandidate(stck[stack_top], repair.bufferPosition);
+    var symbol = mergeCandidate(stck[stack_top], repair.bufferPosition);
     if (symbol != 0) {
-      int j = parseCheck(stck, stack_top, symbol, repair.bufferPosition + 2);
+      var j = parseCheck(stck, stack_top, symbol, repair.bufferPosition + 2);
       if ((j > repair.distance) ||
           (j == repair.distance && repair.misspellIndex < 10)) {
         repair.misspellIndex = 10;
@@ -1163,12 +1183,12 @@ class DiagnoseParser {
     //
     // Next, try deletion of the error token.
     //
-    int j = parseCheck(
+    var j = parseCheck(
         stck,
         stack_top,
         tokStream.getKind(buffer[repair.bufferPosition + 1]),
         repair.bufferPosition + 2);
-    int k = (tokStream.getKind(buffer[repair.bufferPosition]) == EOLT_SYMBOL &&
+    var k = (tokStream.getKind(buffer[repair.bufferPosition]) == EOLT_SYMBOL &&
             tokStream.afterEol(buffer[repair.bufferPosition + 1])
         ? 10
         : 0);
@@ -1184,15 +1204,15 @@ class DiagnoseParser {
     // goto actions induced by the error token. Then assign the top
     // most state of the new configuration to next_state.
     //
-    int next_state = stck[stack_top], max_pos = stack_top;
+    var next_state = stck[stack_top], max_pos = stack_top;
     tempStackTop = stack_top - 1;
 
     tokStream.reset(buffer[repair.bufferPosition + 1]);
-    int tok = tokStream.getKind(buffer[repair.bufferPosition]),
+    var tok = tokStream.getKind(buffer[repair.bufferPosition]),
         act = tAction(next_state, tok);
     while (act <= NUM_RULES) {
       do {
-        int lhs_symbol = lhs(act);
+        var lhs_symbol = lhs(act);
         tempStackTop -= (rhs(act) - 1);
         act = (tempStackTop > max_pos
             ? tempStack[tempStackTop]
@@ -1208,13 +1228,13 @@ class DiagnoseParser {
     //
     //  Next, place the list of candidates in proper order.
     //
-    int root = 0;
-    for (int i = asi(next_state); asr(i) != 0; i++) {
+    var root = 0;
+    for (var i = asi(next_state); asr(i) != 0; i++) {
       symbol = asr(i);
       if (symbol != EOFT_SYMBOL && symbol != ERROR_SYMBOL) {
-        if (root == 0)
+        if (root == 0) {
           list[symbol] = symbol;
-        else {
+        } else {
           list[symbol] = list[root];
           list[root] = symbol;
         }
@@ -1223,14 +1243,14 @@ class DiagnoseParser {
     }
 
     if (stck[stack_top] != next_state) {
-      for (int i = asi(stck[stack_top]); asr(i) != 0; i++) {
+      for (var i = asi(stck[stack_top]); asr(i) != 0; i++) {
         symbol = asr(i);
         if (symbol != EOFT_SYMBOL &&
             symbol != ERROR_SYMBOL &&
             list[symbol] == 0) {
-          if (root == 0)
+          if (root == 0) {
             list[symbol] = symbol;
-          else {
+          } else {
             list[symbol] = list[root];
             list[root] = symbol;
           }
@@ -1239,7 +1259,7 @@ class DiagnoseParser {
       }
     }
 
-    int head = list[root];
+    var head = list[root];
     list[root] = 0;
     root = head;
 
@@ -1249,7 +1269,7 @@ class DiagnoseParser {
     //
     symbol = root;
     while (symbol != 0) {
-      int m = parseCheck(stck, stack_top, symbol, repair.bufferPosition),
+      var m = parseCheck(stck, stack_top, symbol, repair.bufferPosition),
           n = (symbol == EOLT_SYMBOL &&
                   tokStream.afterEol(buffer[repair.bufferPosition])
               ? 10
@@ -1271,7 +1291,7 @@ class DiagnoseParser {
     //
     symbol = root;
     while (symbol != 0) {
-      int m = parseCheck(stck, stack_top, symbol, repair.bufferPosition + 1),
+      var m = parseCheck(stck, stack_top, symbol, repair.bufferPosition + 1),
           n = (symbol == EOLT_SYMBOL &&
                   tokStream.afterEol(buffer[repair.bufferPosition + 1])
               ? 10
@@ -1284,7 +1304,7 @@ class DiagnoseParser {
         repair.code = SUBSTITUTION_CODE;
       }
 
-      int s = symbol;
+      var s = symbol;
       symbol = list[symbol];
       list[s] = 0; // reset element
     }
@@ -1294,11 +1314,11 @@ class DiagnoseParser {
     // error token, or substituting a nonterminal candidate for the
     // error token. Precedence is given to insertion.
     //
-    for (int nt_index = nasi(stck[stack_top]);
+    for (var nt_index = nasi(stck[stack_top]);
         nasr(nt_index) != 0;
         nt_index++) {
       symbol = nasr(nt_index) + NT_OFFSET;
-      int n = parseCheck(stck, stack_top, symbol, repair.bufferPosition + 1);
+      var n = parseCheck(stck, stack_top, symbol, repair.bufferPosition + 1);
       if (n > repair.distance) {
         repair.misspellIndex = 0;
         repair.distance = n;
@@ -1331,25 +1351,25 @@ class DiagnoseParser {
     //
     //  Issue diagnostic.
     //
-    int prevtok = buffer[repair.bufferPosition - 1],
+    var prevtok = buffer[repair.bufferPosition - 1],
         current_token = buffer[repair.bufferPosition];
 
     switch (repair.code) {
       case INSERTION_CODE:
       case BEFORE_CODE:
         {
-          int name_index = (repair.symbol > NT_OFFSET
+          var name_index = (repair.symbol > NT_OFFSET
               ? getNtermIndex(stateStack[stateStackTop], repair.symbol,
                   repair.bufferPosition)
               : getTermIndex(stateStack, stateStackTop, repair.symbol,
                   repair.bufferPosition));
-          int tok = (repair.code == INSERTION_CODE ? prevtok : current_token);
+          var tok = (repair.code == INSERTION_CODE ? prevtok : current_token);
           emitError(repair.code, name_index, tok, tok);
           break;
         }
       case INVALID_CODE:
         {
-          int name_index = getNtermIndex(stateStack[stateStackTop],
+          var name_index = getNtermIndex(stateStack[stateStackTop],
               repair.symbol, repair.bufferPosition + 1);
           emitError(repair.code, name_index, current_token, current_token);
           break;
@@ -1357,13 +1377,14 @@ class DiagnoseParser {
       case SUBSTITUTION_CODE:
         {
           int name_index;
-          if (repair.misspellIndex >= 6)
+          if (repair.misspellIndex >= 6) {
             name_index = terminalIndex(repair.symbol);
-          else {
+          } else {
             name_index = getTermIndex(stateStack, stateStackTop, repair.symbol,
                 repair.bufferPosition + 1);
-            if (name_index != terminalIndex(repair.symbol))
+            if (name_index != terminalIndex(repair.symbol)) {
               repair.code = INVALID_CODE;
+            }
           }
           emitError(repair.code, name_index, current_token, current_token);
           break;
@@ -1374,7 +1395,7 @@ class DiagnoseParser {
         break;
       case SCOPE_CODE:
         {
-          for (int i = 0; i < scopeStackTop; i++) {
+          for (var i = 0; i < scopeStackTop; i++) {
             emitError(
                 repair.code,
                 -scopeIndex[i],
@@ -1402,7 +1423,7 @@ class DiagnoseParser {
     //
     //  Update buffer.
     //
-    RepairCandidate candidate = new RepairCandidate();
+    var candidate = RepairCandidate();
     switch (repair.code) {
       case INSERTION_CODE:
       case BEFORE_CODE:
@@ -1449,7 +1470,7 @@ class DiagnoseParser {
     // Initialize stack index of temp_stack and initialize maximum
     // position of state stack that is still useful.
     //
-    int act = stck[stack_top], max_pos = stack_top, highest_symbol = tok;
+    var act = stck[stack_top], max_pos = stack_top, highest_symbol = tok;
 
     tempStackTop = stack_top - 1;
 
@@ -1467,7 +1488,7 @@ class DiagnoseParser {
       // until a goto action is computed ...
       //
       do {
-        int lhs_symbol = lhs(act);
+        var lhs_symbol = lhs(act);
         tempStackTop -= (rhs(act) - 1);
         act = (tempStackTop > max_pos
             ? tempStack[tempStackTop]
@@ -1499,14 +1520,14 @@ class DiagnoseParser {
     //
     tempStackTop++; // adjust top of stack to reflect last goto
     // next move is shift or shift-reduce.
-    int threshold = tempStackTop;
+    var threshold = tempStackTop;
 
     tok = tokStream.getKind(buffer[buffer_position]);
     tokStream.reset(buffer[buffer_position + 1]);
 
-    if (act > ERROR_ACTION) // shift-reduce on candidate?
+    if (act > ERROR_ACTION) {
       act -= ERROR_ACTION;
-    else if (act < ACCEPT_ACTION) // shift on candidate
+    } else if (act < ACCEPT_ACTION) // shift on candidate
     {
       tempStack[tempStackTop + 1] = act;
       act = tAction(act, tok);
@@ -1518,13 +1539,14 @@ class DiagnoseParser {
       // until a goto action is computed ...
       //
       do {
-        int lhs_symbol = lhs(act);
+        var lhs_symbol = lhs(act);
         tempStackTop -= (rhs(act) - 1);
 
-        if (tempStackTop < threshold)
+        if (tempStackTop < threshold) {
           return (highest_symbol > NT_OFFSET
               ? nonterminalIndex(highest_symbol - NT_OFFSET)
               : terminalIndex(highest_symbol));
+        }
 
         if (tempStackTop == threshold) highest_symbol = lhs_symbol + NT_OFFSET;
         act = (tempStackTop > max_pos
@@ -1553,7 +1575,7 @@ class DiagnoseParser {
   // C =>+rm B, it cannot be the case that B =>+rm C)
   //
   int getNtermIndex(int start, int sym, int buffer_position) {
-    int highest_symbol = sym - NT_OFFSET,
+    var highest_symbol = sym - NT_OFFSET,
         tok = tokStream.getKind(buffer[buffer_position]);
     tokStream.reset(buffer[buffer_position + 1]);
 
@@ -1564,7 +1586,7 @@ class DiagnoseParser {
     tempStackTop = 0;
     tempStack[tempStackTop] = start;
 
-    int act = ntAction(start, highest_symbol);
+    var act = ntAction(start, highest_symbol);
     if (act > NUM_RULES) // goto action?
     {
       tempStack[tempStackTop + 1] = act;
@@ -1646,9 +1668,9 @@ class DiagnoseParser {
     // This algorithm is an adaptation of a bool misspelling
     // algorithm proposed by Juergen Uhl.
     //
-    int count = 0, prefix_length = 0, num_errors = 0;
+    var count = 0, prefix_length = 0, num_errors = 0;
 
-    int i = 0, j = 0;
+    var i = 0, j = 0;
     while ((i < n) && (j < m)) {
       if (s1[i] == s2[j]) {
         count++;
@@ -1667,11 +1689,11 @@ class DiagnoseParser {
         j += 2;
         num_errors++;
       } else {
-        if ((n - i) > (m - j))
+        if ((n - i) > (m - j)) {
           i++;
-        else if ((m - j) > (n - i))
+        } else if ((m - j) > (n - i)) {
           j++;
-        else {
+        } else {
           i++;
           j++;
         }
@@ -1692,7 +1714,9 @@ class DiagnoseParser {
     if (stateSeen.length < stateStack.length) {
       stateSeen = List<int>.filled(stateStack.length, 0);
     }
-    for (int i = 0; i < stateStack.length; i++) stateSeen[i] = NIL;
+    for (var i = 0; i < stateStack.length; i++) {
+      stateSeen[i] = NIL;
+    }
 
     statePoolTop = 0;
     if (statePool.length < stateStack.length) {
@@ -1709,7 +1733,7 @@ class DiagnoseParser {
   void scopeTrialCheck(
       PrimaryRepairInfo repair, List<int> stack, int stack_top, int indx) {
     StateInfo? info;
-    for (int i = stateSeen[stack_top]; i != NIL; i = info.next) {
+    for (var i = stateSeen[stack_top]; i != NIL; i = info.next) {
       info = statePool[i];
       if (null == info) {
         break;
@@ -1718,41 +1742,42 @@ class DiagnoseParser {
       if (info.state == stack[stack_top]) return;
     }
 
-    int old_state_pool_top = statePoolTop++;
+    var old_state_pool_top = statePoolTop++;
     if (statePoolTop >= statePool.length) {
       List.copyRange(statePool, 0,
           statePool = List.filled(statePoolTop * 2, null), 0, statePoolTop);
     }
 
     statePool[old_state_pool_top] =
-        new StateInfo(stack[stack_top], stateSeen[stack_top]);
+        StateInfo(stack[stack_top], stateSeen[stack_top]);
     stateSeen[stack_top] = old_state_pool_top;
 
-    IntTuple action = new IntTuple(1 << 3);
-    for (int i = 0; i < SCOPE_SIZE; i++) {
+    var action = IntTuple(1 << 3);
+    for (var i = 0; i < SCOPE_SIZE; i++) {
       //
       // Compute the action (or set of actions in case of conflicts) that
       // can be executed on the scope lookahead symbol. Save the action(s)
       // in the action tuple.
       //
       action.reset();
-      int act = tAction(stack[stack_top], scopeLa(i));
+      var act = tAction(stack[stack_top], scopeLa(i));
       if (act > ACCEPT_ACTION && act < ERROR_ACTION) // conflicting actions?
       {
         do {
           action.add(baseAction(act++));
         } while (baseAction(act) != 0);
-      } else
+      } else {
         action.add(act);
+      }
 
       //
       // For each action defined on the scope lookahead symbol,
       // try scope recovery.
       //
-      for (int action_index = 0; action_index < action.size(); action_index++) {
+      for (var action_index = 0; action_index < action.size(); action_index++) {
         tokStream.reset(buffer[repair.bufferPosition]);
         tempStackTop = stack_top - 1;
-        int max_pos = stack_top;
+        var max_pos = stack_top;
 
         act = action.get(action_index);
         while (act <= NUM_RULES) {
@@ -1761,7 +1786,7 @@ class DiagnoseParser {
           // reduction, until a goto action is computed ...
           //
           do {
-            int lhs_symbol = lhs(act);
+            var lhs_symbol = lhs(act);
             tempStackTop -= (rhs(act) - 1);
             act = (tempStackTop > max_pos
                 ? tempStack[tempStackTop]
@@ -1784,11 +1809,16 @@ class DiagnoseParser {
           int j, k = scopePrefix(i);
           for (j = tempStackTop + 1;
               j >= (max_pos + 1) && inSymbol(tempStack[j]) == scopeRhs(k);
-              j--) k++;
+              j--) {
+            k++;
+          }
 
           if (j == max_pos) {
-            for (j = max_pos; j >= 1 && inSymbol(stack[j]) == scopeRhs(k); j--)
+            for (j = max_pos;
+                j >= 1 && inSymbol(stack[j]) == scopeRhs(k);
+                j--) {
               k++;
+            }
           }
           //
           // If the prefix matches, check whether the state
@@ -1798,13 +1828,15 @@ class DiagnoseParser {
           // scope in question and that it is at a position
           // below the threshold indicated by MARKED_POS.
           //
-          int marked_pos = (max_pos < stack_top ? max_pos + 1 : stack_top);
+          var marked_pos = (max_pos < stack_top ? max_pos + 1 : stack_top);
           if (scopeRhs(k) == 0 && j < marked_pos) // match?
           {
-            int stack_position = j;
+            var stack_position = j;
             for (j = scopeStateSet(i);
                 stack[stack_position] != scopeState(j) && scopeState(j) != 0;
-                j++);
+                j++) {
+              ;
+            }
             //
             // If the top state is valid for scope recovery,
             // the left-hand side of the scope is used as
@@ -1814,7 +1846,7 @@ class DiagnoseParser {
             //
             if (scopeState(j) != 0) // state was found
             {
-              int previous_distance = repair.distance,
+              var previous_distance = repair.distance,
                   distance = parseCheck(stack, stack_position,
                       scopeLhs(i) + NT_OFFSET, repair.bufferPosition);
               //
@@ -1834,7 +1866,7 @@ class DiagnoseParser {
               // within the stack.
               //
               if ((distance - repair.bufferPosition + 1) < MIN_DISTANCE) {
-                int top = stack_position;
+                var top = stack_position;
                 act = ntAction(stack[top], scopeLhs(i));
                 while (act <= NUM_RULES) {
                   top -= (rhs(act) - 1);
@@ -1898,14 +1930,15 @@ class DiagnoseParser {
   //
   bool secondaryCheck(
       List<int> stack, int stack_top, int buffer_position, int distance) {
-    for (int top = stack_top - 1; top >= 0; top--) {
-      int j = parseCheck(stack, top, tokStream.getKind(buffer[buffer_position]),
+    for (var top = stack_top - 1; top >= 0; top--) {
+      var j = parseCheck(stack, top, tokStream.getKind(buffer[buffer_position]),
           buffer_position + 1);
-      if (((j - buffer_position + 1) > MIN_DISTANCE) && (j > distance))
+      if (((j - buffer_position + 1) > MIN_DISTANCE) && (j > distance)) {
         return true;
+      }
     }
 
-    PrimaryRepairInfo scope_repair = new PrimaryRepairInfo();
+    var scope_repair = PrimaryRepairInfo();
     scope_repair.bufferPosition = buffer_position + 1;
     scope_repair.distance = distance;
     scopeTrial(scope_repair, stack, stack_top);
@@ -1925,14 +1958,14 @@ class DiagnoseParser {
   // Otherwise, the function returns false.
   //
   RepairCandidate secondaryPhase(int error_token) {
-    SecondaryRepairInfo repair = new SecondaryRepairInfo(),
-        misplaced_repair = new SecondaryRepairInfo();
+    var repair = SecondaryRepairInfo(),
+        misplaced_repair = SecondaryRepairInfo();
 
     //
     // If the next_stack is available, try misplaced and secondary
     // recovery on it first.
     //
-    int next_last_index = 0;
+    var next_last_index = 0;
     if (nextStackTop >= 0) {
       int save_location;
 
@@ -1940,8 +1973,9 @@ class DiagnoseParser {
       buffer[1] = tokStream.getPrevious(buffer[2]);
       buffer[0] = tokStream.getPrevious(buffer[1]);
 
-      for (int k = 3; k < BUFF_UBOUND; k++)
+      for (var k = 3; k < BUFF_UBOUND; k++) {
         buffer[k] = tokStream.getNext(buffer[k - 1]);
+      }
 
       buffer[BUFF_UBOUND] = tokStream.badToken(); // elmt not available
 
@@ -1953,7 +1987,9 @@ class DiagnoseParser {
       for (next_last_index = MAX_DISTANCE - 1;
           next_last_index >= 1 &&
               tokStream.getKind(buffer[next_last_index]) == EOFT_SYMBOL;
-          next_last_index--);
+          next_last_index--) {
+        ;
+      }
       next_last_index = next_last_index + 1;
 
       save_location = locationStack[nextStackTop];
@@ -1983,13 +2019,16 @@ class DiagnoseParser {
     buffer[1] = tokStream.getPrevious(buffer[2]);
     buffer[0] = tokStream.getPrevious(buffer[1]);
 
-    for (int k = 4; k < BUFF_SIZE; k++)
+    for (var k = 4; k < BUFF_SIZE; k++) {
       buffer[k] = tokStream.getNext(buffer[k - 1]);
+    }
 
     int last_index;
     for (last_index = MAX_DISTANCE - 1;
         last_index >= 1 && tokStream.getKind(buffer[last_index]) == EOFT_SYMBOL;
-        last_index--);
+        last_index--) {
+      ;
+    }
     last_index++;
 
     misplacementRecovery(
@@ -2028,8 +2067,9 @@ class DiagnoseParser {
       buffer[1] = tokStream.getPrevious(buffer[2]);
       buffer[0] = tokStream.getPrevious(buffer[1]);
 
-      for (int k = 3; k < BUFF_UBOUND; k++)
+      for (var k = 3; k < BUFF_UBOUND; k++) {
         buffer[k] = tokStream.getNext(buffer[k - 1]);
+      }
 
       buffer[BUFF_UBOUND] = tokStream.badToken(); // elmt not available
 
@@ -2042,19 +2082,19 @@ class DiagnoseParser {
     // four ... buffer_position tokens from the input stream.
     //
     if (repair.code == SECONDARY_CODE || repair.code == DELETION_CODE) {
-      PrimaryRepairInfo scope_repair = new PrimaryRepairInfo();
+      var scope_repair = PrimaryRepairInfo();
       for (scope_repair.bufferPosition = 2;
           scope_repair.bufferPosition <= repair.bufferPosition &&
               repair.code != SCOPE_CODE;
           scope_repair.bufferPosition++) {
         scopeTrial(scope_repair, stateStack, stateStackTop);
-        int j = (scope_repair.distance == MAX_DISTANCE
+        var j = (scope_repair.distance == MAX_DISTANCE
                 ? last_index
                 : scope_repair.distance),
             k = scope_repair.bufferPosition - 1;
         if ((scope_repair.distance - k) > MIN_DISTANCE &&
             (j - k) > (repair.distance - repair.numDeletions)) {
-          int i = scopeIndex[scopeStackTop]; // upper bound
+          var i = scopeIndex[scopeStackTop]; // upper bound
           repair.code = SCOPE_CODE;
           repair.symbol = scopeLhs(i) + NT_OFFSET;
           repair.stackPosition = stateStackTop;
@@ -2067,7 +2107,7 @@ class DiagnoseParser {
     // If a successful repair was not found, quit!  Otherwise, issue
     // diagnosis and adjust configuration...
     //
-    RepairCandidate candidate = new RepairCandidate();
+    var candidate = RepairCandidate();
     if (repair.code == 0) return candidate;
 
     secondaryDiagnosis(repair);
@@ -2108,13 +2148,13 @@ class DiagnoseParser {
   //
   void misplacementRecovery(SecondaryRepairInfo repair, List<int> stack,
       int stack_top, int last_index, bool stack_flag) {
-    int previous_loc = buffer[2], stack_deletions = 0;
+    var previous_loc = buffer[2], stack_deletions = 0;
 
-    for (int top = stack_top - 1; top >= 0; top--) {
+    for (var top = stack_top - 1; top >= 0; top--) {
       if (locationStack[top] < previous_loc) stack_deletions++;
       previous_loc = locationStack[top];
 
-      int parse_distance =
+      var parse_distance =
               parseCheck(stack, top, tokStream.getKind(buffer[2]), 3),
           j = (parse_distance == MAX_DISTANCE ? last_index : parse_distance);
       if ((parse_distance > MIN_DISTANCE) &&
@@ -2136,24 +2176,24 @@ class DiagnoseParser {
   //
   void secondaryRecovery(SecondaryRepairInfo repair, List<int> stack,
       int stack_top, int last_index, bool stack_flag) {
-    int previous_loc = buffer[2], stack_deletions = 0;
+    var previous_loc = buffer[2], stack_deletions = 0;
 
-    for (int top = stack_top;
+    for (var top = stack_top;
         top >= 0 && repair.numDeletions >= stack_deletions;
         top--) {
       if (locationStack[top] < previous_loc) stack_deletions++;
       previous_loc = locationStack[top];
 
-      for (int i = 2;
+      for (var i = 2;
           i <= (last_index - MIN_DISTANCE + 1) &&
               (repair.numDeletions >= (stack_deletions + i - 1));
           i++) {
-        int parse_distance =
+        var parse_distance =
                 parseCheck(stack, top, tokStream.getKind(buffer[i]), i + 1),
             j = (parse_distance == MAX_DISTANCE ? last_index : parse_distance);
 
         if ((parse_distance - i + 1) > MIN_DISTANCE) {
-          int k = stack_deletions + i - 1;
+          var k = stack_deletions + i - 1;
           if ((k < repair.numDeletions) ||
               (j - k) > (repair.distance - repair.numDeletions) ||
               ((repair.code == SECONDARY_CODE) &&
@@ -2167,13 +2207,13 @@ class DiagnoseParser {
           }
         }
 
-        for (int l = nasi(stack[top]); l >= 0 && nasr(l) != 0; l++) {
-          int symbol = nasr(l) + NT_OFFSET;
+        for (var l = nasi(stack[top]); l >= 0 && nasr(l) != 0; l++) {
+          var symbol = nasr(l) + NT_OFFSET;
           parse_distance = parseCheck(stack, top, symbol, i);
           j = (parse_distance == MAX_DISTANCE ? last_index : parse_distance);
 
           if ((parse_distance - i + 1) > MIN_DISTANCE) {
-            int k = stack_deletions + i - 1;
+            var k = stack_deletions + i - 1;
             if (k < repair.numDeletions ||
                 (j - k) > (repair.distance - repair.numDeletions)) {
               repair.code = SECONDARY_CODE;
@@ -2202,16 +2242,18 @@ class DiagnoseParser {
     switch (repair.code) {
       case SCOPE_CODE:
         {
-          if (repair.stackPosition < stateStackTop)
+          if (repair.stackPosition < stateStackTop) {
             emitError(DELETION_CODE, terminalIndex(ERROR_SYMBOL),
                 locationStack[repair.stackPosition], buffer[1]);
-          for (int i = 0; i < scopeStackTop; i++)
+          }
+          for (var i = 0; i < scopeStackTop; i++) {
             emitError(
                 SCOPE_CODE,
                 -scopeIndex[i],
                 locationStack[scopePosition[i]],
                 buffer[1],
                 nonterminalIndex(scopeLhs(scopeIndex[i])));
+          }
 
           repair.symbol = scopeLhs(scopeIndex[scopeStackTop]) + NT_OFFSET;
           stateStackTop = scopePosition[scopeStackTop];
@@ -2246,29 +2288,30 @@ class DiagnoseParser {
   void emitError(int msg_code, int name_index, int left_token, int right_token,
       [int scope_name_index = 0]) {
     var token_name =
-        (name_index >= 0 && !(name(name_index).toUpperCase() == ("ERROR"))
-            ? "\"" + name(name_index) + "\""
-            : "");
+        (name_index >= 0 && !(name(name_index).toUpperCase() == ('ERROR'))
+            ? '\"' + name(name_index) + '\"'
+            : '');
 
     if (msg_code == INVALID_CODE) {
-      msg_code = token_name.length == 0 ? INVALID_CODE : INVALID_TOKEN_CODE;
+      msg_code = token_name.isEmpty ? INVALID_CODE : INVALID_TOKEN_CODE;
     }
 
     if (msg_code == SCOPE_CODE) {
-      token_name = "\"";
-      for (int i = scopeSuffix(-name_index); scopeRhs(i) != 0; i++) {
+      token_name = '\"';
+      for (var i = scopeSuffix(-name_index); scopeRhs(i) != 0; i++) {
         if (!isNullable(scopeRhs(i))) {
-          int symbol_index = (scopeRhs(i) > NT_OFFSET
+          var symbol_index = (scopeRhs(i) > NT_OFFSET
               ? nonterminalIndex(scopeRhs(i) - NT_OFFSET)
               : terminalIndex(scopeRhs(i)));
-          if (name(symbol_index).length > 0) {
-            if (token_name.length > 1) // Not just starting quote?
-              token_name += " "; // add a space separator
+          if (name(symbol_index).isNotEmpty) {
+            if (token_name.length > 1) {
+              token_name += ' ';
+            } // add a space separator
             token_name += name(symbol_index);
           }
         }
       }
-      token_name += "\"";
+      token_name += '\"';
     }
 
     tokStream.reportError(msg_code, left_token, right_token, token_name);

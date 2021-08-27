@@ -41,8 +41,9 @@ class LexParser {
   }
 
   LexParser([ILexStream? tokStream, ParseTable? prs, RuleAction? ra]) {
-    if (null != tokStream && null != prs && null != ra)
+    if (null != tokStream && null != prs && null != ra) {
       reset(tokStream, prs, ra);
+    }
   }
 
   //
@@ -52,7 +53,7 @@ class LexParser {
   List<int> stack = [], locationStack = [], tempStack = [];
 
   void reallocateStacks() {
-    int old_stack_length = (stack.isEmpty ? 0 : stackLength);
+    var old_stack_length = (stack.isEmpty ? 0 : stackLength);
     stackLength += STACK_INCREMENT;
     var fill = 0;
     if (old_stack_length == 0) {
@@ -86,9 +87,9 @@ class LexParser {
   // parsing an input with the incremental parser, then they can be invoked.
   //
   int getFirstToken([int? i]) {
-    if (null != i)
+    if (null != i) {
       return getToken(i);
-    else {
+    } else {
       return starttok;
     }
   }
@@ -137,8 +138,10 @@ class LexParser {
         i > tokStream.getStreamLength() ? tokStream.getStreamLength() : i);
     curtok = tokStream.getToken();
     current_kind = tokStream.getKind(curtok);
-    if (stack == null) reallocateStacks();
-    if (action == null) action = new IntTuple(1 << 10);
+    if (stack.isEmpty) {
+      reallocateStacks();
+    }
+    action ??= IntTuple(1 << 10);
   }
 
   //
@@ -217,7 +220,7 @@ class LexParser {
         if (currentAction == ERROR_ACTION &&
             current_kind != EOFT_SYMBOL) // if not successful try EOF
         {
-          int save_next_token = tokStream.peek(); // save position after curtok
+          var save_next_token = tokStream.peek(); // save position after curtok
           tokStream.reset(
               tokStream.getStreamLength() - 1); // point to the end of the input
           parseNextCharacter(curtok, EOFT_SYMBOL);
@@ -238,7 +241,7 @@ class LexParser {
           do {
             stateStackTop -= (prs.rhs(currentAction) - 1);
             ra.ruleAction(currentAction);
-            int lhs_symbol = prs.lhs(currentAction);
+            var lhs_symbol = prs.lhs(currentAction);
             if (lhs_symbol == START_SYMBOL) continue ProcessTokens;
             currentAction = prs.ntAction(stack[stateStackTop], lhs_symbol);
           } while (currentAction <= NUM_RULES);
@@ -247,10 +250,11 @@ class LexParser {
           lastToken = curtok;
           curtok = tokStream.getToken();
           current_kind = tokStream.getKind(curtok);
-        } else if (currentAction == ACCEPT_ACTION)
+        } else if (currentAction == ACCEPT_ACTION) {
           continue ProcessTokens;
-        else
-          break ScanToken; // ERROR_ACTION
+        } else {
+          break ScanToken;
+        } // ERROR_ACTION
       }
 
       //
@@ -546,12 +550,13 @@ class LexParser {
     // Otherwise, we update configuration up to the point prior to the
     // shift or shift-reduce on the token.
     //
-    if (act == ERROR_ACTION)
+    if (act == ERROR_ACTION) {
       action!.reset(action_save);
-    else {
+    } else {
       stateStackTop = tempStackTop + 1;
-      for (int i = pos + 1; i <= stateStackTop; i++) // update stack
+      for (var i = pos + 1; i <= stateStackTop; i++) {
         stack[i] = tempStack[i];
+      }
     }
 
     return act;
@@ -588,7 +593,7 @@ class LexParser {
         do {
           stateStackTop -= (prs.rhs(currentAction) - 1);
           ra.ruleAction(currentAction);
-          int lhs_symbol = prs.lhs(currentAction);
+          var lhs_symbol = prs.lhs(currentAction);
           if (lhs_symbol == START_SYMBOL) {
             // assert(starttok != curtok);  // null string reduction to START_SYMBOL is illegal
             break process_actions;
@@ -606,7 +611,7 @@ class LexParser {
           do {
             stateStackTop -= (prs.rhs(currentAction) - 1);
             ra.ruleAction(currentAction);
-            int lhs_symbol = prs.lhs(currentAction);
+            var lhs_symbol = prs.lhs(currentAction);
             if (lhs_symbol == START_SYMBOL) break process_actions;
             currentAction = prs.ntAction(stack[stateStackTop], lhs_symbol);
           } while (currentAction <= NUM_RULES);

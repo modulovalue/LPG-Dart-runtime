@@ -69,6 +69,7 @@ class BacktrackingParser extends Stacks {
   //
   // Override the getToken function in Stacks.
   //
+  @override
   int getToken(int i) {
     return tokens.get(locationStack[stateStackTop + (i - 1)]);
   }
@@ -162,9 +163,9 @@ class BacktrackingParser extends Stacks {
   //
   void reallocateOtherStacks(int start_token_index) {
     // assert(super.stateStack != null);
+    var length = super.stateStack.length;
+    var fill = 0;
     if (actionStack.isEmpty) {
-      var length = super.stateStack.length;
-      var fill = 0;
       actionStack = List.filled(length, fill);
       super.locationStack = List.filled(length, fill);
       super.parseStack = List.filled(length, null);
@@ -173,10 +174,8 @@ class BacktrackingParser extends Stacks {
       locationStack[0] = start_token_index;
     } else if (actionStack.length < super.stateStack.length) {
       var old_length = actionStack.length;
-      var length = super.stateStack.length;
-      var fill = 0;
-      List.copyRange(this.actionStack, 0,
-          this.actionStack = List.filled(length, fill), 0, old_length);
+      List.copyRange(actionStack, 0, actionStack = List.filled(length, fill), 0,
+          old_length);
       List.copyRange(super.locationStack, 0,
           super.locationStack = List.filled(length, fill), 0, old_length);
       List.copyRange(super.parseStack, 0,
@@ -189,10 +188,7 @@ class BacktrackingParser extends Stacks {
   // Recover up to max_error_count times and then quit
   //
   Object? fuzzyParse([int? max_error_count]) {
-    if (null == max_error_count)
-    {
-      max_error_count = pow(2, 32).floor();
-    }
+    max_error_count ??= pow(2, 32).floor();
     return fuzzyParseEntry(0, max_error_count);
   }
 
@@ -200,9 +196,7 @@ class BacktrackingParser extends Stacks {
   //
   //
   Object? fuzzyParseEntry(int marker_kind, [int? max_error_count]) {
-    if (null == max_error_count) {
-      max_error_count = pow(2, 32).floor();
-    }
+    max_error_count ??= pow(2, 32).floor();
     action.reset();
     tokStream.reset(); // Position at first token.
     reallocateStateStack();
@@ -215,13 +209,13 @@ class BacktrackingParser extends Stacks {
     // it up to the "Stream" implementer to define the predecessor
     // of the first token as he sees fit.
     //
-    int first_token = tokStream.peek(),
+    var first_token = tokStream.peek(),
         start_token = first_token,
         marker_token = getMarkerToken(marker_kind, first_token);
-    tokens = new IntTuple(tokStream.getStreamLength());
+    tokens = IntTuple(tokStream.getStreamLength());
     tokens.add(tokStream.getPrevious(first_token));
 
-    int error_token = backtrackParseInternal(action, marker_token);
+    var error_token = backtrackParseInternal(action, marker_token);
     if (error_token != 0) // an error was detected?
     {
       if (!(tokStream is IPrsStream)) {
@@ -232,12 +226,15 @@ class BacktrackingParser extends Stacks {
       start_token = rp.recover(marker_token, error_token);
     }
 
-    if (marker_token != 0 && start_token == first_token)
+    if (marker_token != 0 && start_token == first_token) {
       tokens.add(marker_token);
+    }
     int t;
     for (t = start_token;
         tokStream.getKind(t) != EOFT_SYMBOL;
-        t = tokStream.getNext(t)) tokens.add(t);
+        t = tokStream.getNext(t)) {
+      tokens.add(t);
+    }
     tokens.add(t);
 
     return parseActions(marker_kind);
@@ -284,17 +281,17 @@ class BacktrackingParser extends Stacks {
     // it up to the "Stream" implementer to define the predecessor
     // of the first token as he sees fit.
     //
-    tokens = new IntTuple(tokStream.getStreamLength());
+    tokens = IntTuple(tokStream.getStreamLength());
     tokens.add(tokStream.getPrevious(tokStream.peek()));
 
-    int start_token_index = tokStream.peek(),
+    var start_token_index = tokStream.peek(),
         repair_token = getMarkerToken(marker_kind, start_token_index),
         start_action_index = action.size(); // obviously 0
     var temp_stack = List.filled(stateStackTop + 1, 0);
     List.copyRange(stateStack, 0, temp_stack, 0, temp_stack.length);
 
-    int initial_error_token = backtrackParseInternal(action, repair_token);
-    for (int error_token = initial_error_token, count = 0;
+    var initial_error_token = backtrackParseInternal(action, repair_token);
+    for (var error_token = initial_error_token, count = 0;
         error_token != 0;
         error_token = backtrackParseInternal(action, repair_token), count++) {
       if (count == max_error_count) {
@@ -311,7 +308,7 @@ class BacktrackingParser extends Stacks {
       for (stateStackTop = findRecoveryStateIndex(stateStackTop);
           stateStackTop >= 0;
           stateStackTop = findRecoveryStateIndex(stateStackTop - 1)) {
-        int recovery_token = tokens.get(locationStack[stateStackTop] - 1);
+        var recovery_token = tokens.get(locationStack[stateStackTop] - 1);
         repair_token = errorRepair(
             tokStream as IPrsStream,
             (recovery_token >= start_token_index
@@ -334,7 +331,9 @@ class BacktrackingParser extends Stacks {
     int t;
     for (t = start_token_index;
         tokStream.getKind(t) != EOFT_SYMBOL;
-        t = tokStream.getNext(t)) tokens.add(t);
+        t = tokStream.getNext(t)) {
+      tokens.add(t);
+    }
     tokens.add(t);
 
     return parseActions(marker_kind);
@@ -349,10 +348,8 @@ class BacktrackingParser extends Stacks {
       ra.ruleAction(currentAction);
       currentAction =
           prs.ntAction(stateStack[stateStackTop], prs.lhs(currentAction));
-//if(currentAction <= NUM_RULES)
-//System.err.println("Goto-reducing by rule " + currentAction);
+
     } while (currentAction <= NUM_RULES);
-//System.err.println("Goto state " + prs.originalState(currentAction));
     return;
   }
 
@@ -372,7 +369,7 @@ class BacktrackingParser extends Stacks {
     stateStackTop = -1;
     currentAction = START_STATE;
 
-    for (int i = 0; i < action.size(); i++) {
+    for (var i = 0; i < action.size(); i++) {
       //
       // if the parser needs to stop processing, it may do so here.
       //
@@ -384,7 +381,6 @@ class BacktrackingParser extends Stacks {
       currentAction = action.get(i);
       if (currentAction <= NUM_RULES) // a reduce action?
       {
-//System.err.println("reducing by rule " + currentAction);
         stateStackTop--; // make reduction look like shift-reduction
         process_reductions();
       } else // a shift or shift-reduce action
@@ -401,10 +397,8 @@ class BacktrackingParser extends Stacks {
         if (currentAction > ERROR_ACTION) // a shift-reduce action?
         {
           currentAction -= ERROR_ACTION;
-//System.err.println("Shift-reducing by rule " + currentAction + " on token " + tokStream.getName(lastToken));
           process_reductions();
         }
-//else System.err.println("Shifting on token " + tokStream.getName(lastToken) + " to state " + prs.originalState(currentAction));
       }
     }
 
@@ -448,14 +442,14 @@ class BacktrackingParser extends Stacks {
     //
     // Allocate configuration stack.
     //
-    var configuration_stack = new ConfigurationStack(prs);
+    var configuration_stack = ConfigurationStack(prs);
 
     //
     // Keep parsing until we successfully reach the end of file or
     // an error is encountered. The list of actions executed will
     // be stored in the "action" tuple.
     //
-    int error_token = 0,
+    var error_token = 0,
         maxStackTop = stateStackTop,
         start_token = tokStream.peek(),
         curtok = (initial_token > 0 ? initial_token : tokStream.getToken()),
@@ -536,14 +530,14 @@ class BacktrackingParser extends Stacks {
     //
     // Allocate configuration stack.
     //
-    ConfigurationStack configuration_stack = new ConfigurationStack(prs);
+    var configuration_stack = ConfigurationStack(prs);
 
     //
     // Keep parsing until we successfully reach the end of file or
     // an error is encountered. The list of actions executed will
     // be stored in the "action" tuple.
     //
-    int start_token = tokStream.peek(),
+    var start_token = tokStream.peek(),
         curtok = (initial_token > 0 ? initial_token : tokStream.getToken()),
         current_kind = tokStream.getKind(curtok),
         act = tAction(stateStack[stateStackTop], current_kind);
@@ -577,12 +571,12 @@ class BacktrackingParser extends Stacks {
       } else if (act == ERROR_ACTION) {
         if (curtok != error_token) {
           var configuration = configuration_stack.pop();
-          if (configuration == null)
+          if (configuration == null) {
             act = ERROR_ACTION;
-          else {
+          } else {
             action.reset(configuration.action_length);
             act = configuration.act;
-            int next_token_index = configuration.curtok;
+            var next_token_index = configuration.curtok;
             tokens.reset(next_token_index);
             curtok = tokens.get(next_token_index - 1);
             current_kind = tokStream.getKind(curtok);
@@ -599,16 +593,17 @@ class BacktrackingParser extends Stacks {
         break;
       } else if (act > ACCEPT_ACTION) {
         if (configuration_stack.findConfiguration(
-            stateStack, stateStackTop, tokens.size()))
+            stateStack, stateStackTop, tokens.size())) {
           act = ERROR_ACTION;
-        else {
+        } else {
           configuration_stack.push(
               stateStack, stateStackTop, act + 1, tokens.size(), action.size());
           act = prs.baseAction(act);
         }
         continue;
-      } else
-        break; // assert(act == ACCEPT_ACTION);
+      } else {
+        break;
+      } // assert(act == ACCEPT_ACTION);
 
       stateStack[++stateStackTop] = act; // no need to check if out of bounds
       locationStack[stateStackTop] = tokens.size();
@@ -625,14 +620,14 @@ class BacktrackingParser extends Stacks {
     //
     // Allocate configuration stack.
     //
-    ConfigurationStack configuration_stack = new ConfigurationStack(prs);
+    var configuration_stack = ConfigurationStack(prs);
 
     //
     // Keep parsing until we successfully reach the end of file or
     // an error is encountered. The list of actions executed will
     // be stored in the "action" tuple.
     //
-    int start_token = tokStream.peek(),
+    var start_token = tokStream.peek(),
         final_token = tokStream.getStreamLength(), // unreachable
         curtok = 0,
         current_kind = ERROR_SYMBOL,
@@ -653,9 +648,9 @@ class BacktrackingParser extends Stacks {
         current_kind = tokStream.getKind(curtok);
       } else if (act == ERROR_ACTION) {
         var configuration = configuration_stack.pop();
-        if (configuration == null)
+        if (configuration == null) {
           act = ERROR_ACTION;
-        else {
+        } else {
           stateStackTop = configuration.stack_top;
           configuration.retrieveStack(stateStack);
           act = configuration.act;
@@ -672,16 +667,17 @@ class BacktrackingParser extends Stacks {
         break;
       } else if (act > ACCEPT_ACTION) {
         if (configuration_stack.findConfiguration(
-            stateStack, stateStackTop, curtok))
+            stateStack, stateStackTop, curtok)) {
           act = ERROR_ACTION;
-        else {
+        } else {
           configuration_stack.push(
               stateStack, stateStackTop, act + 1, curtok, 0);
           act = prs.baseAction(act);
         }
         continue;
-      } else
-        break; // assert(act == ACCEPT_ACTION);
+      } else {
+        break;
+      } // assert(act == ACCEPT_ACTION);
       try {
         //
         // We consider a configuration to be acceptable for recovery
@@ -697,8 +693,9 @@ class BacktrackingParser extends Stacks {
           // the current token. I.e., we have to be able to parse at least
           // two tokens past the resynch point before we claim victory.
           //
-          if (recoverableState(act))
+          if (recoverableState(act)) {
             final_token = skipTokens ? curtok : tokStream.getNext(curtok);
+          }
         }
 
         stateStack[++stateStackTop] = act;
@@ -717,7 +714,7 @@ class BacktrackingParser extends Stacks {
   }
 
   bool recoverableState(int state) {
-    for (int k = prs.asi(state); prs.asr(k) != 0; k++) {
+    for (var k = prs.asi(state); prs.asr(k) != 0; k++) {
       if (prs.asr(k) == ERROR_SYMBOL) return true;
     }
     return false;

@@ -18,5 +18,5 @@ abstract class LpgLexStream extends LexStream {
       [String? inputChars,
       int tab = LexStream.DEFAULT_TAB,
       IntSegmentedTuple? lineOffsets])
-      : super(fileName, inputChars, tab, lineOffsets) {}
+      : super(fileName, inputChars, tab, lineOffsets);
 }

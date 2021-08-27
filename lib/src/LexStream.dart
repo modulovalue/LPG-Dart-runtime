@@ -57,7 +57,7 @@ class LexStream implements ILexStream {
   {
     inputChars ??= File(fileName).readAsStringSync();
 
-    if(inputChars == null) {
+    if(inputChars.isEmpty) {
         return;
       }
     setInputChars(inputChars);
@@ -166,10 +166,8 @@ class LexStream implements ILexStream {
     return inputChars.codeUnitAt(i);
   }
 
-  /**
-   * @deprecated replaced by {@link #getLineCount()}
-   *
-   */
+  /// @deprecated replaced by {@link #getLineCount()}
+  ///
   int getLine2() {
     return getLineCount();
   }
@@ -191,7 +189,7 @@ class LexStream implements ILexStream {
 
   @override
   int getColumnOfCharAt(int i) {
-    int lineNo = getLineNumberOfCharAt(i), start = lineOffsets.get(lineNo - 1);
+    var lineNo = getLineNumberOfCharAt(i), start = lineOffsets.get(lineNo - 1);
     if (start + 1 >= streamLength) return 1;
     for (var k = start + 1; k < i; k++) {
       if (inputChars[k] == '\t') {
@@ -222,6 +220,7 @@ class LexStream implements ILexStream {
     return index = (index < end_token ? getNext(index) : streamLength);
   }
 
+  @override
   int getKind(int i) {
     return 0;
   }
@@ -250,7 +249,7 @@ class LexStream implements ILexStream {
 
   @override
   String getName(int i) {
-    return i >= getStreamLength() ? "" : "" + getCharValue(i);
+    return i >= getStreamLength() ? '' : '' + getCharValue(i);
   }
 
   @override
@@ -286,40 +285,41 @@ class LexStream implements ILexStream {
     return getColumnOfCharAt(i);
   }
 
+  @override
   int getEndLine(int i) {
     return getLine(i);
   }
 
+  @override
   int getEndColumn(int i) {
     return getColumnOfCharAt(i);
   }
 
+  @override
   bool afterEol(int i) {
     return (i < 1
         ? true
         : getLineNumberOfCharAt(i - 1) < getLineNumberOfCharAt(i));
   }
 
-  /**
-   * @deprecated replaced by {@link #getFirstRealToken()}
-   *
-   */
+  /// @deprecated replaced by {@link #getFirstRealToken()}
+  ///
   int getFirstErrorToken(int i) {
     return getFirstRealToken(i);
   }
 
+  @override
   int getFirstRealToken(int i) {
     return i;
   }
 
-  /**
-   * @deprecated replaced by {@link #getLastRealToken()}
-   *
-   */
+  /// @deprecated replaced by {@link #getLastRealToken()}
+  ///
   int getLastErrorToken(int i) {
     return getLastRealToken(i);
   }
 
+  @override
   int getLastRealToken(int i) {
     return i;
   }
@@ -430,7 +430,7 @@ class LexStream implements ILexStream {
       stdout.write('****Error: ' + locationInfo);
 
       for (var i = 0; i < errorInfo.length; i++) {
-        stdout.write(errorInfo[i] + " ");
+        stdout.write(errorInfo[i] + ' ');
       }
 
       stdout.write(errorMsgText[errorCode]);

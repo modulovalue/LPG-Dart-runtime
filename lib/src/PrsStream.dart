@@ -31,17 +31,18 @@ class PrsStream implements IPrsStream {
     }
   }
 
+  @override
   List<String> orderedExportedSymbols() {
     return [];
   }
-
+  @override
   void remapTerminalSymbols(
       List<String>? ordered_parser_symbols, int eof_symbol) {
     // SMS 12 Feb 2008
     // lexStream might be null, maybe only erroneously, but it has happened
     if (iLexStream is EscapeStrictPropertyInitializationLexStream) {
       throw NullPointerException(
-          "PrsStream.remapTerminalSymbols(..):  lexStream is null");
+          'PrsStream.remapTerminalSymbols(..):  lexStream is null');
     }
 
     var ordered_lexer_symbols = iLexStream.orderedExportedSymbols();
@@ -77,7 +78,7 @@ class PrsStream implements IPrsStream {
       throw UnimplementedTerminalsException(unimplemented_symbols);
     }
   }
-
+  @override
   int mapKind(int kind) {
     return (kindMap.isEmpty ? kind : kindMap[kind]);
   }
@@ -89,9 +90,9 @@ class PrsStream implements IPrsStream {
 
     adjuncts = ArrayList();
   }
-
+  @override
   void setLexStream(ILexStream lexStream) {
-    this.iLexStream = lexStream;
+    iLexStream = lexStream;
     resetTokenStream();
   }
 
@@ -107,7 +108,7 @@ class PrsStream implements IPrsStream {
 
   @override
   void makeToken(int startLoc, int endLoc, int kind) {
-    var token = new Token(startLoc, endLoc, mapKind(kind), this);
+    var token = Token(startLoc, endLoc, mapKind(kind), this);
     token.setTokenIndex(tokens.size());
     tokens.add(token);
     token.setAdjunctIndex(adjuncts.size());
@@ -317,6 +318,7 @@ class PrsStream implements IPrsStream {
   // not exist, it returns the negation of the index of the
   // element immediately preceding the offset.
   //
+  @override
   int getTokenIndexAtCharacter(int offset) {
     var low = 0, high = tokens.size();
     while (high > low) {
@@ -365,13 +367,13 @@ class PrsStream implements IPrsStream {
   int getStreamLength() {
     return len;
   }
-
+  @override
   void setStreamIndex(int index) {
     this.index = index;
   }
 
   void setStreamLength2() {
-    this.len = tokens.size();
+    len = tokens.size();
   }
 
   @override
@@ -393,19 +395,23 @@ class PrsStream implements IPrsStream {
     return iLexStream;
   }
 
+  @override
   void dumpTokens() {
     if (getSize() <= 2) return;
-    stdout.write(" Kind \tOffset \tLen \tLine \tCol \tText\n");
-    for (var i = 1; i < getSize() - 1; i++) dumpToken(i);
+    stdout.write(' Kind \tOffset \tLen \tLine \tCol \tText\n');
+    for (var i = 1; i < getSize() - 1; i++) {
+      dumpToken(i);
+    }
   }
 
+  @override
   void dumpToken(int i) {
-    stdout.write(" (" + getKind(i).toString() + ")");
-    stdout.write(" \t" + getStartOffset(i).toString());
-    stdout.write(" \t" + getTokenLength(i).toString());
-    stdout.write(" \t" + getLineNumberOfTokenAt(i).toString());
-    stdout.write(" \t" + getColumnOfTokenAt(i).toString());
-    stdout.write(" \t" + getTokenText(i));
+    stdout.write(' (' + getKind(i).toString() + ')');
+    stdout.write(' \t' + getStartOffset(i).toString());
+    stdout.write(' \t' + getTokenLength(i).toString());
+    stdout.write(' \t' + getLineNumberOfTokenAt(i).toString());
+    stdout.write(' \t' + getColumnOfTokenAt(i).toString());
+    stdout.write(' \t' + getTokenText(i));
     stdout.write('\n');
   }
 
@@ -417,12 +423,12 @@ class PrsStream implements IPrsStream {
         size = end_index - start_index;
 
     var slice = List<IToken?>.filled(size, null);
-    for (int j = start_index, k = 0; j < end_index; j++, k++) {
+    for (var j = start_index, k = 0; j < end_index; j++, k++) {
       slice[k] = adjuncts.get(j);
     }
-    var ret=<IToken>[];
-    for (var item in slice){
-      if(null != item){
+    var ret = <IToken>[];
+    for (var item in slice) {
+      if (null != item) {
         ret.add(item);
       }
     }

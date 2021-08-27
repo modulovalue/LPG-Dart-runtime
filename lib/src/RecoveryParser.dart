@@ -30,6 +30,7 @@ class RecoveryParser extends DiagnoseParser {
     this.tokens = tokens;
   }
 
+  @override
   void reallocateStacks() {
     super.reallocateStacks();
     if (actionStack.isEmpty) {
@@ -44,27 +45,28 @@ class RecoveryParser extends DiagnoseParser {
   }
 
   void reportError(int scope_index, int error_token) {
-    String text = "\"";
-    for (int i = scopeSuffix(scope_index); scopeRhs(i) != 0; i++) {
+    var text = '\"';
+    for (var i = scopeSuffix(scope_index); scopeRhs(i) != 0; i++) {
       if (!isNullable(scopeRhs(i))) {
-        int symbol_index = (scopeRhs(i) > NT_OFFSET
+        var symbol_index = (scopeRhs(i) > NT_OFFSET
             ? nonterminalIndex(scopeRhs(i) - NT_OFFSET)
             : terminalIndex(scopeRhs(i)));
-        if (name(symbol_index).length > 0) {
-          if (text.length > 1) // Not just starting quote?
-            text += " "; // add a space separator
+        if (name(symbol_index).isNotEmpty) {
+          if (text.length > 1) {
+            text += ' ';
+          } // add a space separator
           text += name(symbol_index);
         }
       }
     }
-    text += "\"";
+    text += '\"';
 
     tokStream.reportError(SCOPE_CODE, error_token, error_token, [text]);
     return;
   }
 
   int recover(int marker_token, int error_token) {
-    if (stateStack == null) reallocateStacks();
+    if (stateStack.isEmpty) reallocateStacks();
 
     //
     //
@@ -72,7 +74,7 @@ class RecoveryParser extends DiagnoseParser {
     tokens.reset();
     tokStream.reset();
     tokens.add(tokStream.getPrevious(tokStream.peek()));
-    int restart_token =
+    var restart_token =
             (marker_token != 0 ? marker_token : tokStream.getToken()),
         old_action_size = 0;
     stateStackTop = 0;
@@ -130,14 +132,15 @@ class RecoveryParser extends DiagnoseParser {
     //
     // Save information about the current configuration.
     //
-    int curtok = start_token,
+    var curtok = start_token,
         current_kind = tokStream.getKind(curtok),
         first_stream_token = tokStream.peek();
 
     buffer[1] = error_token;
     buffer[0] = tokStream.getPrevious(buffer[1]);
-    for (int k = 2; k < BUFF_SIZE; k++)
+    for (var k = 2; k < BUFF_SIZE; k++) {
       buffer[k] = tokStream.getNext(buffer[k - 1]);
+    }
 
     scope_repair.distance = 0;
     scope_repair.misspellIndex = 0;
@@ -155,7 +158,7 @@ class RecoveryParser extends DiagnoseParser {
     //
     locationStack[stateStackTop] = curtok;
     actionStack[stateStackTop] = action.size();
-    int act = tAction(stateStack[stateStackTop], current_kind);
+    var act = tAction(stateStack[stateStackTop], current_kind);
     for (;;) {
       //
       // if the parser needs to stop processing,
@@ -185,9 +188,9 @@ class RecoveryParser extends DiagnoseParser {
       } else if (act == ERROR_ACTION) {
         if (curtok != error_token || main_configuration_stack.size() > 0) {
           var configuration = main_configuration_stack.pop();
-          if (configuration == null)
+          if (configuration == null) {
             act = ERROR_ACTION;
-          else {
+          } else {
             stateStackTop = configuration.stack_top;
             configuration.retrieveStack(stateStack);
             act = configuration.act;
@@ -202,9 +205,9 @@ class RecoveryParser extends DiagnoseParser {
         break;
       } else if (act > ACCEPT_ACTION && act < ERROR_ACTION) {
         if (main_configuration_stack.findConfiguration(
-            stateStack, stateStackTop, curtok))
+            stateStack, stateStackTop, curtok)) {
           act = ERROR_ACTION;
-        else {
+        } else {
           main_configuration_stack.push(
               stateStack, stateStackTop, act + 1, curtok, action.size());
           act = baseAction(act);
@@ -224,8 +227,9 @@ class RecoveryParser extends DiagnoseParser {
             stateStackTop -= (rhs(act) - 1);
             act = ntAction(stateStack[stateStackTop], lhs(act));
           } while (act <= NUM_RULES);
-        } else
-          break; // assert(act == ACCEPT_ACTION);  THIS IS NOT SUPPOSED TO HAPPEN!!!
+        } else {
+          break;
+        } // assert(act == ACCEPT_ACTION);  THIS IS NOT SUPPOSED TO HAPPEN!!!
 
         try {
           stateStack[++stateStackTop] = act;
@@ -239,9 +243,11 @@ class RecoveryParser extends DiagnoseParser {
           if (scope_repair.distance >= MIN_DISTANCE) {
 //TemporaryErrorDump();
             tokens.add(start_token);
-            for (int token = first_stream_token;
+            for (var token = first_stream_token;
                 token != error_token;
-                token = tokStream.getNext(token)) tokens.add(token);
+                token = tokStream.getNext(token)) {
+              tokens.add(token);
+            }
             acceptRecovery(error_token);
             break; // equivalent to: return true;
           }
@@ -273,9 +279,9 @@ class RecoveryParser extends DiagnoseParser {
     // recoveries.
     // TODO: need to add action and fix the location_stack?
     //
-    IntTuple recovery_action = new IntTuple();
-    for (int k = 0; k <= scopeStackTop; k++) {
-      int scope_index = scopeIndex[k], la = scopeLa(scope_index);
+    var recovery_action = IntTuple();
+    for (var k = 0; k <= scopeStackTop; k++) {
+      var scope_index = scopeIndex[k], la = scopeLa(scope_index);
 
       //
       // Compute the action (or set of actions in case of conflicts) that
@@ -283,20 +289,21 @@ class RecoveryParser extends DiagnoseParser {
       // in the action tuple.
       //
       recovery_action.reset();
-      int act = tAction(stateStack[stateStackTop], la);
+      var act = tAction(stateStack[stateStackTop], la);
       if (act > ACCEPT_ACTION && act < ERROR_ACTION) // conflicting actions?
       {
         do {
           recovery_action.add(baseAction(act++));
         } while (baseAction(act) != 0);
-      } else
+      } else {
         recovery_action.add(act);
+      }
 
       //
       // For each action defined on the scope lookahead symbol,
       // try scope recovery. At least one action should succeed!
       //
-      int start_action_size = action.size();
+      var start_action_size = action.size();
       int index;
       for (index = 0; index < recovery_action.size(); index++) {
         //
@@ -307,7 +314,7 @@ class RecoveryParser extends DiagnoseParser {
         action.reset(start_action_size);
         tokStream.reset(error_token);
         tempStackTop = stateStackTop - 1;
-        int max_pos = stateStackTop;
+        var max_pos = stateStackTop;
 
         act = recovery_action.get(index);
         while (act <= NUM_RULES) {
@@ -317,7 +324,7 @@ class RecoveryParser extends DiagnoseParser {
           // reduction, until a goto action is computed ...
           //
           do {
-            int lhs_symbol = lhs(act);
+            var lhs_symbol = lhs(act);
             tempStackTop -= (rhs(act) - 1);
             act = (tempStackTop > max_pos
                 ? tempStack[tempStackTop]
@@ -338,7 +345,9 @@ class RecoveryParser extends DiagnoseParser {
         //
         if (act != ERROR_ACTION) {
           nextStackTop = ++tempStackTop;
-          for (int i = 0; i <= max_pos; i++) nextStack[i] = stateStack[i];
+          for (var i = 0; i <= max_pos; i++) {
+            nextStack[i] = stateStack[i];
+          }
 
           //
           // NOTE that we do not need to update location_stack and
@@ -346,10 +355,11 @@ class RecoveryParser extends DiagnoseParser {
           // these scopes are reduced, all these states will be popped
           // from the stack.
           //
-          for (int i = max_pos + 1; i <= tempStackTop; i++)
+          for (var i = max_pos + 1; i <= tempStackTop; i++) {
             nextStack[i] = tempStack[i];
+          }
           if (completeScope(action, scopeSuffix(scope_index))) {
-            for (int i = scopeSuffix(scopeIndex[k]); scopeRhs(i) != 0; i++) {
+            for (var i = scopeSuffix(scopeIndex[k]); scopeRhs(i) != 0; i++) {
               // System.err.println("(*) adding token for
               // nonterminal at location " + tokens.size());
               tokens.add((tokStream as IPrsStream).makeErrorToken(
@@ -377,17 +387,19 @@ class RecoveryParser extends DiagnoseParser {
   //
   //
   bool completeScope(IntSegmentedTuple action, int scope_rhs_index) {
-    int kind = scopeRhs(scope_rhs_index);
+    var kind = scopeRhs(scope_rhs_index);
     if (kind == 0) return true;
 
-    int act = nextStack[nextStackTop];
+    var act = nextStack[nextStackTop];
 
     if (kind > NT_OFFSET) {
-      int lhs_symbol = kind - NT_OFFSET;
+      var lhs_symbol = kind - NT_OFFSET;
       if (baseCheck(act + lhs_symbol) != lhs_symbol) // is there a valid
         // action defined on
         // lhs_symbol?
+      {
         return false;
+      }
       act = ntAction(act, lhs_symbol);
 
       //
@@ -431,8 +443,8 @@ class RecoveryParser extends DiagnoseParser {
     } else if (act > ACCEPT_ACTION &&
         act < ERROR_ACTION) // conflicting actions?
     {
-      int save_action_size = action.size();
-      for (int i = act;
+      var save_action_size = action.size();
+      for (var i = act;
           baseAction(i) != 0;
           i++) // consider only shift and shift-reduce actions
       {
@@ -440,7 +452,9 @@ class RecoveryParser extends DiagnoseParser {
         act = baseAction(i);
         action.add(act); // save this terminal action
         if (act <= NUM_RULES) // Ignore reduce actions
+         {
           ;
+          }
         else if (act < ACCEPT_ACTION) {
           nextStackTop++;
           nextStack[nextStackTop] = act;

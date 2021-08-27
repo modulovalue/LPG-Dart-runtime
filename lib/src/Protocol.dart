@@ -204,7 +204,6 @@ class EscapeStrictPropertyInitializationLexStream implements ILexStream{
     throw UnimplementedError();
   }
 
-  @override
   IPrsStream getPrsStream() {
     // TODO: implement getPrsStream
     throw UnimplementedError();

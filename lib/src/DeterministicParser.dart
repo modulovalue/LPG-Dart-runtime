@@ -135,8 +135,8 @@ class DeterministicParser extends Stacks {
   }
 
   void reset1() {
-    this.taking_actions = false;
-    this.markerKind = 0;
+    taking_actions = false;
+    markerKind = 0;
 
     if (action != null) {
       action!.reset();
@@ -255,8 +255,9 @@ class DeterministicParser extends Stacks {
         lastToken = curtok;
         curtok = tokStream.getToken();
         current_kind = tokStream.getKind(curtok);
-      } else
+      } else {
         break ProcessTerminals;
+      }
     }
 
     taking_actions = false; // indicate that we are done
@@ -281,15 +282,18 @@ class DeterministicParser extends Stacks {
   // using the entry point parse(int [], int).
   //
   void resetParserEntry(int marker_kind) {
-    this.markerKind = marker_kind;
+    markerKind = marker_kind;
 
-    if (stateStack == null) reallocateStacks(); // make initial allocation
+    if (stateStack.isEmpty) {
+      reallocateStacks();
+    } // make initial allocation
     stateStackTop = 0;
     stateStack[stateStackTop] = START_STATE;
-    if (action == null)
-      action = new IntTuple(1 << 20);
-    else
+    if (action == null) {
+      action = IntTuple(1 << 20);
+    } else {
       action!.reset();
+    }
 
     //
     // Indicate that we are going to run the incremental parser and that
@@ -318,9 +322,10 @@ class DeterministicParser extends Stacks {
   // the error token. If we can't do that, reset it to the beginning.
   //
   void errorReset() {
-    var gate = (this.markerKind == 0 ? 0 : 1);
-    for (; stateStackTop >= gate; stateStackTop--)
+    var gate = (markerKind == 0 ? 0 : 1);
+    for (; stateStackTop >= gate; stateStackTop--) {
       if (recoverableState(stateStack[stateStackTop])) break;
+    }
     if (stateStackTop < gate) resetParserEntry(markerKind);
     return;
   }
@@ -358,7 +363,7 @@ class DeterministicParser extends Stacks {
     // to simulate these actions. We initialize its first useful
     // offset here.
     //
-    int save_action_length = action!.size(),
+    var save_action_length = action!.size(),
         pos = stateStackTop,
         location_top = stateStackTop - 1;
 
@@ -413,8 +418,9 @@ class DeterministicParser extends Stacks {
       // the info that was temporarily computed in the locationStack.
       //
       stateStackTop = location_top + 1;
-      for (var i = pos + 1; i <= stateStackTop; i++)
+      for (var i = pos + 1; i <= stateStackTop; i++) {
         stateStack[i] = locationStack[i];
+      }
 
       //
       // If we have a shift-reduce, process it as well as
@@ -440,8 +446,9 @@ class DeterministicParser extends Stacks {
         reallocateStacks();
         stateStack[stateStackTop] = currentAction;
       }
-    } else if (currentAction == ERROR_ACTION)
-      action!.reset(save_action_length); // restore original action state.
+    } else if (currentAction == ERROR_ACTION) {
+      action!.reset(save_action_length);
+    } // restore original action state.
     return currentAction;
   }
 
