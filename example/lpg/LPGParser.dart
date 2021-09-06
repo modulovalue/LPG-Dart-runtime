@@ -239,7 +239,7 @@ class LPGParser extends Object implements RuleAction
                     //#line 47 LPGParser.g
                     EofSeg(getLeftIToken(), getRightIToken(),
                            //#line 47 LPGParser.g
-                           getRhsSym(2) as Ieof_segment)
+                           getRhsSym(2) as ASTNode)
                 //#line 47 LPGParser.g
                 );
             
@@ -253,7 +253,7 @@ class LPGParser extends Object implements RuleAction
                     //#line 48 LPGParser.g
                     EolSeg(getLeftIToken(), getRightIToken(),
                            //#line 48 LPGParser.g
-                           getRhsSym(2) as Ieol_segment)
+                           getRhsSym(2) as ASTNode)
                 //#line 48 LPGParser.g
                 );
             
@@ -267,7 +267,7 @@ class LPGParser extends Object implements RuleAction
                     //#line 49 LPGParser.g
                     ErrorSeg(getLeftIToken(), getRightIToken(),
                              //#line 49 LPGParser.g
-                             getRhsSym(2) as Ierror_segment)
+                             getRhsSym(2) as ASTNode)
                 //#line 49 LPGParser.g
                 );
             
@@ -323,7 +323,7 @@ class LPGParser extends Object implements RuleAction
                     //#line 53 LPGParser.g
                     IdentifierSeg(getLeftIToken(), getRightIToken(),
                                   //#line 53 LPGParser.g
-                                  getRhsSym(2) as Iidentifier_segment)
+                                  getRhsSym(2) as ASTNode)
                 //#line 53 LPGParser.g
                 );
             
@@ -575,7 +575,7 @@ class LPGParser extends Object implements RuleAction
                            //#line 72 LPGParser.g
                            ASTNodeToken(getRhsIToken(1)),
                            //#line 72 LPGParser.g
-                           getRhsSym(2) as Ioption_value?)
+                           getRhsSym(2) as ASTNode?)
                 //#line 72 LPGParser.g
                 );
             
@@ -643,7 +643,7 @@ class LPGParser extends Object implements RuleAction
                //#line 79 "LPGParser.g"
                 setResult(
                     //#line 79 LPGParser.g
-                    aliasSpecList.aliasSpecListfromElement(getRhsSym(1) as IaliasSpec, true /* left recursive */)
+                    aliasSpecList.aliasSpecListfromElement(getRhsSym(1) as ASTNode, true /* left recursive */)
                 //#line 79 LPGParser.g
                 );
             
@@ -667,9 +667,9 @@ class LPGParser extends Object implements RuleAction
                                //#line 81 LPGParser.g
                                ASTNodeToken(getRhsIToken(1)),
                                //#line 81 LPGParser.g
-                               getRhsSym(2) as Iproduces,
+                               getRhsSym(2) as ASTNode,
                                //#line 81 LPGParser.g
-                               getRhsSym(3) as Ialias_rhs)
+                               getRhsSym(3) as ASTNode)
                 //#line 81 LPGParser.g
                 );
             
@@ -685,9 +685,9 @@ class LPGParser extends Object implements RuleAction
                                //#line 82 LPGParser.g
                                ASTNodeToken(getRhsIToken(1)),
                                //#line 82 LPGParser.g
-                               getRhsSym(2) as Iproduces,
+                               getRhsSym(2) as ASTNode,
                                //#line 82 LPGParser.g
-                               getRhsSym(3) as Ialias_rhs)
+                               getRhsSym(3) as ASTNode)
                 //#line 82 LPGParser.g
                 );
             
@@ -703,9 +703,9 @@ class LPGParser extends Object implements RuleAction
                                //#line 83 LPGParser.g
                                ASTNodeToken(getRhsIToken(1)),
                                //#line 83 LPGParser.g
-                               getRhsSym(2) as Iproduces,
+                               getRhsSym(2) as ASTNode,
                                //#line 83 LPGParser.g
-                               getRhsSym(3) as Ialias_rhs)
+                               getRhsSym(3) as ASTNode)
                 //#line 83 LPGParser.g
                 );
             
@@ -721,9 +721,9 @@ class LPGParser extends Object implements RuleAction
                                //#line 84 LPGParser.g
                                ASTNodeToken(getRhsIToken(1)),
                                //#line 84 LPGParser.g
-                               getRhsSym(2) as Iproduces,
+                               getRhsSym(2) as ASTNode,
                                //#line 84 LPGParser.g
-                               getRhsSym(3) as Ialias_rhs)
+                               getRhsSym(3) as ASTNode)
                 //#line 84 LPGParser.g
                 );
             
@@ -739,9 +739,9 @@ class LPGParser extends Object implements RuleAction
                                //#line 85 LPGParser.g
                                ASTNodeToken(getRhsIToken(1)),
                                //#line 85 LPGParser.g
-                               getRhsSym(2) as Iproduces,
+                               getRhsSym(2) as ASTNode,
                                //#line 85 LPGParser.g
-                               getRhsSym(3) as Ialias_rhs)
+                               getRhsSym(3) as ASTNode)
                 //#line 85 LPGParser.g
                 );
             
@@ -757,9 +757,9 @@ class LPGParser extends Object implements RuleAction
                                //#line 86 LPGParser.g
                                getRhsSym(1) as alias_lhs_macro_name,
                                //#line 86 LPGParser.g
-                               getRhsSym(2) as Iproduces,
+                               getRhsSym(2) as ASTNode,
                                //#line 86 LPGParser.g
-                               getRhsSym(3) as Ialias_rhs)
+                               getRhsSym(3) as ASTNode)
                 //#line 86 LPGParser.g
                 );
             
@@ -894,7 +894,7 @@ class LPGParser extends Object implements RuleAction
                     //#line 103 LPGParser.g
                     defineSpec(getLeftIToken(), getRightIToken(),
                                //#line 103 LPGParser.g
-                               getRhsSym(1) as Imacro_name_symbol,
+                               getRhsSym(1) as ASTNode,
                                //#line 103 LPGParser.g
                                getRhsSym(2) as macro_segment)
                 //#line 103 LPGParser.g
@@ -959,7 +959,7 @@ class LPGParser extends Object implements RuleAction
                //#line 118 "LPGParser.g"
                 setResult(
                     //#line 118 LPGParser.g
-                    terminal_symbolList.terminal_symbolListfromElement(getRhsSym(1) as Iterminal_symbol, true /* left recursive */)
+                    terminal_symbolList.terminal_symbolListfromElement(getRhsSym(1) as ASTNode, true /* left recursive */)
                 //#line 118 LPGParser.g
                 );
             
@@ -1123,7 +1123,7 @@ class LPGParser extends Object implements RuleAction
                               //#line 142 LPGParser.g
                               getRhsSym(2) as optMacroName?,
                               //#line 142 LPGParser.g
-                              getRhsSym(3) as Iproduces,
+                              getRhsSym(3) as ASTNode,
                               //#line 142 LPGParser.g
                               getRhsSym(4) as ruleList)
                 //#line 142 LPGParser.g
@@ -1169,7 +1169,7 @@ class LPGParser extends Object implements RuleAction
                //#line 150 "LPGParser.g"
                 setResult(
                     //#line 150 LPGParser.g
-                    keywordSpecList.keywordSpecListfromElement(getRhsSym(1) as IkeywordSpec, true /* left recursive */)
+                    keywordSpecList.keywordSpecListfromElement(getRhsSym(1) as ASTNode, true /* left recursive */)
                 //#line 150 LPGParser.g
                 );
             
@@ -1196,11 +1196,11 @@ class LPGParser extends Object implements RuleAction
                     //#line 152 LPGParser.g
                     keywordSpec(getLeftIToken(), getRightIToken(),
                                 //#line 152 LPGParser.g
-                                getRhsSym(1) as Iterminal_symbol,
+                                getRhsSym(1) as ASTNode,
                                 //#line 152 LPGParser.g
-                                getRhsSym(2) as Iproduces,
+                                getRhsSym(2) as ASTNode,
                                 //#line 152 LPGParser.g
-                                getRhsSym(3) as Iname)
+                                getRhsSym(3) as ASTNode)
                 //#line 152 LPGParser.g
                 );
             
@@ -1234,11 +1234,11 @@ class LPGParser extends Object implements RuleAction
                     //#line 156 LPGParser.g
                     nameSpec(getLeftIToken(), getRightIToken(),
                              //#line 156 LPGParser.g
-                             getRhsSym(1) as Iname,
+                             getRhsSym(1) as ASTNode,
                              //#line 156 LPGParser.g
-                             getRhsSym(2) as Iproduces,
+                             getRhsSym(2) as ASTNode,
                              //#line 156 LPGParser.g
-                             getRhsSym(3) as Iname)
+                             getRhsSym(3) as ASTNode)
                 //#line 156 LPGParser.g
                 );
             
@@ -1382,7 +1382,7 @@ class LPGParser extends Object implements RuleAction
                             //#line 173 LPGParser.g
                             getRhsSym(1) as RuleName,
                             //#line 173 LPGParser.g
-                            getRhsSym(2) as Iproduces,
+                            getRhsSym(2) as ASTNode,
                             //#line 173 LPGParser.g
                             getRhsSym(3) as ruleList)
                 //#line 173 LPGParser.g
@@ -1635,7 +1635,7 @@ class LPGParser extends Object implements RuleAction
                //#line 217 "LPGParser.g"
                 setResult(
                     //#line 217 LPGParser.g
-                    start_symbolList.start_symbolListfromElement(getRhsSym(1) as Istart_symbol, true /* left recursive */)
+                    start_symbolList.start_symbolListfromElement(getRhsSym(1) as ASTNode, true /* left recursive */)
                 //#line 217 LPGParser.g
                 );
             
@@ -1701,7 +1701,7 @@ class LPGParser extends Object implements RuleAction
                     //#line 227 LPGParser.g
                     terminal(getLeftIToken(), getRightIToken(),
                              //#line 227 LPGParser.g
-                             getRhsSym(1) as Iterminal_symbol,
+                             getRhsSym(1) as ASTNode,
                              //#line 227 LPGParser.g
                              getRhsSym(2) as optTerminalAlias?)
                 //#line 227 LPGParser.g
@@ -1725,9 +1725,9 @@ class LPGParser extends Object implements RuleAction
                     //#line 229 LPGParser.g
                     optTerminalAlias(getLeftIToken(), getRightIToken(),
                                      //#line 229 LPGParser.g
-                                     getRhsSym(1) as Iproduces,
+                                     getRhsSym(1) as ASTNode,
                                      //#line 229 LPGParser.g
-                                     getRhsSym(2) as Iname)
+                                     getRhsSym(2) as ASTNode)
                 //#line 229 LPGParser.g
                 );
             
@@ -1792,7 +1792,7 @@ class LPGParser extends Object implements RuleAction
                                       //#line 241 LPGParser.g
                                       ASTNodeToken(getRhsIToken(1)),
                                       //#line 241 LPGParser.g
-                                      getRhsSym(2) as Iproduces,
+                                      getRhsSym(2) as ASTNode,
                                       //#line 241 LPGParser.g
                                       getRhsSym(3) as SYMBOLList,
                                       //#line 241 LPGParser.g
@@ -1934,6 +1934,593 @@ class LPGParser extends Object implements RuleAction
     }
 
 }
+abstract class IRootForLPGParser
+    {
+         IToken getLeftIToken() ;
+        IToken  getRightIToken() ;
+
+        void accept(IAstVisitor v );
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>alias_lhs_macro_name
+     **<li>macro_segment
+     **<li>optMacroName
+     **<li>include_segment
+     **<li>RuleName
+     **<li>symAttrs
+     **<li>action_segment
+     **<li>recover_symbol
+     **<li>END_KEY_OPT
+     **<li>alias_rhs0
+     **<li>alias_rhs1
+     **<li>alias_rhs2
+     **<li>alias_rhs3
+     **<li>alias_rhs4
+     **<li>alias_rhs5
+     **<li>alias_rhs6
+     **<li>macro_name_symbol0
+     **<li>macro_name_symbol1
+     **<li>name0
+     **<li>name1
+     **<li>name2
+     **<li>name3
+     **<li>name4
+     **<li>name5
+     **<li>produces0
+     **<li>produces1
+     **<li>produces2
+     **<li>produces3
+     **<li>symWithAttrs0
+     **<li>symWithAttrs1
+     **<li>start_symbol0
+     **<li>start_symbol1
+     **<li>terminal_symbol0
+     **<li>terminal_symbol1
+     **</ul>
+     **</b>
+     **/
+abstract class IASTNodeToken implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>LPG</b>
+     **/
+abstract class ILPG implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>option_specList</b>
+     **/
+abstract class Ioptions_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>LPG_itemList</b>
+     **/
+abstract class ILPG_INPUT implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>AliasSeg
+     **<li>AstSeg
+     **<li>DefineSeg
+     **<li>EofSeg
+     **<li>EolSeg
+     **<li>ErrorSeg
+     **<li>ExportSeg
+     **<li>GlobalsSeg
+     **<li>HeadersSeg
+     **<li>IdentifierSeg
+     **<li>ImportSeg
+     **<li>IncludeSeg
+     **<li>KeywordsSeg
+     **<li>NamesSeg
+     **<li>NoticeSeg
+     **<li>RulesSeg
+     **<li>SoftKeywordsSeg
+     **<li>StartSeg
+     **<li>TerminalsSeg
+     **<li>TrailersSeg
+     **<li>TypesSeg
+     **<li>RecoverSeg
+     **<li>PredecessorSeg
+     **</ul>
+     **</b>
+     **/
+abstract class ILPG_item implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>aliasSpecList</b>
+     **/
+abstract class Ialias_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>action_segmentList</b>
+     **/
+abstract class Iast_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>defineSpecList</b>
+     **/
+abstract class Idefine_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>terminal_symbol0
+     **<li>terminal_symbol1
+     **</ul>
+     **</b>
+     **/
+abstract class Ieof_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>terminal_symbol0
+     **<li>terminal_symbol1
+     **</ul>
+     **</b>
+     **/
+abstract class Ieol_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>terminal_symbol0
+     **<li>terminal_symbol1
+     **</ul>
+     **</b>
+     **/
+abstract class Ierror_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>terminal_symbolList</b>
+     **/
+abstract class Iexport_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>action_segmentList</b>
+     **/
+abstract class Iglobals_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>action_segmentList</b>
+     **/
+abstract class Iheaders_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>terminal_symbol0
+     **<li>terminal_symbol1
+     **</ul>
+     **</b>
+     **/
+abstract class Iidentifier_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>import_segment</b>
+     **/
+abstract class Iimport_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>keywordSpecList</b>
+     **/
+abstract class Ikeywords_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>nameSpecList</b>
+     **/
+abstract class Inames_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>action_segmentList</b>
+     **/
+abstract class Inotice_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>rules_segment</b>
+     **/
+abstract class Irules_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>start_symbolList</b>
+     **/
+abstract class Istart_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>terminalList</b>
+     **/
+abstract class Iterminals_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>action_segmentList</b>
+     **/
+abstract class Itrailers_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>type_declarationsList</b>
+     **/
+abstract class Itypes_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>SYMBOLList</b>
+     **/
+abstract class Irecover_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>symbol_pairList</b>
+     **/
+abstract class Ipredecessor_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>option_spec</b>
+     **/
+abstract class Ioption_spec implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>optionList</b>
+     **/
+abstract class Ioption_list implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>option</b>
+     **/
+abstract class Ioption implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>option_value0
+     **<li>option_value1
+     **</ul>
+     **</b>
+     **/
+abstract class Ioption_value implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>SYMBOLList</b>
+     **/
+abstract class Isymbol_list implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>aliasSpec0
+     **<li>aliasSpec1
+     **<li>aliasSpec2
+     **<li>aliasSpec3
+     **<li>aliasSpec4
+     **<li>aliasSpec5
+     **</ul>
+     **</b>
+     **/
+abstract class IaliasSpec implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>defineSpec</b>
+     **/
+abstract class IdefineSpec implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>drop_commandList</b>
+     **/
+abstract class Idrop_command_list implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>drop_command0
+     **<li>drop_command1
+     **</ul>
+     **</b>
+     **/
+abstract class Idrop_command implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>SYMBOLList</b>
+     **/
+abstract class Idrop_symbols implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>drop_ruleList</b>
+     **/
+abstract class Idrop_rules implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>drop_rule</b>
+     **/
+abstract class Idrop_rule implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>ruleList</b>
+     **/
+abstract class IruleList implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>keywordSpec
+     **<li>terminal_symbol0
+     **<li>terminal_symbol1
+     **</ul>
+     **</b>
+     **/
+abstract class IkeywordSpec implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>nameSpec</b>
+     **/
+abstract class InameSpec implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>nonTermList</b>
+     **/
+abstract class InonTermList implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>nonTerm</b>
+     **/
+abstract class InonTerm implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>rule</b>
+     **/
+abstract class Irule implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>symWithAttrsList</b>
+     **/
+abstract class IsymWithAttrsList implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>action_segment</b>
+     **/
+abstract class Iopt_action_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>terminal</b>
+     **/
+abstract class Iterminal implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>optTerminalAlias</b>
+     **/
+abstract class IoptTerminalAlias implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>type_declarations</b>
+     **/
+abstract class Itype_declarations implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>SYMBOLList</b>
+     **/
+abstract class IbarSymbolList implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>symbol_pair</b>
+     **/
+abstract class Isymbol_pair implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>END_KEY_OPT</b>
+     **/
+abstract class IEND_KEY_OPT implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>include_segment</b>
+     **/
+abstract class Iinclude_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>produces0
+     **<li>produces1
+     **<li>produces2
+     **<li>produces3
+     **</ul>
+     **</b>
+     **/
+abstract class Iproduces implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>alias_rhs0
+     **<li>alias_rhs1
+     **<li>alias_rhs2
+     **<li>alias_rhs3
+     **<li>alias_rhs4
+     **<li>alias_rhs5
+     **<li>alias_rhs6
+     **</ul>
+     **</b>
+     **/
+abstract class Ialias_rhs implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>alias_lhs_macro_name</b>
+     **/
+abstract class Ialias_lhs_macro_name implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>action_segmentList</b>
+     **/
+abstract class Iaction_segment_list implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>macro_name_symbol0
+     **<li>macro_name_symbol1
+     **</ul>
+     **</b>
+     **/
+abstract class Imacro_name_symbol implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>macro_segment</b>
+     **/
+abstract class Imacro_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>terminal_symbol0
+     **<li>terminal_symbol1
+     **</ul>
+     **</b>
+     **/
+abstract class Iterminal_symbol implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>action_segment</b>
+     **/
+abstract class Iaction_segment implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>optMacroName</b>
+     **/
+abstract class IoptMacroName implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>name0
+     **<li>name1
+     **<li>name2
+     **<li>name3
+     **<li>name4
+     **<li>name5
+     **</ul>
+     **</b>
+     **/
+abstract class Iname implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>RuleName</b>
+     **/
+abstract class IruleNameWithAttributes implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by:
+     **<b>
+     **<ul>
+     **<li>symWithAttrs0
+     **<li>symWithAttrs1
+     **</ul>
+     **</b>
+     **/
+abstract class IsymWithAttrs implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is implemented by <b>symAttrs</b>
+     **/
+abstract class IoptAttrList implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
+     **<b>
+     **<ul>
+     **<li>start_symbol0
+     **<li>start_symbol1
+     **</ul>
+     **</b>
+     **/
+abstract class Istart_symbol implements IRootForLPGParser    {
+    }
+
+    /***
+     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>recover_symbol</b>
+     **/
+abstract class Irecover_symbol implements IRootForLPGParser    {
+    }
+
 abstract class ASTNode implements IAst
     {
         IAst? getNextAst(){ return null; }
@@ -2075,576 +2662,6 @@ class ASTNodeToken extends ASTNode implements IASTNodeToken
         }
     }
 
-abstract class IRootForLPGParser
-    {
-         IToken getLeftIToken() ;
-        IToken  getRightIToken() ;
-
-        void accept(IAstVisitor v );
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>alias_lhs_macro_name
-     **<li>macro_segment
-     **<li>optMacroName
-     **<li>include_segment
-     **<li>RuleName
-     **<li>symAttrs
-     **<li>action_segment
-     **<li>recover_symbol
-     **<li>END_KEY_OPT
-     **<li>alias_rhs0
-     **<li>alias_rhs1
-     **<li>alias_rhs2
-     **<li>alias_rhs3
-     **<li>alias_rhs4
-     **<li>alias_rhs5
-     **<li>alias_rhs6
-     **<li>macro_name_symbol0
-     **<li>macro_name_symbol1
-     **<li>name0
-     **<li>name1
-     **<li>name2
-     **<li>name3
-     **<li>name4
-     **<li>name5
-     **<li>produces0
-     **<li>produces1
-     **<li>produces2
-     **<li>produces3
-     **<li>symWithAttrs0
-     **<li>symWithAttrs1
-     **<li>start_symbol0
-     **<li>start_symbol1
-     **<li>terminal_symbol0
-     **<li>terminal_symbol1
-     **</ul>
-     **</b>
-     **/
-abstract class IASTNodeToken implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>LPG</b>
-     **/
-abstract class ILPG implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>option_specList</b>
-     **/
-abstract class Ioptions_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>LPG_itemList</b>
-     **/
-abstract class ILPG_INPUT implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>AliasSeg
-     **<li>AstSeg
-     **<li>DefineSeg
-     **<li>EofSeg
-     **<li>EolSeg
-     **<li>ErrorSeg
-     **<li>ExportSeg
-     **<li>GlobalsSeg
-     **<li>HeadersSeg
-     **<li>IdentifierSeg
-     **<li>ImportSeg
-     **<li>IncludeSeg
-     **<li>KeywordsSeg
-     **<li>NamesSeg
-     **<li>NoticeSeg
-     **<li>RulesSeg
-     **<li>SoftKeywordsSeg
-     **<li>StartSeg
-     **<li>TerminalsSeg
-     **<li>TrailersSeg
-     **<li>TypesSeg
-     **<li>RecoverSeg
-     **<li>PredecessorSeg
-     **</ul>
-     **</b>
-     **/
-abstract class ILPG_item implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>aliasSpecList</b>
-     **/
-abstract class Ialias_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>END_KEY_OPT</b>
-     **/
-abstract class IEND_KEY_OPT implements IASTNodeToken {}
-
-    /***
-     ** is implemented by <b>action_segmentList</b>
-     **/
-abstract class Iast_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>defineSpecList</b>
-     **/
-abstract class Idefine_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>terminal_symbol0
-     **<li>terminal_symbol1
-     **</ul>
-     **</b>
-     **/
-abstract class Ieof_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>terminal_symbol0
-     **<li>terminal_symbol1
-     **</ul>
-     **</b>
-     **/
-abstract class Ieol_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>terminal_symbol0
-     **<li>terminal_symbol1
-     **</ul>
-     **</b>
-     **/
-abstract class Ierror_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>terminal_symbolList</b>
-     **/
-abstract class Iexport_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>action_segmentList</b>
-     **/
-abstract class Iglobals_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>action_segmentList</b>
-     **/
-abstract class Iheaders_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>terminal_symbol0
-     **<li>terminal_symbol1
-     **</ul>
-     **</b>
-     **/
-abstract class Iidentifier_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>import_segment</b>
-     **/
-abstract class Iimport_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>include_segment</b>
-     **/
-abstract class Iinclude_segment implements IASTNodeToken {}
-
-    /***
-     ** is implemented by <b>keywordSpecList</b>
-     **/
-abstract class Ikeywords_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>nameSpecList</b>
-     **/
-abstract class Inames_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>action_segmentList</b>
-     **/
-abstract class Inotice_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>rules_segment</b>
-     **/
-abstract class Irules_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>start_symbolList</b>
-     **/
-abstract class Istart_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>terminalList</b>
-     **/
-abstract class Iterminals_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>action_segmentList</b>
-     **/
-abstract class Itrailers_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>type_declarationsList</b>
-     **/
-abstract class Itypes_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>SYMBOLList</b>
-     **/
-abstract class Irecover_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>symbol_pairList</b>
-     **/
-abstract class Ipredecessor_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>option_spec</b>
-     **/
-abstract class Ioption_spec implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>optionList</b>
-     **/
-abstract class Ioption_list implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>option</b>
-     **/
-abstract class Ioption implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>option_value0
-     **<li>option_value1
-     **</ul>
-     **</b>
-     **/
-abstract class Ioption_value implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>SYMBOLList</b>
-     **/
-abstract class Isymbol_list implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>aliasSpec0
-     **<li>aliasSpec1
-     **<li>aliasSpec2
-     **<li>aliasSpec3
-     **<li>aliasSpec4
-     **<li>aliasSpec5
-     **</ul>
-     **</b>
-     **/
-abstract class IaliasSpec implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>produces0
-     **<li>produces1
-     **<li>produces2
-     **<li>produces3
-     **</ul>
-     **</b>
-     **/
-abstract class Iproduces implements IASTNodeToken {}
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>alias_rhs0
-     **<li>alias_rhs1
-     **<li>alias_rhs2
-     **<li>alias_rhs3
-     **<li>alias_rhs4
-     **<li>alias_rhs5
-     **<li>alias_rhs6
-     **</ul>
-     **</b>
-     **/
-abstract class Ialias_rhs implements IASTNodeToken {}
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>alias_lhs_macro_name</b>
-     **/
-abstract class Ialias_lhs_macro_name implements IASTNodeToken {}
-
-    /***
-     ** is implemented by <b>action_segmentList</b>
-     **/
-abstract class Iaction_segment_list implements Iast_segment, Iheaders_segment, Itrailers_segment {}
-
-    /***
-     ** is implemented by <b>defineSpec</b>
-     **/
-abstract class IdefineSpec implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>macro_name_symbol0
-     **<li>macro_name_symbol1
-     **</ul>
-     **</b>
-     **/
-abstract class Imacro_name_symbol implements IASTNodeToken {}
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>macro_segment</b>
-     **/
-abstract class Imacro_segment implements IASTNodeToken {}
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>terminal_symbol0
-     **<li>terminal_symbol1
-     **</ul>
-     **</b>
-     **/
-abstract class Iterminal_symbol implements Ieol_segment, Ieof_segment, Ierror_segment, Iidentifier_segment, IkeywordSpec, IASTNodeToken {}
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>action_segment</b>
-     **/
-abstract class Iaction_segment implements Iopt_action_segment, IASTNodeToken {}
-
-    /***
-     ** is implemented by <b>drop_commandList</b>
-     **/
-abstract class Idrop_command_list implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>drop_command0
-     **<li>drop_command1
-     **</ul>
-     **</b>
-     **/
-abstract class Idrop_command implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>SYMBOLList</b>
-     **/
-abstract class Idrop_symbols implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>drop_ruleList</b>
-     **/
-abstract class Idrop_rules implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>drop_rule</b>
-     **/
-abstract class Idrop_rule implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>optMacroName</b>
-     **/
-abstract class IoptMacroName implements IASTNodeToken {}
-
-    /***
-     ** is implemented by <b>ruleList</b>
-     **/
-abstract class IruleList implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>keywordSpec
-     **<li>terminal_symbol0
-     **<li>terminal_symbol1
-     **</ul>
-     **</b>
-     **/
-abstract class IkeywordSpec implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>name0
-     **<li>name1
-     **<li>name2
-     **<li>name3
-     **<li>name4
-     **<li>name5
-     **</ul>
-     **</b>
-     **/
-abstract class Iname implements IASTNodeToken {}
-
-    /***
-     ** is implemented by <b>nameSpec</b>
-     **/
-abstract class InameSpec implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>nonTermList</b>
-     **/
-abstract class InonTermList implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>nonTerm</b>
-     **/
-abstract class InonTerm implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>RuleName</b>
-     **/
-abstract class IruleNameWithAttributes implements IASTNodeToken {}
-
-    /***
-     ** is implemented by <b>rule</b>
-     **/
-abstract class Irule implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>symWithAttrsList</b>
-     **/
-abstract class IsymWithAttrsList implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by:
-     **<b>
-     **<ul>
-     **<li>symWithAttrs0
-     **<li>symWithAttrs1
-     **</ul>
-     **</b>
-     **/
-abstract class IsymWithAttrs implements IASTNodeToken {}
-
-    /***
-     ** is implemented by <b>symAttrs</b>
-     **/
-abstract class IoptAttrList implements IASTNodeToken {}
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>action_segment</b>
-     **/
-abstract class Iopt_action_segment implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by:
-     **<b>
-     **<ul>
-     **<li>start_symbol0
-     **<li>start_symbol1
-     **</ul>
-     **</b>
-     **/
-abstract class Istart_symbol implements IASTNodeToken {}
-
-    /***
-     ** is implemented by <b>terminal</b>
-     **/
-abstract class Iterminal implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>optTerminalAlias</b>
-     **/
-abstract class IoptTerminalAlias implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>type_declarations</b>
-     **/
-abstract class Itype_declarations implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>SYMBOLList</b>
-     **/
-abstract class IbarSymbolList implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is implemented by <b>symbol_pair</b>
-     **/
-abstract class Isymbol_pair implements IRootForLPGParser    {
-    }
-
-    /***
-     ** is always implemented by <b>ASTNodeToken</b>. It is also implemented by <b>recover_symbol</b>
-     **/
-abstract class Irecover_symbol implements IASTNodeToken {}
-
 /**
  *<b>
 *<li>Rule 1:  LPG ::= options_segment LPG_INPUT
@@ -2711,12 +2728,12 @@ class LPG extends ASTNode implements ILPG
  */
 class LPG_itemList extends AbstractASTNodeList implements ILPG_INPUT
     {
-         ILPG_item getLPG_itemAt(int i){ return getElementAt(i) as ILPG_item; }
+         ASTNode getLPG_itemAt(int i){ return getElementAt(i) as ASTNode; }
 
         LPG_itemList(IToken leftToken, IToken rightToken , bool leftRecursive  ):super(leftToken, rightToken, leftRecursive)
         {}
 
-        static LPG_itemList LPG_itemListfromElement(ILPG_item element,bool leftRecursive )
+        static LPG_itemList LPG_itemListfromElement(ASTNode element,bool leftRecursive )
         {
             var obj = LPG_itemList(element.getLeftIToken(),element.getRightIToken(), leftRecursive);
             obj.list.add(element);
@@ -2739,7 +2756,7 @@ class LPG_itemList extends AbstractASTNodeList implements ILPG_INPUT
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitLPG_itemList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -2748,7 +2765,7 @@ class LPG_itemList extends AbstractASTNodeList implements ILPG_INPUT
                     element.accept(v);
                 }
             }
-            v.endVisit(this);
+            v.endVisitLPG_itemList(this);
         }
     }
 
@@ -2903,13 +2920,13 @@ class DefineSeg extends ASTNode implements ILPG_item
  */
 class EofSeg extends ASTNode implements ILPG_item
     {
-         late Ieof_segment _eof_segment;
+         late ASTNode _eof_segment;
 
-         Ieof_segment geteof_segment(){ return _eof_segment; }
-         void seteof_segment(Ieof_segment _eof_segment){ this._eof_segment = _eof_segment; }
+         ASTNode geteof_segment(){ return _eof_segment; }
+         void seteof_segment(ASTNode _eof_segment){ this._eof_segment = _eof_segment; }
 
         EofSeg(IToken leftIToken, IToken rightIToken,
-               Ieof_segment _eof_segment)
+               ASTNode _eof_segment)
             :super(leftIToken, rightIToken)
 
         {
@@ -2951,13 +2968,13 @@ class EofSeg extends ASTNode implements ILPG_item
  */
 class EolSeg extends ASTNode implements ILPG_item
     {
-         late Ieol_segment _eol_segment;
+         late ASTNode _eol_segment;
 
-         Ieol_segment geteol_segment(){ return _eol_segment; }
-         void seteol_segment(Ieol_segment _eol_segment){ this._eol_segment = _eol_segment; }
+         ASTNode geteol_segment(){ return _eol_segment; }
+         void seteol_segment(ASTNode _eol_segment){ this._eol_segment = _eol_segment; }
 
         EolSeg(IToken leftIToken, IToken rightIToken,
-               Ieol_segment _eol_segment)
+               ASTNode _eol_segment)
             :super(leftIToken, rightIToken)
 
         {
@@ -2999,13 +3016,13 @@ class EolSeg extends ASTNode implements ILPG_item
  */
 class ErrorSeg extends ASTNode implements ILPG_item
     {
-         late Ierror_segment _error_segment;
+         late ASTNode _error_segment;
 
-         Ierror_segment geterror_segment(){ return _error_segment; }
-         void seterror_segment(Ierror_segment _error_segment){ this._error_segment = _error_segment; }
+         ASTNode geterror_segment(){ return _error_segment; }
+         void seterror_segment(ASTNode _error_segment){ this._error_segment = _error_segment; }
 
         ErrorSeg(IToken leftIToken, IToken rightIToken,
-                 Ierror_segment _error_segment)
+                 ASTNode _error_segment)
             :super(leftIToken, rightIToken)
 
         {
@@ -3191,13 +3208,13 @@ class HeadersSeg extends ASTNode implements ILPG_item
  */
 class IdentifierSeg extends ASTNode implements ILPG_item
     {
-         late Iidentifier_segment _identifier_segment;
+         late ASTNode _identifier_segment;
 
-         Iidentifier_segment getidentifier_segment(){ return _identifier_segment; }
-         void setidentifier_segment(Iidentifier_segment _identifier_segment){ this._identifier_segment = _identifier_segment; }
+         ASTNode getidentifier_segment(){ return _identifier_segment; }
+         void setidentifier_segment(ASTNode _identifier_segment){ this._identifier_segment = _identifier_segment; }
 
         IdentifierSeg(IToken leftIToken, IToken rightIToken,
-                      Iidentifier_segment _identifier_segment)
+                      ASTNode _identifier_segment)
             :super(leftIToken, rightIToken)
 
         {
@@ -3892,7 +3909,7 @@ class option_specList extends AbstractASTNodeList implements Ioptions_segment
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitoption_specList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -3903,7 +3920,7 @@ class option_specList extends AbstractASTNodeList implements Ioptions_segment
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisitoption_specList(this);
         }
     }
 
@@ -3991,7 +4008,7 @@ class optionList extends AbstractASTNodeList implements Ioption_list
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitoptionList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -4002,7 +4019,7 @@ class optionList extends AbstractASTNodeList implements Ioption_list
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisitoptionList(this);
         }
     }
 
@@ -4014,19 +4031,19 @@ class optionList extends AbstractASTNodeList implements Ioption_list
 class option extends ASTNode implements Ioption
     {
          late ASTNodeToken _SYMBOL;
-         late Ioption_value? _option_value;
+         late ASTNode? _option_value;
 
          ASTNodeToken getSYMBOL(){ return _SYMBOL; }
          void setSYMBOL(ASTNodeToken _SYMBOL){ this._SYMBOL = _SYMBOL; }
         /**
          * The value returned by <b>getoption_value</b> may be <b>null</b>
          */
-         Ioption_value ?  getoption_value(){ return _option_value; }
-         void setoption_value(Ioption_value _option_value){ this._option_value = _option_value; }
+         ASTNode ?  getoption_value(){ return _option_value; }
+         void setoption_value(ASTNode _option_value){ this._option_value = _option_value; }
 
         option(IToken leftIToken, IToken rightIToken,
                ASTNodeToken _SYMBOL,
-               Ioption_value? _option_value)
+               ASTNode? _option_value)
             :super(leftIToken, rightIToken)
 
         {
@@ -4109,7 +4126,7 @@ class SYMBOLList extends AbstractASTNodeList implements Isymbol_list, Idrop_symb
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitSYMBOLList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -4120,7 +4137,7 @@ class SYMBOLList extends AbstractASTNodeList implements Isymbol_list, Idrop_symb
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisitSYMBOLList(this);
         }
     }
 
@@ -4132,12 +4149,12 @@ class SYMBOLList extends AbstractASTNodeList implements Isymbol_list, Idrop_symb
  */
 class aliasSpecList extends AbstractASTNodeList implements Ialias_segment
     {
-         IaliasSpec getaliasSpecAt(int i){ return getElementAt(i) as IaliasSpec; }
+         ASTNode getaliasSpecAt(int i){ return getElementAt(i) as ASTNode; }
 
         aliasSpecList(IToken leftToken, IToken rightToken , bool leftRecursive  ):super(leftToken, rightToken, leftRecursive)
         {}
 
-        static aliasSpecList aliasSpecListfromElement(IaliasSpec element,bool leftRecursive )
+        static aliasSpecList aliasSpecListfromElement(ASTNode element,bool leftRecursive )
         {
             var obj = aliasSpecList(element.getLeftIToken(),element.getRightIToken(), leftRecursive);
             obj.list.add(element);
@@ -4160,7 +4177,7 @@ class aliasSpecList extends AbstractASTNodeList implements Ialias_segment
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitaliasSpecList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -4169,7 +4186,7 @@ class aliasSpecList extends AbstractASTNodeList implements Ialias_segment
                     element.accept(v);
                 }
             }
-            v.endVisit(this);
+            v.endVisitaliasSpecList(this);
         }
     }
 
@@ -4234,7 +4251,7 @@ class defineSpecList extends AbstractASTNodeList implements Idefine_segment
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitdefineSpecList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -4245,7 +4262,7 @@ class defineSpecList extends AbstractASTNodeList implements Idefine_segment
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisitdefineSpecList(this);
         }
     }
 
@@ -4256,16 +4273,16 @@ class defineSpecList extends AbstractASTNodeList implements Idefine_segment
  */
 class defineSpec extends ASTNode implements IdefineSpec
     {
-         late Imacro_name_symbol _macro_name_symbol;
+         late ASTNode _macro_name_symbol;
          late macro_segment _macro_segment;
 
-         Imacro_name_symbol getmacro_name_symbol(){ return _macro_name_symbol; }
-         void setmacro_name_symbol(Imacro_name_symbol _macro_name_symbol){ this._macro_name_symbol = _macro_name_symbol; }
+         ASTNode getmacro_name_symbol(){ return _macro_name_symbol; }
+         void setmacro_name_symbol(ASTNode _macro_name_symbol){ this._macro_name_symbol = _macro_name_symbol; }
          macro_segment getmacro_segment(){ return _macro_segment; }
          void setmacro_segment(macro_segment _macro_segment){ this._macro_segment = _macro_segment; }
 
         defineSpec(IToken leftIToken, IToken rightIToken,
-                   Imacro_name_symbol _macro_name_symbol,
+                   ASTNode _macro_name_symbol,
                    macro_segment _macro_segment)
             :super(leftIToken, rightIToken)
 
@@ -4340,12 +4357,12 @@ class macro_segment extends ASTNodeToken implements Imacro_segment
  */
 class terminal_symbolList extends AbstractASTNodeList implements Iexport_segment
     {
-         Iterminal_symbol getterminal_symbolAt(int i){ return getElementAt(i) as Iterminal_symbol; }
+         ASTNode getterminal_symbolAt(int i){ return getElementAt(i) as ASTNode; }
 
         terminal_symbolList(IToken leftToken, IToken rightToken , bool leftRecursive  ):super(leftToken, rightToken, leftRecursive)
         {}
 
-        static terminal_symbolList terminal_symbolListfromElement(Iterminal_symbol element,bool leftRecursive )
+        static terminal_symbolList terminal_symbolListfromElement(ASTNode element,bool leftRecursive )
         {
             var obj = terminal_symbolList(element.getLeftIToken(),element.getRightIToken(), leftRecursive);
             obj.list.add(element);
@@ -4368,7 +4385,7 @@ class terminal_symbolList extends AbstractASTNodeList implements Iexport_segment
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitterminal_symbolList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -4377,7 +4394,7 @@ class terminal_symbolList extends AbstractASTNodeList implements Iexport_segment
                     element.accept(v);
                 }
             }
-            v.endVisit(this);
+            v.endVisitterminal_symbolList(this);
         }
     }
 
@@ -4421,7 +4438,7 @@ class action_segmentList extends AbstractASTNodeList implements Iglobals_segment
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitaction_segmentList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -4432,7 +4449,7 @@ class action_segmentList extends AbstractASTNodeList implements Iglobals_segment
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisitaction_segmentList(this);
         }
     }
 
@@ -4502,12 +4519,12 @@ class import_segment extends ASTNode implements Iimport_segment
  */
 class drop_commandList extends AbstractASTNodeList implements Idrop_command_list
     {
-         Idrop_command getdrop_commandAt(int i){ return getElementAt(i) as Idrop_command; }
+         ASTNode getdrop_commandAt(int i){ return getElementAt(i) as ASTNode; }
 
         drop_commandList(IToken leftToken, IToken rightToken , bool leftRecursive  ):super(leftToken, rightToken, leftRecursive)
         {}
 
-        static drop_commandList drop_commandListfromElement(Idrop_command element,bool leftRecursive )
+        static drop_commandList drop_commandListfromElement(ASTNode element,bool leftRecursive )
         {
             var obj = drop_commandList(element.getLeftIToken(),element.getRightIToken(), leftRecursive);
             obj.list.add(element);
@@ -4530,7 +4547,7 @@ class drop_commandList extends AbstractASTNodeList implements Idrop_command_list
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitdrop_commandList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -4539,7 +4556,7 @@ class drop_commandList extends AbstractASTNodeList implements Idrop_command_list
                     element.accept(v);
                 }
             }
-            v.endVisit(this);
+            v.endVisitdrop_commandList(this);
         }
     }
 
@@ -4579,7 +4596,7 @@ class drop_ruleList extends AbstractASTNodeList implements Idrop_rules
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitdrop_ruleList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -4590,7 +4607,7 @@ class drop_ruleList extends AbstractASTNodeList implements Idrop_rules
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisitdrop_ruleList(this);
         }
     }
 
@@ -4603,7 +4620,7 @@ class drop_rule extends ASTNode implements Idrop_rule
     {
          late ASTNodeToken _SYMBOL;
          late optMacroName? _optMacroName;
-         late Iproduces _produces;
+         late ASTNode _produces;
          late ruleList _ruleList;
 
          ASTNodeToken getSYMBOL(){ return _SYMBOL; }
@@ -4613,15 +4630,15 @@ class drop_rule extends ASTNode implements Idrop_rule
          */
          optMacroName ?  getoptMacroName(){ return _optMacroName; }
          void setoptMacroName(optMacroName _optMacroName){ this._optMacroName = _optMacroName; }
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
          ruleList getruleList(){ return _ruleList; }
          void setruleList(ruleList _ruleList){ this._ruleList = _ruleList; }
 
         drop_rule(IToken leftIToken, IToken rightIToken,
                   ASTNodeToken _SYMBOL,
                   optMacroName? _optMacroName,
-                  Iproduces _produces,
+                  ASTNode _produces,
                   ruleList _ruleList)
             :super(leftIToken, rightIToken)
 
@@ -4733,12 +4750,12 @@ class include_segment extends ASTNodeToken implements Iinclude_segment
  */
 class keywordSpecList extends AbstractASTNodeList implements Ikeywords_segment
     {
-         IkeywordSpec getkeywordSpecAt(int i){ return getElementAt(i) as IkeywordSpec; }
+         ASTNode getkeywordSpecAt(int i){ return getElementAt(i) as ASTNode; }
 
         keywordSpecList(IToken leftToken, IToken rightToken , bool leftRecursive  ):super(leftToken, rightToken, leftRecursive)
         {}
 
-        static keywordSpecList keywordSpecListfromElement(IkeywordSpec element,bool leftRecursive )
+        static keywordSpecList keywordSpecListfromElement(ASTNode element,bool leftRecursive )
         {
             var obj = keywordSpecList(element.getLeftIToken(),element.getRightIToken(), leftRecursive);
             obj.list.add(element);
@@ -4761,7 +4778,7 @@ class keywordSpecList extends AbstractASTNodeList implements Ikeywords_segment
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitkeywordSpecList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -4770,7 +4787,7 @@ class keywordSpecList extends AbstractASTNodeList implements Ikeywords_segment
                     element.accept(v);
                 }
             }
-            v.endVisit(this);
+            v.endVisitkeywordSpecList(this);
         }
     }
 
@@ -4785,21 +4802,21 @@ class keywordSpecList extends AbstractASTNodeList implements Ikeywords_segment
  */
 class keywordSpec extends ASTNode implements IkeywordSpec
     {
-         late Iterminal_symbol _terminal_symbol;
-         late Iproduces _produces;
-         late Iname _name;
+         late ASTNode _terminal_symbol;
+         late ASTNode _produces;
+         late ASTNode _name;
 
-         Iterminal_symbol getterminal_symbol(){ return _terminal_symbol; }
-         void setterminal_symbol(Iterminal_symbol _terminal_symbol){ this._terminal_symbol = _terminal_symbol; }
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
-         Iname getname(){ return _name; }
-         void setname(Iname _name){ this._name = _name; }
+         ASTNode getterminal_symbol(){ return _terminal_symbol; }
+         void setterminal_symbol(ASTNode _terminal_symbol){ this._terminal_symbol = _terminal_symbol; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
+         ASTNode getname(){ return _name; }
+         void setname(ASTNode _name){ this._name = _name; }
 
         keywordSpec(IToken leftIToken, IToken rightIToken,
-                    Iterminal_symbol _terminal_symbol,
-                    Iproduces _produces,
-                    Iname _name)
+                    ASTNode _terminal_symbol,
+                    ASTNode _produces,
+                    ASTNode _name)
             :super(leftIToken, rightIToken)
 
         {
@@ -4880,7 +4897,7 @@ class nameSpecList extends AbstractASTNodeList implements Inames_segment
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitnameSpecList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -4891,7 +4908,7 @@ class nameSpecList extends AbstractASTNodeList implements Inames_segment
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisitnameSpecList(this);
         }
     }
 
@@ -4902,21 +4919,21 @@ class nameSpecList extends AbstractASTNodeList implements Inames_segment
  */
 class nameSpec extends ASTNode implements InameSpec
     {
-         late Iname _name;
-         late Iproduces _produces;
-         late Iname _name3;
+         late ASTNode _name;
+         late ASTNode _produces;
+         late ASTNode _name3;
 
-         Iname getname(){ return _name; }
-         void setname(Iname _name){ this._name = _name; }
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
-         Iname getname3(){ return _name3; }
-         void setname3(Iname _name3){ this._name3 = _name3; }
+         ASTNode getname(){ return _name; }
+         void setname(ASTNode _name){ this._name = _name; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
+         ASTNode getname3(){ return _name3; }
+         void setname3(ASTNode _name3){ this._name3 = _name3; }
 
         nameSpec(IToken leftIToken, IToken rightIToken,
-                 Iname _name,
-                 Iproduces _produces,
-                 Iname _name3)
+                 ASTNode _name,
+                 ASTNode _produces,
+                 ASTNode _name3)
             :super(leftIToken, rightIToken)
 
         {
@@ -5055,7 +5072,7 @@ class nonTermList extends AbstractASTNodeList implements InonTermList
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitnonTermList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -5066,7 +5083,7 @@ class nonTermList extends AbstractASTNodeList implements InonTermList
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisitnonTermList(this);
         }
     }
 
@@ -5078,19 +5095,19 @@ class nonTermList extends AbstractASTNodeList implements InonTermList
 class nonTerm extends ASTNode implements InonTerm
     {
          late RuleName _ruleNameWithAttributes;
-         late Iproduces _produces;
+         late ASTNode _produces;
          late ruleList _ruleList;
 
          RuleName getruleNameWithAttributes(){ return _ruleNameWithAttributes; }
          void setruleNameWithAttributes(RuleName _ruleNameWithAttributes){ this._ruleNameWithAttributes = _ruleNameWithAttributes; }
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
          ruleList getruleList(){ return _ruleList; }
          void setruleList(ruleList _ruleList){ this._ruleList = _ruleList; }
 
         nonTerm(IToken leftIToken, IToken rightIToken,
                 RuleName _ruleNameWithAttributes,
-                Iproduces _produces,
+                ASTNode _produces,
                 ruleList _ruleList)
             :super(leftIToken, rightIToken)
 
@@ -5243,7 +5260,7 @@ class ruleList extends AbstractASTNodeList implements IruleList
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitruleList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -5254,7 +5271,7 @@ class ruleList extends AbstractASTNodeList implements IruleList
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisitruleList(this);
         }
     }
 
@@ -5324,12 +5341,12 @@ class rule extends ASTNode implements Irule
  */
 class symWithAttrsList extends AbstractASTNodeList implements IsymWithAttrsList
     {
-         IsymWithAttrs getsymWithAttrsAt(int i){ return getElementAt(i) as IsymWithAttrs; }
+         ASTNode getsymWithAttrsAt(int i){ return getElementAt(i) as ASTNode; }
 
         symWithAttrsList(IToken leftToken, IToken rightToken , bool leftRecursive  ):super(leftToken, rightToken, leftRecursive)
         {}
 
-        static symWithAttrsList symWithAttrsListfromElement(IsymWithAttrs element,bool leftRecursive )
+        static symWithAttrsList symWithAttrsListfromElement(ASTNode element,bool leftRecursive )
         {
             var obj = symWithAttrsList(element.getLeftIToken(),element.getRightIToken(), leftRecursive);
             obj.list.add(element);
@@ -5352,7 +5369,7 @@ class symWithAttrsList extends AbstractASTNodeList implements IsymWithAttrsList
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitsymWithAttrsList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -5361,7 +5378,7 @@ class symWithAttrsList extends AbstractASTNodeList implements IsymWithAttrsList
                     element.accept(v);
                 }
             }
-            v.endVisit(this);
+            v.endVisitsymWithAttrsList(this);
         }
     }
 
@@ -5449,12 +5466,12 @@ class action_segment extends ASTNodeToken implements Iaction_segment
  */
 class start_symbolList extends AbstractASTNodeList implements Istart_segment
     {
-         Istart_symbol getstart_symbolAt(int i){ return getElementAt(i) as Istart_symbol; }
+         ASTNode getstart_symbolAt(int i){ return getElementAt(i) as ASTNode; }
 
         start_symbolList(IToken leftToken, IToken rightToken , bool leftRecursive  ):super(leftToken, rightToken, leftRecursive)
         {}
 
-        static start_symbolList start_symbolListfromElement(Istart_symbol element,bool leftRecursive )
+        static start_symbolList start_symbolListfromElement(ASTNode element,bool leftRecursive )
         {
             var obj = start_symbolList(element.getLeftIToken(),element.getRightIToken(), leftRecursive);
             obj.list.add(element);
@@ -5477,7 +5494,7 @@ class start_symbolList extends AbstractASTNodeList implements Istart_segment
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitstart_symbolList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -5486,7 +5503,7 @@ class start_symbolList extends AbstractASTNodeList implements Istart_segment
                     element.accept(v);
                 }
             }
-            v.endVisit(this);
+            v.endVisitstart_symbolList(this);
         }
     }
 
@@ -5526,7 +5543,7 @@ class terminalList extends AbstractASTNodeList implements Iterminals_segment
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitterminalList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -5537,7 +5554,7 @@ class terminalList extends AbstractASTNodeList implements Iterminals_segment
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisitterminalList(this);
         }
     }
 
@@ -5576,11 +5593,11 @@ class terminals_segment_terminalList extends terminalList
  */
 class terminal extends ASTNode implements Iterminal
     {
-         late Iterminal_symbol _terminal_symbol;
+         late ASTNode _terminal_symbol;
          late optTerminalAlias? _optTerminalAlias;
 
-         Iterminal_symbol getterminal_symbol(){ return _terminal_symbol; }
-         void setterminal_symbol(Iterminal_symbol _terminal_symbol){ this._terminal_symbol = _terminal_symbol; }
+         ASTNode getterminal_symbol(){ return _terminal_symbol; }
+         void setterminal_symbol(ASTNode _terminal_symbol){ this._terminal_symbol = _terminal_symbol; }
         /**
          * The value returned by <b>getoptTerminalAlias</b> may be <b>null</b>
          */
@@ -5588,7 +5605,7 @@ class terminal extends ASTNode implements Iterminal
          void setoptTerminalAlias(optTerminalAlias _optTerminalAlias){ this._optTerminalAlias = _optTerminalAlias; }
 
         terminal(IToken leftIToken, IToken rightIToken,
-                 Iterminal_symbol _terminal_symbol,
+                 ASTNode _terminal_symbol,
                  optTerminalAlias? _optTerminalAlias)
             :super(leftIToken, rightIToken)
 
@@ -5641,17 +5658,17 @@ class terminal extends ASTNode implements Iterminal
  */
 class optTerminalAlias extends ASTNode implements IoptTerminalAlias
     {
-         late Iproduces _produces;
-         late Iname _name;
+         late ASTNode _produces;
+         late ASTNode _name;
 
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
-         Iname getname(){ return _name; }
-         void setname(Iname _name){ this._name = _name; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
+         ASTNode getname(){ return _name; }
+         void setname(ASTNode _name){ this._name = _name; }
 
         optTerminalAlias(IToken leftIToken, IToken rightIToken,
-                         Iproduces _produces,
-                         Iname _name)
+                         ASTNode _produces,
+                         ASTNode _name)
             :super(leftIToken, rightIToken)
 
         {
@@ -5728,7 +5745,7 @@ class type_declarationsList extends AbstractASTNodeList implements Itypes_segmen
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visittype_declarationsList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -5739,7 +5756,7 @@ class type_declarationsList extends AbstractASTNodeList implements Itypes_segmen
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisittype_declarationsList(this);
         }
     }
 
@@ -5751,14 +5768,14 @@ class type_declarationsList extends AbstractASTNodeList implements Itypes_segmen
 class type_declarations extends ASTNode implements Itype_declarations
     {
          late ASTNodeToken _SYMBOL;
-         late Iproduces _produces;
+         late ASTNode _produces;
          late SYMBOLList _barSymbolList;
          late action_segment? _opt_action_segment;
 
          ASTNodeToken getSYMBOL(){ return _SYMBOL; }
          void setSYMBOL(ASTNodeToken _SYMBOL){ this._SYMBOL = _SYMBOL; }
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
          SYMBOLList getbarSymbolList(){ return _barSymbolList; }
          void setbarSymbolList(SYMBOLList _barSymbolList){ this._barSymbolList = _barSymbolList; }
         /**
@@ -5769,7 +5786,7 @@ class type_declarations extends ASTNode implements Itype_declarations
 
         type_declarations(IToken leftIToken, IToken rightIToken,
                           ASTNodeToken _SYMBOL,
-                          Iproduces _produces,
+                          ASTNode _produces,
                           SYMBOLList _barSymbolList,
                           action_segment? _opt_action_segment)
             :super(leftIToken, rightIToken)
@@ -5856,7 +5873,7 @@ class symbol_pairList extends AbstractASTNodeList implements Ipredecessor_segmen
         }
          void enter(Visitor v)
         {
-            var checkChildren = v.visit(this);
+            var checkChildren = v.visitsymbol_pairList(this);
             if (checkChildren)
             {
                 for (var i = 0; i < size(); i++)
@@ -5867,7 +5884,7 @@ class symbol_pairList extends AbstractASTNodeList implements Ipredecessor_segmen
                     v.postVisit(element);
                 }
             }
-            v.endVisit(this);
+            v.endVisitsymbol_pairList(this);
         }
     }
 
@@ -6087,20 +6104,20 @@ class option_value1 extends ASTNode implements Ioption_value
 class aliasSpec0 extends ASTNode implements IaliasSpec
     {
          late ASTNodeToken _ERROR_KEY;
-         late Iproduces _produces;
-         late Ialias_rhs _alias_rhs;
+         late ASTNode _produces;
+         late ASTNode _alias_rhs;
 
          ASTNodeToken getERROR_KEY(){ return _ERROR_KEY; }
          void setERROR_KEY(ASTNodeToken _ERROR_KEY){ this._ERROR_KEY = _ERROR_KEY; }
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
-         Ialias_rhs getalias_rhs(){ return _alias_rhs; }
-         void setalias_rhs(Ialias_rhs _alias_rhs){ this._alias_rhs = _alias_rhs; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
+         ASTNode getalias_rhs(){ return _alias_rhs; }
+         void setalias_rhs(ASTNode _alias_rhs){ this._alias_rhs = _alias_rhs; }
 
         aliasSpec0(IToken leftIToken, IToken rightIToken,
                    ASTNodeToken _ERROR_KEY,
-                   Iproduces _produces,
-                   Ialias_rhs _alias_rhs)
+                   ASTNode _produces,
+                   ASTNode _alias_rhs)
             :super(leftIToken, rightIToken)
 
         {
@@ -6153,20 +6170,20 @@ class aliasSpec0 extends ASTNode implements IaliasSpec
 class aliasSpec1 extends ASTNode implements IaliasSpec
     {
          late ASTNodeToken _EOL_KEY;
-         late Iproduces _produces;
-         late Ialias_rhs _alias_rhs;
+         late ASTNode _produces;
+         late ASTNode _alias_rhs;
 
          ASTNodeToken getEOL_KEY(){ return _EOL_KEY; }
          void setEOL_KEY(ASTNodeToken _EOL_KEY){ this._EOL_KEY = _EOL_KEY; }
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
-         Ialias_rhs getalias_rhs(){ return _alias_rhs; }
-         void setalias_rhs(Ialias_rhs _alias_rhs){ this._alias_rhs = _alias_rhs; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
+         ASTNode getalias_rhs(){ return _alias_rhs; }
+         void setalias_rhs(ASTNode _alias_rhs){ this._alias_rhs = _alias_rhs; }
 
         aliasSpec1(IToken leftIToken, IToken rightIToken,
                    ASTNodeToken _EOL_KEY,
-                   Iproduces _produces,
-                   Ialias_rhs _alias_rhs)
+                   ASTNode _produces,
+                   ASTNode _alias_rhs)
             :super(leftIToken, rightIToken)
 
         {
@@ -6219,20 +6236,20 @@ class aliasSpec1 extends ASTNode implements IaliasSpec
 class aliasSpec2 extends ASTNode implements IaliasSpec
     {
          late ASTNodeToken _EOF_KEY;
-         late Iproduces _produces;
-         late Ialias_rhs _alias_rhs;
+         late ASTNode _produces;
+         late ASTNode _alias_rhs;
 
          ASTNodeToken getEOF_KEY(){ return _EOF_KEY; }
          void setEOF_KEY(ASTNodeToken _EOF_KEY){ this._EOF_KEY = _EOF_KEY; }
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
-         Ialias_rhs getalias_rhs(){ return _alias_rhs; }
-         void setalias_rhs(Ialias_rhs _alias_rhs){ this._alias_rhs = _alias_rhs; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
+         ASTNode getalias_rhs(){ return _alias_rhs; }
+         void setalias_rhs(ASTNode _alias_rhs){ this._alias_rhs = _alias_rhs; }
 
         aliasSpec2(IToken leftIToken, IToken rightIToken,
                    ASTNodeToken _EOF_KEY,
-                   Iproduces _produces,
-                   Ialias_rhs _alias_rhs)
+                   ASTNode _produces,
+                   ASTNode _alias_rhs)
             :super(leftIToken, rightIToken)
 
         {
@@ -6285,20 +6302,20 @@ class aliasSpec2 extends ASTNode implements IaliasSpec
 class aliasSpec3 extends ASTNode implements IaliasSpec
     {
          late ASTNodeToken _IDENTIFIER_KEY;
-         late Iproduces _produces;
-         late Ialias_rhs _alias_rhs;
+         late ASTNode _produces;
+         late ASTNode _alias_rhs;
 
          ASTNodeToken getIDENTIFIER_KEY(){ return _IDENTIFIER_KEY; }
          void setIDENTIFIER_KEY(ASTNodeToken _IDENTIFIER_KEY){ this._IDENTIFIER_KEY = _IDENTIFIER_KEY; }
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
-         Ialias_rhs getalias_rhs(){ return _alias_rhs; }
-         void setalias_rhs(Ialias_rhs _alias_rhs){ this._alias_rhs = _alias_rhs; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
+         ASTNode getalias_rhs(){ return _alias_rhs; }
+         void setalias_rhs(ASTNode _alias_rhs){ this._alias_rhs = _alias_rhs; }
 
         aliasSpec3(IToken leftIToken, IToken rightIToken,
                    ASTNodeToken _IDENTIFIER_KEY,
-                   Iproduces _produces,
-                   Ialias_rhs _alias_rhs)
+                   ASTNode _produces,
+                   ASTNode _alias_rhs)
             :super(leftIToken, rightIToken)
 
         {
@@ -6351,20 +6368,20 @@ class aliasSpec3 extends ASTNode implements IaliasSpec
 class aliasSpec4 extends ASTNode implements IaliasSpec
     {
          late ASTNodeToken _SYMBOL;
-         late Iproduces _produces;
-         late Ialias_rhs _alias_rhs;
+         late ASTNode _produces;
+         late ASTNode _alias_rhs;
 
          ASTNodeToken getSYMBOL(){ return _SYMBOL; }
          void setSYMBOL(ASTNodeToken _SYMBOL){ this._SYMBOL = _SYMBOL; }
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
-         Ialias_rhs getalias_rhs(){ return _alias_rhs; }
-         void setalias_rhs(Ialias_rhs _alias_rhs){ this._alias_rhs = _alias_rhs; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
+         ASTNode getalias_rhs(){ return _alias_rhs; }
+         void setalias_rhs(ASTNode _alias_rhs){ this._alias_rhs = _alias_rhs; }
 
         aliasSpec4(IToken leftIToken, IToken rightIToken,
                    ASTNodeToken _SYMBOL,
-                   Iproduces _produces,
-                   Ialias_rhs _alias_rhs)
+                   ASTNode _produces,
+                   ASTNode _alias_rhs)
             :super(leftIToken, rightIToken)
 
         {
@@ -6417,20 +6434,20 @@ class aliasSpec4 extends ASTNode implements IaliasSpec
 class aliasSpec5 extends ASTNode implements IaliasSpec
     {
          late alias_lhs_macro_name _alias_lhs_macro_name;
-         late Iproduces _produces;
-         late Ialias_rhs _alias_rhs;
+         late ASTNode _produces;
+         late ASTNode _alias_rhs;
 
          alias_lhs_macro_name getalias_lhs_macro_name(){ return _alias_lhs_macro_name; }
          void setalias_lhs_macro_name(alias_lhs_macro_name _alias_lhs_macro_name){ this._alias_lhs_macro_name = _alias_lhs_macro_name; }
-         Iproduces getproduces(){ return _produces; }
-         void setproduces(Iproduces _produces){ this._produces = _produces; }
-         Ialias_rhs getalias_rhs(){ return _alias_rhs; }
-         void setalias_rhs(Ialias_rhs _alias_rhs){ this._alias_rhs = _alias_rhs; }
+         ASTNode getproduces(){ return _produces; }
+         void setproduces(ASTNode _produces){ this._produces = _produces; }
+         ASTNode getalias_rhs(){ return _alias_rhs; }
+         void setalias_rhs(ASTNode _alias_rhs){ this._alias_rhs = _alias_rhs; }
 
         aliasSpec5(IToken leftIToken, IToken rightIToken,
                    alias_lhs_macro_name _alias_lhs_macro_name,
-                   Iproduces _produces,
-                   Ialias_rhs _alias_rhs)
+                   ASTNode _produces,
+                   ASTNode _alias_rhs)
             :super(leftIToken, rightIToken)
 
         {
@@ -8098,7 +8115,7 @@ abstract class AbstractVisitor implements Visitor
             else if (n is start_symbol1) endVisitstart_symbol1(n);
             else if (n is terminal_symbol0) endVisitterminal_symbol0(n);
             else if (n is terminal_symbol1) endVisitterminal_symbol1(n);
-            throw  ArgumentError("visit(" + n.toString() + ")");
+            else throw  ArgumentError("visit(" + n.toString() + ")");
         }
     }
 

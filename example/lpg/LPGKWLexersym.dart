@@ -77,6 +77,6 @@ static const  List<String> orderedTerminalSymbols = [
     'z'
      ];
 
-static const int numTokenKinds  = 31;
+static const int numTokenKinds  = 30;
 static const bool isValidForParser = true;
 }

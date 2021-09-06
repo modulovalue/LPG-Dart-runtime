@@ -1,4 +1,4 @@
-%options la=15,programming_Language=typescript
+%options la=15
 %options single-productions
 %options template=LexerTemplateF.gi
 %options filter=LPGKWLexer.gi

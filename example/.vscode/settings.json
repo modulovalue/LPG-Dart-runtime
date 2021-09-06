@@ -1,5 +1,6 @@
 {
     "lpg.generation.setting": {
+        "visitor": "preorder",
         "mode": "external",
          "built_in_template": "dart",
         "outputDir": "../"

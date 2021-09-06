@@ -98,6 +98,6 @@ static const  List<String> orderedTerminalSymbols = [
     'ERROR_TOKEN'
      ];
 
-static const int numTokenKinds  = 48;
+static const int numTokenKinds  = 47;
 static const bool isValidForParser = true;
 }

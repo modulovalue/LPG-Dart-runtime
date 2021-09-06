@@ -8,8 +8,8 @@ import org.eclipse.imp.lpg.parser.LPGParser;
 import java.io.File;
 import java.io.IOException;
 
-public class test2 {
-    public  static  void main(String[] arg){
+public class test {
+    public3  static  void main(String[] arg){
 
         String filename= "C:\\Users\\kuafu\\source\\repos\\lpgRuntimeCpp\\LpgExample\\LpgExample.cpp";
         filename= "E:/LPG2/lpg2/src/jikespg.g";

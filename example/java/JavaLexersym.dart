@@ -221,6 +221,6 @@ static const  List<String> orderedTerminalSymbols = [
     'CtlCharNotWS'
      ];
 
-static const int numTokenKinds  = 103;
+static const int numTokenKinds  = 102;
 static const bool isValidForParser = true;
 }
