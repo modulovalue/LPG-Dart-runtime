@@ -243,7 +243,7 @@ class PrsStream implements IPrsStream {
 
   @override
   int getColumnOfCharAt(int i) {
-    return getColumnOfCharAt(i);
+    return iLexStream.getColumnOfCharAt(i);
   }
 
   /// @deprecated replaced by {@link #getFirstRealToken()}
