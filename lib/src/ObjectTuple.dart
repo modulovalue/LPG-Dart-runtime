@@ -10,7 +10,9 @@
 // for log_blksize and base_increment. If these estimates are
 // found to be off later, more space will be allocated.
 //
- class ObjectTuple
+import 'Util.dart';
+
+class ObjectTuple
 {
     late List<Object?> array;
     int top=0;
@@ -62,7 +64,7 @@
         if (i >= array.length)
         {
 
-            List.copyRange(array, 0, array = List.filled(i * 2, null, growable: false), 0, i);
+            ArrayList.copy(array, 0, array = List.filled(i * 2, null, growable: false), 0, i);
         }
         return i;
     }

@@ -43,19 +43,19 @@ class LexStream implements ILexStream {
   }
 
   static Future<String> fromStream(Stream<List<int>> stream,
-      {Encoding encoding = utf8}) {
+      {Encoding encoding = systemEncoding}) {
     final data = stream.transform(encoding.decoder);
     return fromStringStream(data);
   }
 
-  static Future<String> fromPath(String path, {Encoding encoding = utf8}) {
+  static Future<String> fromPath(String path, {Encoding encoding = systemEncoding}) {
     return fromStream(File(path).openRead());
   }
 
   void initialize(String fileName, String? inputChars,
       IntSegmentedTuple? lineOffsets)
   {
-    inputChars ??= File(fileName).readAsStringSync();
+    inputChars ??= File(fileName).readAsStringSync(encoding: systemEncoding);
 
     if(inputChars.isEmpty) {
         return;
@@ -433,7 +433,7 @@ class LexStream implements ILexStream {
         stdout.write(errorInfo[i] + ' ');
       }
 
-      stdout.write(errorMsgText[errorCode]);
+      stdout.writeln(errorMsgText[errorCode]);
     } else {
       errMsg!.handleMessage(
           errorCode,

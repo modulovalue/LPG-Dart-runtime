@@ -4,7 +4,7 @@ import 'ParseTable.dart';
 import 'Protocol.dart';
 import 'RuleAction.dart';
 import 'UnavailableParserInformationException.dart';
-
+import 'Util.dart';
 class LexParser {
   bool taking_actions = false;
 
@@ -61,11 +61,11 @@ class LexParser {
       locationStack = List.filled(stackLength, fill);
       tempStack = List.filled(stackLength, fill);
     } else {
-      List.copyRange(stack, 0, stack = List.filled(stackLength, fill), 0,
+      ArrayList.copy(stack, 0, stack = List.filled(stackLength, fill), 0,
           old_stack_length);
-      List.copyRange(locationStack, 0,
+      ArrayList.copy(locationStack, 0,
           locationStack = List.filled(stackLength, fill), 0, old_stack_length);
-      List.copyRange(tempStack, 0, tempStack = List.filled(stackLength, fill),
+      ArrayList.copy(tempStack, 0, tempStack = List.filled(stackLength, fill),
           0, old_stack_length);
     }
     return;

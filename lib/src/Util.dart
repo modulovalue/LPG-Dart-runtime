@@ -62,6 +62,15 @@ class ArrayList<E>  {
   int lastIndexOf(E element, [int? start]) {
     return content.lastIndexOf(element,start);
   }
+  static void copy<T>(
+        List<T> sourceArray,
+        int sourceIndex,
+        List<T> destinationArray,
+        int destinationIndex,
+        int length){
+      List.copyRange(destinationArray,destinationIndex,sourceArray,sourceIndex,sourceIndex+length);
+    }
+
 
 }
 

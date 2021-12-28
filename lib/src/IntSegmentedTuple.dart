@@ -1,3 +1,4 @@
+import 'Util.dart';
 //
 // This Tuple class can be used to construct a dynamic
 // array of integers. The space for the array is allocated in
@@ -44,7 +45,7 @@ class IntSegmentedTuple {
     //
     if (k == base_size) {
       base_size *= 2;
-      List.copyRange(base, 0, base = List.filled(base_size, []), 0, k);
+      ArrayList.copy(base, 0, base = List.filled(base_size, []), 0, k);
     }
 
     base[k] = List.filled(1 << log_blksize, 0);

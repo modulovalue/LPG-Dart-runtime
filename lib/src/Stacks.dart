@@ -1,3 +1,4 @@
+import 'Util.dart';
 class Stacks {
   final int STACK_INCREMENT = 1024;
   int stateStackTop = 0;
@@ -46,11 +47,11 @@ class Stacks {
       locationStack = List.filled(stack_length, 0);
       parseStack = List.filled(stack_length, null);
     } else {
-      List.copyRange(stateStack, 0, stateStack = List.filled(stack_length, 0),
+      ArrayList.copy(stateStack, 0, stateStack = List.filled(stack_length, 0),
           0, old_stack_length);
-      List.copyRange(locationStack, 0,
+      ArrayList.copy(locationStack, 0,
           locationStack = List.filled(stack_length, 0), 0, old_stack_length);
-      List.copyRange(parseStack, 0,
+      ArrayList.copy(parseStack, 0,
           parseStack = List.filled(stack_length, null), 0, old_stack_length);
     }
     return;
@@ -65,7 +66,7 @@ class Stacks {
     if (stateStack.isEmpty) {
       stateStack = List.filled(stack_length, 0);
     } else {
-      List.copyRange(stateStack, 0, stateStack = List.filled(stack_length, 0),
+      ArrayList.copy(stateStack, 0, stateStack = List.filled(stack_length, 0),
           0, old_stack_length);
     }
     return;

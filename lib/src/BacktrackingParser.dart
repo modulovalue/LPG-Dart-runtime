@@ -1,3 +1,4 @@
+import 'Util.dart';
 import 'BadParseException.dart';
 import 'BadParseSymFileException.dart';
 import 'ConfigurationStack.dart';
@@ -174,11 +175,11 @@ class BacktrackingParser extends Stacks {
       locationStack[0] = start_token_index;
     } else if (actionStack.length < super.stateStack.length) {
       var old_length = actionStack.length;
-      List.copyRange(actionStack, 0, actionStack = List.filled(length, fill), 0,
+      ArrayList.copy(actionStack, 0, actionStack = List.filled(length, fill), 0,
           old_length);
-      List.copyRange(super.locationStack, 0,
+      ArrayList.copy(super.locationStack, 0,
           super.locationStack = List.filled(length, fill), 0, old_length);
-      List.copyRange(super.parseStack, 0,
+      ArrayList.copy(super.parseStack, 0,
           super.parseStack = List.filled(length, null), 0, old_length);
     }
     return;
@@ -288,7 +289,7 @@ class BacktrackingParser extends Stacks {
         repair_token = getMarkerToken(marker_kind, start_token_index),
         start_action_index = action.size(); // obviously 0
     var temp_stack = List.filled(stateStackTop + 1, 0);
-    List.copyRange(stateStack, 0, temp_stack, 0, temp_stack.length);
+    ArrayList.copy(stateStack, 0, temp_stack, 0, temp_stack.length);
 
     var initial_error_token = backtrackParseInternal(action, repair_token);
     for (var error_token = initial_error_token, count = 0;
@@ -300,7 +301,7 @@ class BacktrackingParser extends Stacks {
       action.reset(start_action_index);
       tokStream.reset(start_token_index);
       stateStackTop = temp_stack.length - 1;
-      List.copyRange(temp_stack, 0, stateStack, 0, temp_stack.length);
+      ArrayList.copy(temp_stack, 0, stateStack, 0, temp_stack.length);
       reallocateOtherStacks(start_token_index);
 
       backtrackParseUpToError(repair_token, error_token);
@@ -321,7 +322,7 @@ class BacktrackingParser extends Stacks {
       if (stateStackTop < 0) throw BadParseException(initial_error_token);
 
       temp_stack = List.filled(stateStackTop + 1, 0);
-      List.copyRange(stateStack, 0, temp_stack, 0, temp_stack.length);
+      ArrayList.copy(stateStack, 0, temp_stack, 0, temp_stack.length);
 
       start_action_index = action.size();
       start_token_index = tokStream.peek();
@@ -426,7 +427,7 @@ class BacktrackingParser extends Stacks {
   int backtrackParse(List<int> stack, int stack_top, IntSegmentedTuple action,
       int initial_token) {
     stateStackTop = stack_top;
-    List.copyRange(stack, 0, stateStack, 0, stateStackTop + 1);
+    ArrayList.copy(stack, 0, stateStack, 0, stateStackTop + 1);
     // assert(this.action == action);
     return backtrackParseInternal(action, initial_token);
   }
@@ -744,21 +745,21 @@ class BacktrackingParser extends Stacks {
 
   int errorRepair(IPrsStream stream, int recovery_token, int error_token) {
     var temp_stack = List.filled(stateStackTop + 1, 0);
-    List.copyRange(stateStack, 0, temp_stack, 0, temp_stack.length);
+    ArrayList.copy(stateStack, 0, temp_stack, 0, temp_stack.length);
     for (;
         stream.getKind(recovery_token) != EOFT_SYMBOL;
         recovery_token = stream.getNext(recovery_token)) {
       stream.reset(recovery_token);
       if (repairable(error_token)) break;
       stateStackTop = temp_stack.length - 1;
-      List.copyRange(temp_stack, 0, stateStack, 0, temp_stack.length);
+      ArrayList.copy(temp_stack, 0, stateStack, 0, temp_stack.length);
     }
 
     if (stream.getKind(recovery_token) == EOFT_SYMBOL) {
       stream.reset(recovery_token);
       if (!repairable(error_token)) {
         stateStackTop = temp_stack.length - 1;
-        List.copyRange(temp_stack, 0, stateStack, 0, temp_stack.length);
+        ArrayList.copy(temp_stack, 0, stateStack, 0, temp_stack.length);
         return 0;
       }
     }
@@ -767,7 +768,7 @@ class BacktrackingParser extends Stacks {
     //
     //
     stateStackTop = temp_stack.length - 1;
-    List.copyRange(temp_stack, 0, stateStack, 0, temp_stack.length);
+    ArrayList.copy(temp_stack, 0, stateStack, 0, temp_stack.length);
     stream.reset(recovery_token);
     tokens.reset(locationStack[stateStackTop] - 1);
     action.reset(actionStack[stateStackTop]);

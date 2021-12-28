@@ -1,3 +1,4 @@
+import 'Util.dart';
 import 'BacktrackingParser.dart';
 import 'BadParseException.dart';
 import 'ConfigurationStack.dart';
@@ -37,7 +38,7 @@ class RecoveryParser extends DiagnoseParser {
       actionStack = List.filled(stateStack.length, 0);
     } else {
       var old_stack_length = actionStack.length;
-      List.copyRange(actionStack, 0,
+      ArrayList.copy(actionStack, 0,
           actionStack = List.filled(stateStack.length, 0), 0, old_stack_length);
     }
 
@@ -110,10 +111,10 @@ class RecoveryParser extends DiagnoseParser {
 //void TemporaryErrorDump()
 //{
 //int prevStackTop = stateStackTop;
-//List.copyRange(stateStack, 0, prevStack, 0, stateStackTop + 1); // save StateStack
+//ArrayList.copy(stateStack, 0, prevStack, 0, stateStackTop + 1); // save StateStack
 //RepairCandidate candidate = primaryDiagnosis(scope_repair);
 //stateStackTop = prevStackTop;
-//List.copyRange(prevStack, 0, stateStack, 0, stateStackTop + 1); // restore StateStack
+//ArrayList.copy(prevStack, 0, stateStack, 0, stateStackTop + 1); // restore StateStack
 //}
 
   //
@@ -377,7 +378,7 @@ class RecoveryParser extends DiagnoseParser {
       }
       // assert (index < recovery_action.size()); // sanity check!
       stateStackTop = nextStackTop;
-      List.copyRange(nextStack, 0, stateStack, 0, stateStackTop + 1);
+      ArrayList.copy(nextStack, 0, stateStack, 0, stateStackTop + 1);
     }
 
     return;

@@ -1,3 +1,4 @@
+import 'Util.dart';
 //
 // This Tuple class can be used to construct a dynamic
 // array of integers. The space for the array is allocated in
@@ -55,7 +56,7 @@ class IntTuple {
   int nextIndex() {
     var i = top++;
     if (i >= array.length) {
-      List.copyRange(array, 0, array = List.filled(i * 2,0), 0, i);
+      ArrayList.copy(array, 0, array = List.filled(i * 2,0), 0, i);
     }
     return i;
   }

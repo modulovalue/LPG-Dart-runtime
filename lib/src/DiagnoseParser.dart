@@ -1,5 +1,5 @@
 import 'dart:core';
-
+import 'Util.dart';
 import 'ConfigurationStack.dart';
 import 'IntTuple.dart';
 import 'Monitor.dart';
@@ -270,20 +270,20 @@ class DiagnoseParser {
       scopeIndex = List.filled(stack_length, 0);
       scopePosition = List.filled(stack_length, 0);
     } else {
-      List.copyRange(stateStack, 0, stateStack = List.filled(stack_length, 0),
+      ArrayList.copy(stateStack, 0, stateStack = List.filled(stack_length, 0),
           0, old_stack_length);
-      List.copyRange(locationStack, 0,
+      ArrayList.copy(locationStack, 0,
           locationStack = List.filled(stack_length, 0), 0, old_stack_length);
 
-      List.copyRange(tempStack, 0, tempStack = List.filled(stack_length, 0), 0,
+      ArrayList.copy(tempStack, 0, tempStack = List.filled(stack_length, 0), 0,
           old_stack_length);
-      List.copyRange(prevStack, 0, prevStack = List.filled(stack_length, 0), 0,
+      ArrayList.copy(prevStack, 0, prevStack = List.filled(stack_length, 0), 0,
           old_stack_length);
-      List.copyRange(nextStack, 0, nextStack = List.filled(stack_length, 0), 0,
+      ArrayList.copy(nextStack, 0, nextStack = List.filled(stack_length, 0), 0,
           old_stack_length);
-      List.copyRange(scopeIndex, 0, scopeIndex = List.filled(stack_length, 0),
+      ArrayList.copy(scopeIndex, 0, scopeIndex = List.filled(stack_length, 0),
           0, old_stack_length);
-      List.copyRange(scopePosition, 0,
+      ArrayList.copy(scopePosition, 0,
           scopePosition = List.filled(stack_length, 0), 0, old_stack_length);
     }
     return;
@@ -365,7 +365,7 @@ class DiagnoseParser {
     stateStack[stateStackTop] = START_STATE;
 
     tempStackTop = stateStackTop;
-    List.copyRange(tempStack, 0, stateStack, 0, tempStackTop + 1);
+    ArrayList.copy(tempStack, 0, stateStack, 0, tempStackTop + 1);
 
     tokStream.reset();
     if (marker_kind == 0) {
@@ -393,7 +393,7 @@ class DiagnoseParser {
 
       var pos = stateStackTop;
       tempStackTop = stateStackTop - 1;
-      List.copyRange(stateStack, 0, tempStack, 0, stateStackTop + 1);
+      ArrayList.copy(stateStack, 0, tempStack, 0, stateStackTop + 1);
 
       var action_index = 0;
       act = action.get(action_index++); // tAction(act, current_kind);
@@ -579,7 +579,7 @@ class DiagnoseParser {
         //
         var next_token = tokStream.peek();
         tempStackTop = stateStackTop;
-        List.copyRange(stateStack, 0, tempStack, 0, stateStackTop + 1);
+        ArrayList.copy(stateStack, 0, tempStack, 0, stateStackTop + 1);
         error_token = parseForError(current_kind);
 
         //
@@ -589,7 +589,7 @@ class DiagnoseParser {
         if (error_token != 0) {
           tokStream.reset(next_token);
           tempStackTop = stateStackTop;
-          List.copyRange(stateStack, 0, tempStack, 0, stateStackTop + 1);
+          ArrayList.copy(stateStack, 0, tempStack, 0, stateStackTop + 1);
           parseUpToError(action, current_kind, error_token);
           tokStream.reset(next_token);
         } else {
@@ -1108,10 +1108,10 @@ class DiagnoseParser {
     //
     if (repair.bufferPosition == 1) {
       stateStackTop = prevStackTop;
-      List.copyRange(prevStack, 0, stateStack, 0, stateStackTop + 1);
+      ArrayList.copy(prevStack, 0, stateStack, 0, stateStackTop + 1);
     } else if (nextStackTop >= 0 && repair.bufferPosition >= 3) {
       stateStackTop = nextStackTop;
-      List.copyRange(nextStack, 0, stateStack, 0, stateStackTop + 1);
+      ArrayList.copy(nextStack, 0, stateStack, 0, stateStackTop + 1);
       locationStack[stateStackTop] = buffer[3];
     }
 
@@ -1744,7 +1744,7 @@ class DiagnoseParser {
 
     var old_state_pool_top = statePoolTop++;
     if (statePoolTop >= statePool.length) {
-      List.copyRange(statePool, 0,
+      ArrayList.copy(statePool, 0,
           statePool = List.filled(statePoolTop * 2, null), 0, statePoolTop);
     }
 
@@ -2061,7 +2061,7 @@ class DiagnoseParser {
     //
     if (repair.recoveryOnNextStack) {
       stateStackTop = nextStackTop;
-      List.copyRange(nextStack, 0, stateStack, 0, stateStackTop + 1);
+      ArrayList.copy(nextStack, 0, stateStack, 0, stateStackTop + 1);
 
       buffer[2] = error_token;
       buffer[1] = tokStream.getPrevious(buffer[2]);
