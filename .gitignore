@@ -5,3 +5,5 @@
 # Conventional directory for build output.
 build/
 /.idea
+example/.DS_Store
+example/lpg/.DS_Store
