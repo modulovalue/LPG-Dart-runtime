@@ -2,7 +2,11 @@
 
 # LPG-Dart-runtime
 Dart-runtime for The LALR parser generator (LPG)
-
+<!-- nuget packages -->
+| Package | pub dev                               |
+| ------- |---------------------------------------|
+| lpg2 | [lpg2](https://pub.dev/packages/lpg2) |
+<!-- nuget packages -->
 ## Getting Started with LPG
 
 [Getting Started with LPG]( https://github.com/A-LPG/LPG2/tree/main/lpg-generator-templates-2.1.00/docs )
