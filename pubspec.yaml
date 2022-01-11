@@ -2,7 +2,7 @@ name: lpg2
 description: " Dart runtime for LPG2."
 
 version: 1.0.0
-
+author: kuafuking <kuafuking@qq.com>
 homepage: "https://github.com/A-LPG/LPG-Dart-runtime"
 
 license: "EPL-2.0 License"

@@ -62,7 +62,7 @@ abstract class ILexStream extends TokenStream
     IMessageHandler? getMessageHandler();
 
     /// See IMessaageHandler for a description of the List<int> return value.
-    List<int> getLocation(int left_loc, int right_loc);
+    Location getLocation(int left_loc, int right_loc);
 
 
     void reportLexicalError(int left_loc, int right_loc,[int? errorCode,  int? error_left_loc,
@@ -175,7 +175,7 @@ class EscapeStrictPropertyInitializationLexStream implements ILexStream{
   }
 
   @override
-  List<int> getLocation(int left_loc, int right_loc) {
+  Location getLocation(int left_loc, int right_loc) {
     // TODO: implement getLocation
     throw UnimplementedError();
   }

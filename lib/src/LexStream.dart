@@ -355,18 +355,18 @@ class LexStream implements ILexStream {
 
   /// See IMessaageHandler for a description of the List<int> return value.
   @override
-  List<int> getLocation(int left_loc, int right_loc) {
+  Location getLocation(int left_loc, int right_loc) {
     var length = (right_loc < streamLength ? right_loc : streamLength - 1) -
         left_loc +
         1;
-    return [
+    return Location(
       left_loc,
       length,
       getLineNumberOfCharAt(left_loc),
       getColumnOfCharAt(left_loc),
       getLineNumberOfCharAt(right_loc),
       getColumnOfCharAt(right_loc)
-    ];
+    );
   }
 
   @override
