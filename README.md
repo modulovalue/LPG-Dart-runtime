@@ -1,5 +1,7 @@
 [![](https://vsmarketplacebadge.apphb.com/version-short/kuafuwang.lpg-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=kuafuwang.lpg-vscode)
 
+// Fork Comment: (note to self) sadly, the runtime generator is not here. I've refactored this hoping to find it here, but it is not here.
+
 # LPG-Dart-runtime
 Dart-runtime for The LALR parser generator (LPG)
 <!-- nuget packages -->

@@ -1,21 +1,18 @@
+// ignore_for_file: cast_nullable_to_non_nullable
 
-    //#line 128 "btParserTemplateF.gi
-
-import 'package:lpg2/lpg2.dart';
 import 'dart:io';
+import 'package:lpg2/lpg2.dart';
 import 'LPGParserprs.dart';
 import 'LPGParsersym.dart';
-
-    //#line 137 "btParserTemplateF.gi
 
 class LPGParser extends Object implements RuleAction
 {
 
     @override
     void ruleAction(int ruleNumber) {
-           var act = _rule_action[ruleNumber];
+           dynamic act = _rule_action[ruleNumber];
             if(null != act){
-                act(); 
+                act();
             }
     }
 
@@ -47,20 +44,20 @@ class LPGParser extends Object implements RuleAction
     int getRightSpan() { return btParser.getLastToken(); }
     IToken getRightIToken() { return prsStream.getIToken(getRightSpan()); }
 
-    int getRhsErrorTokenIndex(int i)  
+    int getRhsErrorTokenIndex(int i)
     {
         var index = btParser.getToken(i);
         var err = prsStream.getIToken(index);
         return (err is ErrorToken ? index : 0);
     }
-    ErrorToken? getRhsErrorIToken(int i)  
+    ErrorToken? getRhsErrorIToken(int i)
     {
         var index = btParser.getToken(i);
         var err = prsStream.getIToken(index);
         return err as ErrorToken?;
     }
 
-    void  reset(ILexStream lexStream)   
+    void  reset(ILexStream lexStream)
     {
         prsStream.resetLexStream(lexStream);
         btParser.reset(prsStream);
@@ -68,7 +65,7 @@ class LPGParser extends Object implements RuleAction
         try
         {
             prsStream.remapTerminalSymbols(orderedTerminalSymbols(), LPGParser.prsTable.getEoftSymbol());
-        } 
+        }
         on NullExportedSymbolsException{}
         on UnimplementedTerminalsException catch (e)
         {
@@ -78,7 +75,7 @@ class LPGParser extends Object implements RuleAction
                 for (var i  = 0; i < unimplemented_symbols!.size(); i++)
                 {
                     int id = unimplemented_symbols.get(i);
-                    stdout.writeln("    " + LPGParsersym.orderedTerminalSymbols[id]);               
+                    stdout.writeln("    " + LPGParsersym.orderedTerminalSymbols[id]);
                 }
                 stdout.writeln();
             }
@@ -91,7 +88,7 @@ class LPGParser extends Object implements RuleAction
         }
 
     }
-    List<dynamic?> _rule_action = List.filled(147 + 2, null);
+    List<dynamic?> _rule_action = List<dynamic>.filled(147 + 2, null);
     LPGParser([ILexStream? lexStream])
     {
         initRuleAction();
@@ -113,9 +110,9 @@ class LPGParser extends Object implements RuleAction
           reset(lexStream);
         }
     }
-    
-   
-    
+
+
+
     int numTokenKinds(){ return LPGParsersym.numTokenKinds; }
     List<String>  orderedTerminalSymbols()  { return LPGParsersym.orderedTerminalSymbols; }
     String  getTokenKindName(int kind)   { return LPGParsersym.orderedTerminalSymbols[kind]; }
@@ -126,7 +123,7 @@ class LPGParser extends Object implements RuleAction
     IAst? parser([int error_repair_count = 0 ,Monitor?  monitor])
     {
         btParser.setMonitor(monitor);
-        
+
         try{
             return btParser.fuzzyParse(error_repair_count) as IAst?;
         }
@@ -141,7 +138,7 @@ class LPGParser extends Object implements RuleAction
     //
     // Additional entry points, if any
     //
-    
+
 
     //#line 224 "LPGParser.g
 
@@ -166,7 +163,7 @@ class LPGParser extends Object implements RuleAction
                         getRhsSym(2) as LPG_itemList)
                 //#line 37 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 2:  LPG_INPUT ::= %Empty
@@ -178,7 +175,7 @@ class LPGParser extends Object implements RuleAction
                     LPG_itemList(getLeftIToken(), getRightIToken(), true /* left recursive */)
                 //#line 40 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 3:  LPG_INPUT ::= LPG_INPUT LPG_item
@@ -186,7 +183,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[3]=(){
                //#line 41 "LPGParser.g"
                 (getRhsSym(1) as LPG_itemList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 4:  LPG_item ::= ALIAS_KEY$ alias_segment END_KEY_OPT$
@@ -200,7 +197,7 @@ class LPGParser extends Object implements RuleAction
                              getRhsSym(2) as aliasSpecList)
                 //#line 44 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 5:  LPG_item ::= AST_KEY$ ast_segment END_KEY_OPT$
@@ -214,7 +211,7 @@ class LPGParser extends Object implements RuleAction
                            getRhsSym(2) as action_segmentList)
                 //#line 45 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 6:  LPG_item ::= DEFINE_KEY$ define_segment END_KEY_OPT$
@@ -228,7 +225,7 @@ class LPGParser extends Object implements RuleAction
                               getRhsSym(2) as defineSpecList)
                 //#line 46 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 7:  LPG_item ::= EOF_KEY$ eof_segment END_KEY_OPT$
@@ -242,7 +239,7 @@ class LPGParser extends Object implements RuleAction
                            getRhsSym(2) as ASTNode)
                 //#line 47 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 8:  LPG_item ::= EOL_KEY$ eol_segment END_KEY_OPT$
@@ -256,7 +253,7 @@ class LPGParser extends Object implements RuleAction
                            getRhsSym(2) as ASTNode)
                 //#line 48 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 9:  LPG_item ::= ERROR_KEY$ error_segment END_KEY_OPT$
@@ -270,7 +267,7 @@ class LPGParser extends Object implements RuleAction
                              getRhsSym(2) as ASTNode)
                 //#line 49 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 10:  LPG_item ::= EXPORT_KEY$ export_segment END_KEY_OPT$
@@ -284,7 +281,7 @@ class LPGParser extends Object implements RuleAction
                               getRhsSym(2) as terminal_symbolList)
                 //#line 50 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 11:  LPG_item ::= GLOBALS_KEY$ globals_segment END_KEY_OPT$
@@ -298,7 +295,7 @@ class LPGParser extends Object implements RuleAction
                                getRhsSym(2) as action_segmentList)
                 //#line 51 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 12:  LPG_item ::= HEADERS_KEY$ headers_segment END_KEY_OPT$
@@ -312,7 +309,7 @@ class LPGParser extends Object implements RuleAction
                                getRhsSym(2) as action_segmentList)
                 //#line 52 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 13:  LPG_item ::= IDENTIFIER_KEY$ identifier_segment END_KEY_OPT$
@@ -326,7 +323,7 @@ class LPGParser extends Object implements RuleAction
                                   getRhsSym(2) as ASTNode)
                 //#line 53 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 14:  LPG_item ::= IMPORT_KEY$ import_segment END_KEY_OPT$
@@ -340,7 +337,7 @@ class LPGParser extends Object implements RuleAction
                               getRhsSym(2) as import_segment)
                 //#line 54 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 15:  LPG_item ::= INCLUDE_KEY$ include_segment END_KEY_OPT$
@@ -354,7 +351,7 @@ class LPGParser extends Object implements RuleAction
                                getRhsSym(2) as include_segment)
                 //#line 55 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 16:  LPG_item ::= KEYWORDS_KEY$ keywords_segment END_KEY_OPT$
@@ -368,7 +365,7 @@ class LPGParser extends Object implements RuleAction
                                 getRhsSym(2) as keywordSpecList)
                 //#line 56 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 17:  LPG_item ::= NAMES_KEY$ names_segment END_KEY_OPT$
@@ -382,7 +379,7 @@ class LPGParser extends Object implements RuleAction
                              getRhsSym(2) as nameSpecList)
                 //#line 57 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 18:  LPG_item ::= NOTICE_KEY$ notice_segment END_KEY_OPT$
@@ -396,7 +393,7 @@ class LPGParser extends Object implements RuleAction
                               getRhsSym(2) as action_segmentList)
                 //#line 58 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 19:  LPG_item ::= RULES_KEY$ rules_segment END_KEY_OPT$
@@ -410,7 +407,7 @@ class LPGParser extends Object implements RuleAction
                              getRhsSym(2) as rules_segment)
                 //#line 59 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 20:  LPG_item ::= SOFT_KEYWORDS_KEY$ keywords_segment END_KEY_OPT$
@@ -424,7 +421,7 @@ class LPGParser extends Object implements RuleAction
                                     getRhsSym(2) as keywordSpecList)
                 //#line 60 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 21:  LPG_item ::= START_KEY$ start_segment END_KEY_OPT$
@@ -438,7 +435,7 @@ class LPGParser extends Object implements RuleAction
                              getRhsSym(2) as start_symbolList)
                 //#line 61 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 22:  LPG_item ::= TERMINALS_KEY$ terminals_segment END_KEY_OPT$
@@ -452,7 +449,7 @@ class LPGParser extends Object implements RuleAction
                                  getRhsSym(2) as terminals_segment_terminalList)
                 //#line 62 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 23:  LPG_item ::= TRAILERS_KEY$ trailers_segment END_KEY_OPT$
@@ -466,7 +463,7 @@ class LPGParser extends Object implements RuleAction
                                 getRhsSym(2) as action_segmentList)
                 //#line 63 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 24:  LPG_item ::= TYPES_KEY$ types_segment END_KEY_OPT$
@@ -480,7 +477,7 @@ class LPGParser extends Object implements RuleAction
                              getRhsSym(2) as type_declarationsList)
                 //#line 64 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 25:  LPG_item ::= RECOVER_KEY$ recover_segment END_KEY_OPT$
@@ -494,7 +491,7 @@ class LPGParser extends Object implements RuleAction
                                getRhsSym(2) as SYMBOLList)
                 //#line 65 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 26:  LPG_item ::= DISJOINTPREDECESSORSETS_KEY$ predecessor_segment END_KEY_OPT$
@@ -508,7 +505,7 @@ class LPGParser extends Object implements RuleAction
                                    getRhsSym(2) as symbol_pairList)
                 //#line 66 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 27:  options_segment ::= %Empty
@@ -520,7 +517,7 @@ class LPGParser extends Object implements RuleAction
                     option_specList(getLeftIToken(), getRightIToken(), true /* left recursive */)
                 //#line 69 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 28:  options_segment ::= options_segment option_spec
@@ -528,7 +525,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[28]=(){
                //#line 69 "LPGParser.g"
                 (getRhsSym(1) as option_specList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 29:  option_spec ::= OPTIONS_KEY$ option_list
@@ -542,7 +539,7 @@ class LPGParser extends Object implements RuleAction
                                 getRhsSym(2) as optionList)
                 //#line 70 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 30:  option_list ::= option
@@ -554,7 +551,7 @@ class LPGParser extends Object implements RuleAction
                     optionList.optionListfromElement(getRhsSym(1) as option, true /* left recursive */)
                 //#line 71 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 31:  option_list ::= option_list ,$ option
@@ -562,7 +559,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[31]=(){
                //#line 71 "LPGParser.g"
                 (getRhsSym(1) as optionList).addElement(getRhsSym(3)as ASTNode);
-            
+
             };
             //
             // Rule 32:  option ::= SYMBOL option_value
@@ -578,7 +575,7 @@ class LPGParser extends Object implements RuleAction
                            getRhsSym(2) as ASTNode?)
                 //#line 72 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 33:  option_value ::= %Empty
@@ -586,7 +583,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[33]=(){
                //#line 73 "LPGParser.g"
                 setResult(null);
-            
+
             };
             //
             // Rule 34:  option_value ::= =$ SYMBOL
@@ -600,7 +597,7 @@ class LPGParser extends Object implements RuleAction
                                   ASTNodeToken(getRhsIToken(2)))
                 //#line 73 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 35:  option_value ::= =$ ($ symbol_list )$
@@ -614,7 +611,7 @@ class LPGParser extends Object implements RuleAction
                                   getRhsSym(3) as SYMBOLList)
                 //#line 73 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 36:  symbol_list ::= SYMBOL
@@ -626,7 +623,7 @@ class LPGParser extends Object implements RuleAction
                     SYMBOLList.SYMBOLListfromElement(ASTNodeToken(getRhsIToken(1)), true /* left recursive */)
                 //#line 75 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 37:  symbol_list ::= symbol_list ,$ SYMBOL
@@ -634,7 +631,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[37]=(){
                //#line 76 "LPGParser.g"
                 (getRhsSym(1) as SYMBOLList).addElement(ASTNodeToken(getRhsIToken(3)));
-            
+
             };
             //
             // Rule 38:  alias_segment ::= aliasSpec
@@ -646,7 +643,7 @@ class LPGParser extends Object implements RuleAction
                     aliasSpecList.aliasSpecListfromElement(getRhsSym(1) as ASTNode, true /* left recursive */)
                 //#line 79 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 39:  alias_segment ::= alias_segment aliasSpec
@@ -654,7 +651,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[39]=(){
                //#line 79 "LPGParser.g"
                 (getRhsSym(1) as aliasSpecList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 40:  aliasSpec ::= ERROR_KEY produces alias_rhs
@@ -672,7 +669,7 @@ class LPGParser extends Object implements RuleAction
                                getRhsSym(3) as ASTNode)
                 //#line 81 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 41:  aliasSpec ::= EOL_KEY produces alias_rhs
@@ -690,7 +687,7 @@ class LPGParser extends Object implements RuleAction
                                getRhsSym(3) as ASTNode)
                 //#line 82 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 42:  aliasSpec ::= EOF_KEY produces alias_rhs
@@ -708,7 +705,7 @@ class LPGParser extends Object implements RuleAction
                                getRhsSym(3) as ASTNode)
                 //#line 83 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 43:  aliasSpec ::= IDENTIFIER_KEY produces alias_rhs
@@ -726,7 +723,7 @@ class LPGParser extends Object implements RuleAction
                                getRhsSym(3) as ASTNode)
                 //#line 84 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 44:  aliasSpec ::= SYMBOL produces alias_rhs
@@ -744,7 +741,7 @@ class LPGParser extends Object implements RuleAction
                                getRhsSym(3) as ASTNode)
                 //#line 85 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 45:  aliasSpec ::= alias_lhs_macro_name produces alias_rhs
@@ -762,7 +759,7 @@ class LPGParser extends Object implements RuleAction
                                getRhsSym(3) as ASTNode)
                 //#line 86 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 46:  alias_lhs_macro_name ::= MACRO_NAME
@@ -774,7 +771,7 @@ class LPGParser extends Object implements RuleAction
                     alias_lhs_macro_name(getRhsIToken(1))
                 //#line 88 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 47:  alias_rhs ::= SYMBOL
@@ -786,7 +783,7 @@ class LPGParser extends Object implements RuleAction
                     alias_rhs0(getRhsIToken(1))
                 //#line 90 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 48:  alias_rhs ::= MACRO_NAME
@@ -798,7 +795,7 @@ class LPGParser extends Object implements RuleAction
                     alias_rhs1(getRhsIToken(1))
                 //#line 91 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 49:  alias_rhs ::= ERROR_KEY
@@ -810,7 +807,7 @@ class LPGParser extends Object implements RuleAction
                     alias_rhs2(getRhsIToken(1))
                 //#line 92 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 50:  alias_rhs ::= EOL_KEY
@@ -822,7 +819,7 @@ class LPGParser extends Object implements RuleAction
                     alias_rhs3(getRhsIToken(1))
                 //#line 93 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 51:  alias_rhs ::= EOF_KEY
@@ -834,7 +831,7 @@ class LPGParser extends Object implements RuleAction
                     alias_rhs4(getRhsIToken(1))
                 //#line 94 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 52:  alias_rhs ::= EMPTY_KEY
@@ -846,7 +843,7 @@ class LPGParser extends Object implements RuleAction
                     alias_rhs5(getRhsIToken(1))
                 //#line 95 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 53:  alias_rhs ::= IDENTIFIER_KEY
@@ -858,13 +855,13 @@ class LPGParser extends Object implements RuleAction
                     alias_rhs6(getRhsIToken(1))
                 //#line 96 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 54:  ast_segment ::= action_segment_list
             //
-            
-                 
+
+
             //
             // Rule 55:  define_segment ::= defineSpec
             //
@@ -875,7 +872,7 @@ class LPGParser extends Object implements RuleAction
                     defineSpecList.defineSpecListfromElement(getRhsSym(1) as defineSpec, true /* left recursive */)
                 //#line 102 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 56:  define_segment ::= define_segment defineSpec
@@ -883,7 +880,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[56]=(){
                //#line 102 "LPGParser.g"
                 (getRhsSym(1) as defineSpecList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 57:  defineSpec ::= macro_name_symbol macro_segment
@@ -899,7 +896,7 @@ class LPGParser extends Object implements RuleAction
                                getRhsSym(2) as macro_segment)
                 //#line 103 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 58:  macro_name_symbol ::= MACRO_NAME
@@ -911,7 +908,7 @@ class LPGParser extends Object implements RuleAction
                     macro_name_symbol0(getRhsIToken(1))
                 //#line 106 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 59:  macro_name_symbol ::= SYMBOL
@@ -923,7 +920,7 @@ class LPGParser extends Object implements RuleAction
                     macro_name_symbol1(getRhsIToken(1))
                 //#line 107 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 60:  macro_segment ::= BLOCK
@@ -935,23 +932,23 @@ class LPGParser extends Object implements RuleAction
                     macro_segment(getRhsIToken(1))
                 //#line 108 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 61:  eol_segment ::= terminal_symbol
             //
-            
-                 
+
+
             //
             // Rule 62:  eof_segment ::= terminal_symbol
             //
-            
-                 
+
+
             //
             // Rule 63:  error_segment ::= terminal_symbol
             //
-            
-                 
+
+
             //
             // Rule 64:  export_segment ::= terminal_symbol
             //
@@ -962,7 +959,7 @@ class LPGParser extends Object implements RuleAction
                     terminal_symbolList.terminal_symbolListfromElement(getRhsSym(1) as ASTNode, true /* left recursive */)
                 //#line 118 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 65:  export_segment ::= export_segment terminal_symbol
@@ -970,7 +967,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[65]=(){
                //#line 118 "LPGParser.g"
                 (getRhsSym(1) as terminal_symbolList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 66:  globals_segment ::= action_segment
@@ -982,7 +979,7 @@ class LPGParser extends Object implements RuleAction
                     action_segmentList.action_segmentListfromElement(getRhsSym(1) as action_segment, true /* left recursive */)
                 //#line 121 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 67:  globals_segment ::= globals_segment action_segment
@@ -990,18 +987,18 @@ class LPGParser extends Object implements RuleAction
              _rule_action[67]=(){
                //#line 121 "LPGParser.g"
                 (getRhsSym(1) as action_segmentList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 68:  headers_segment ::= action_segment_list
             //
-            
-                 
+
+
             //
             // Rule 69:  identifier_segment ::= terminal_symbol
             //
-            
-                 
+
+
             //
             // Rule 70:  import_segment ::= SYMBOL drop_command_list
             //
@@ -1016,7 +1013,7 @@ class LPGParser extends Object implements RuleAction
                                    getRhsSym(2) as drop_commandList)
                 //#line 130 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 71:  drop_command_list ::= %Empty
@@ -1028,7 +1025,7 @@ class LPGParser extends Object implements RuleAction
                     drop_commandList(getLeftIToken(), getRightIToken(), true /* left recursive */)
                 //#line 132 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 72:  drop_command_list ::= drop_command_list drop_command
@@ -1036,7 +1033,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[72]=(){
                //#line 132 "LPGParser.g"
                 (getRhsSym(1) as drop_commandList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 73:  drop_command ::= DROPSYMBOLS_KEY drop_symbols
@@ -1052,7 +1049,7 @@ class LPGParser extends Object implements RuleAction
                                   getRhsSym(2) as SYMBOLList)
                 //#line 134 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 74:  drop_command ::= DROPRULES_KEY drop_rules
@@ -1068,7 +1065,7 @@ class LPGParser extends Object implements RuleAction
                                   getRhsSym(2) as drop_ruleList)
                 //#line 135 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 75:  drop_symbols ::= SYMBOL
@@ -1080,7 +1077,7 @@ class LPGParser extends Object implements RuleAction
                     SYMBOLList.SYMBOLListfromElement(ASTNodeToken(getRhsIToken(1)), true /* left recursive */)
                 //#line 137 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 76:  drop_symbols ::= drop_symbols SYMBOL
@@ -1088,7 +1085,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[76]=(){
                //#line 138 "LPGParser.g"
                 (getRhsSym(1) as SYMBOLList).addElement(ASTNodeToken(getRhsIToken(2)));
-            
+
             };
             //
             // Rule 77:  drop_rules ::= drop_rule
@@ -1100,7 +1097,7 @@ class LPGParser extends Object implements RuleAction
                     drop_ruleList.drop_ruleListfromElement(getRhsSym(1) as drop_rule, true /* left recursive */)
                 //#line 139 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 78:  drop_rules ::= drop_rules drop_rule
@@ -1108,7 +1105,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[78]=(){
                //#line 140 "LPGParser.g"
                 (getRhsSym(1) as drop_ruleList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 79:  drop_rule ::= SYMBOL optMacroName produces ruleList
@@ -1128,7 +1125,7 @@ class LPGParser extends Object implements RuleAction
                               getRhsSym(4) as ruleList)
                 //#line 142 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 80:  optMacroName ::= %Empty
@@ -1136,7 +1133,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[80]=(){
                //#line 144 "LPGParser.g"
                 setResult(null);
-            
+
             };
             //
             // Rule 81:  optMacroName ::= MACRO_NAME
@@ -1148,7 +1145,7 @@ class LPGParser extends Object implements RuleAction
                     optMacroName(getRhsIToken(1))
                 //#line 144 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 82:  include_segment ::= SYMBOL
@@ -1160,7 +1157,7 @@ class LPGParser extends Object implements RuleAction
                     include_segment(getRhsIToken(1))
                 //#line 147 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 83:  keywords_segment ::= keywordSpec
@@ -1172,7 +1169,7 @@ class LPGParser extends Object implements RuleAction
                     keywordSpecList.keywordSpecListfromElement(getRhsSym(1) as ASTNode, true /* left recursive */)
                 //#line 150 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 84:  keywords_segment ::= keywords_segment keywordSpec
@@ -1180,13 +1177,13 @@ class LPGParser extends Object implements RuleAction
              _rule_action[84]=(){
                //#line 150 "LPGParser.g"
                 (getRhsSym(1) as keywordSpecList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 85:  keywordSpec ::= terminal_symbol
             //
-            
-                 
+
+
             //
             // Rule 86:  keywordSpec ::= terminal_symbol produces name
             //
@@ -1203,7 +1200,7 @@ class LPGParser extends Object implements RuleAction
                                 getRhsSym(3) as ASTNode)
                 //#line 152 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 87:  names_segment ::= nameSpec
@@ -1215,7 +1212,7 @@ class LPGParser extends Object implements RuleAction
                     nameSpecList.nameSpecListfromElement(getRhsSym(1) as nameSpec, true /* left recursive */)
                 //#line 155 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 88:  names_segment ::= names_segment nameSpec
@@ -1223,7 +1220,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[88]=(){
                //#line 155 "LPGParser.g"
                 (getRhsSym(1) as nameSpecList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 89:  nameSpec ::= name produces name
@@ -1241,7 +1238,7 @@ class LPGParser extends Object implements RuleAction
                              getRhsSym(3) as ASTNode)
                 //#line 156 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 90:  name ::= SYMBOL
@@ -1253,7 +1250,7 @@ class LPGParser extends Object implements RuleAction
                     name0(getRhsIToken(1))
                 //#line 158 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 91:  name ::= MACRO_NAME
@@ -1265,7 +1262,7 @@ class LPGParser extends Object implements RuleAction
                     name1(getRhsIToken(1))
                 //#line 159 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 92:  name ::= EMPTY_KEY
@@ -1277,7 +1274,7 @@ class LPGParser extends Object implements RuleAction
                     name2(getRhsIToken(1))
                 //#line 160 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 93:  name ::= ERROR_KEY
@@ -1289,7 +1286,7 @@ class LPGParser extends Object implements RuleAction
                     name3(getRhsIToken(1))
                 //#line 161 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 94:  name ::= EOL_KEY
@@ -1301,7 +1298,7 @@ class LPGParser extends Object implements RuleAction
                     name4(getRhsIToken(1))
                 //#line 162 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 95:  name ::= IDENTIFIER_KEY
@@ -1313,7 +1310,7 @@ class LPGParser extends Object implements RuleAction
                     name5(getRhsIToken(1))
                 //#line 163 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 96:  notice_segment ::= action_segment
@@ -1325,7 +1322,7 @@ class LPGParser extends Object implements RuleAction
                     action_segmentList.action_segmentListfromElement(getRhsSym(1) as action_segment, true /* left recursive */)
                 //#line 166 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 97:  notice_segment ::= notice_segment action_segment
@@ -1333,7 +1330,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[97]=(){
                //#line 166 "LPGParser.g"
                 (getRhsSym(1) as action_segmentList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 98:  rules_segment ::= action_segment_list nonTermList
@@ -1349,7 +1346,7 @@ class LPGParser extends Object implements RuleAction
                                   getRhsSym(2) as nonTermList)
                 //#line 169 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 99:  nonTermList ::= %Empty
@@ -1361,7 +1358,7 @@ class LPGParser extends Object implements RuleAction
                     nonTermList(getLeftIToken(), getRightIToken(), true /* left recursive */)
                 //#line 171 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 100:  nonTermList ::= nonTermList nonTerm
@@ -1369,7 +1366,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[100]=(){
                //#line 171 "LPGParser.g"
                 (getRhsSym(1) as nonTermList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 101:  nonTerm ::= ruleNameWithAttributes produces ruleList
@@ -1387,7 +1384,7 @@ class LPGParser extends Object implements RuleAction
                             getRhsSym(3) as ruleList)
                 //#line 173 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 102:  ruleNameWithAttributes ::= SYMBOL
@@ -1405,7 +1402,7 @@ class LPGParser extends Object implements RuleAction
                              null)
                 //#line 177 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 103:  ruleNameWithAttributes ::= SYMBOL MACRO_NAME$className
@@ -1423,7 +1420,7 @@ class LPGParser extends Object implements RuleAction
                              null)
                 //#line 178 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 104:  ruleNameWithAttributes ::= SYMBOL MACRO_NAME$className MACRO_NAME$arrayElement
@@ -1441,7 +1438,7 @@ class LPGParser extends Object implements RuleAction
                              ASTNodeToken(getRhsIToken(3)))
                 //#line 179 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 105:  ruleList ::= rule
@@ -1453,7 +1450,7 @@ class LPGParser extends Object implements RuleAction
                     ruleList.ruleListfromElement(getRhsSym(1) as rule, true /* left recursive */)
                 //#line 193 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 106:  ruleList ::= ruleList |$ rule
@@ -1461,7 +1458,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[106]=(){
                //#line 193 "LPGParser.g"
                 (getRhsSym(1) as ruleList).addElement(getRhsSym(3)as ASTNode);
-            
+
             };
             //
             // Rule 107:  produces ::= ::=
@@ -1473,7 +1470,7 @@ class LPGParser extends Object implements RuleAction
                     produces0(getRhsIToken(1))
                 //#line 195 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 108:  produces ::= ::=?
@@ -1485,7 +1482,7 @@ class LPGParser extends Object implements RuleAction
                     produces1(getRhsIToken(1))
                 //#line 196 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 109:  produces ::= ->
@@ -1497,7 +1494,7 @@ class LPGParser extends Object implements RuleAction
                     produces2(getRhsIToken(1))
                 //#line 197 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 110:  produces ::= ->?
@@ -1509,7 +1506,7 @@ class LPGParser extends Object implements RuleAction
                     produces3(getRhsIToken(1))
                 //#line 198 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 111:  rule ::= symWithAttrsList action_segment_list
@@ -1525,7 +1522,7 @@ class LPGParser extends Object implements RuleAction
                          getRhsSym(2) as action_segmentList)
                 //#line 200 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 112:  symWithAttrsList ::= %Empty
@@ -1537,7 +1534,7 @@ class LPGParser extends Object implements RuleAction
                     symWithAttrsList(getLeftIToken(), getRightIToken(), true /* left recursive */)
                 //#line 202 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 113:  symWithAttrsList ::= symWithAttrsList symWithAttrs
@@ -1545,7 +1542,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[113]=(){
                //#line 202 "LPGParser.g"
                 (getRhsSym(1) as symWithAttrsList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 114:  symWithAttrs ::= EMPTY_KEY
@@ -1557,7 +1554,7 @@ class LPGParser extends Object implements RuleAction
                     symWithAttrs0(getRhsIToken(1))
                 //#line 204 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 115:  symWithAttrs ::= SYMBOL optAttrList
@@ -1573,7 +1570,7 @@ class LPGParser extends Object implements RuleAction
                                   getRhsSym(2) as symAttrs?)
                 //#line 205 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 116:  optAttrList ::= %Empty
@@ -1587,7 +1584,7 @@ class LPGParser extends Object implements RuleAction
                              null)
                 //#line 208 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 117:  optAttrList ::= MACRO_NAME
@@ -1601,7 +1598,7 @@ class LPGParser extends Object implements RuleAction
                              ASTNodeToken(getRhsIToken(1)))
                 //#line 209 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 118:  opt_action_segment ::= %Empty
@@ -1609,13 +1606,13 @@ class LPGParser extends Object implements RuleAction
              _rule_action[118]=(){
                //#line 211 "LPGParser.g"
                 setResult(null);
-            
+
             };
             //
             // Rule 119:  opt_action_segment ::= action_segment
             //
-            
-                 
+
+
             //
             // Rule 120:  action_segment ::= BLOCK
             //
@@ -1626,7 +1623,7 @@ class LPGParser extends Object implements RuleAction
                     action_segment(getRhsIToken(1))
                 //#line 213 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 121:  start_segment ::= start_symbol
@@ -1638,7 +1635,7 @@ class LPGParser extends Object implements RuleAction
                     start_symbolList.start_symbolListfromElement(getRhsSym(1) as ASTNode, true /* left recursive */)
                 //#line 217 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 122:  start_segment ::= start_segment start_symbol
@@ -1646,7 +1643,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[122]=(){
                //#line 217 "LPGParser.g"
                 (getRhsSym(1) as start_symbolList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 123:  start_symbol ::= SYMBOL
@@ -1658,7 +1655,7 @@ class LPGParser extends Object implements RuleAction
                     start_symbol0(getRhsIToken(1))
                 //#line 218 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 124:  start_symbol ::= MACRO_NAME
@@ -1670,7 +1667,7 @@ class LPGParser extends Object implements RuleAction
                     start_symbol1(getRhsIToken(1))
                 //#line 219 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 125:  terminals_segment ::= terminal
@@ -1682,7 +1679,7 @@ class LPGParser extends Object implements RuleAction
                     terminals_segment_terminalList.terminals_segment_terminalListfromElement(this, getRhsSym(1) as terminal, true /* left recursive */)
                 //#line 222 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 126:  terminals_segment ::= terminals_segment terminal
@@ -1690,7 +1687,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[126]=(){
                //#line 222 "LPGParser.g"
                 (getRhsSym(1) as terminals_segment_terminalList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 127:  terminal ::= terminal_symbol optTerminalAlias
@@ -1706,7 +1703,7 @@ class LPGParser extends Object implements RuleAction
                              getRhsSym(2) as optTerminalAlias?)
                 //#line 227 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 128:  optTerminalAlias ::= %Empty
@@ -1714,7 +1711,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[128]=(){
                //#line 229 "LPGParser.g"
                 setResult(null);
-            
+
             };
             //
             // Rule 129:  optTerminalAlias ::= produces name
@@ -1730,7 +1727,7 @@ class LPGParser extends Object implements RuleAction
                                      getRhsSym(2) as ASTNode)
                 //#line 229 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 130:  terminal_symbol ::= SYMBOL
@@ -1742,7 +1739,7 @@ class LPGParser extends Object implements RuleAction
                     terminal_symbol0(getRhsIToken(1))
                 //#line 231 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 131:  terminal_symbol ::= MACRO_NAME
@@ -1754,13 +1751,13 @@ class LPGParser extends Object implements RuleAction
                     terminal_symbol1(getRhsIToken(1))
                 //#line 233 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 132:  trailers_segment ::= action_segment_list
             //
-            
-                 
+
+
             //
             // Rule 133:  types_segment ::= type_declarations
             //
@@ -1771,7 +1768,7 @@ class LPGParser extends Object implements RuleAction
                     type_declarationsList.type_declarationsListfromElement(getRhsSym(1) as type_declarations, true /* left recursive */)
                 //#line 239 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 134:  types_segment ::= types_segment type_declarations
@@ -1779,7 +1776,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[134]=(){
                //#line 239 "LPGParser.g"
                 (getRhsSym(1) as type_declarationsList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 135:  type_declarations ::= SYMBOL produces barSymbolList opt_action_segment
@@ -1799,7 +1796,7 @@ class LPGParser extends Object implements RuleAction
                                       getRhsSym(4) as action_segment?)
                 //#line 241 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 136:  barSymbolList ::= SYMBOL
@@ -1811,7 +1808,7 @@ class LPGParser extends Object implements RuleAction
                     SYMBOLList.SYMBOLListfromElement(ASTNodeToken(getRhsIToken(1)), true /* left recursive */)
                 //#line 242 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 137:  barSymbolList ::= barSymbolList |$ SYMBOL
@@ -1819,7 +1816,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[137]=(){
                //#line 242 "LPGParser.g"
                 (getRhsSym(1) as SYMBOLList).addElement(ASTNodeToken(getRhsIToken(3)));
-            
+
             };
             //
             // Rule 138:  predecessor_segment ::= %Empty
@@ -1831,7 +1828,7 @@ class LPGParser extends Object implements RuleAction
                     symbol_pairList(getLeftIToken(), getRightIToken(), true /* left recursive */)
                 //#line 245 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 139:  predecessor_segment ::= predecessor_segment symbol_pair
@@ -1839,7 +1836,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[139]=(){
                //#line 245 "LPGParser.g"
                 (getRhsSym(1) as symbol_pairList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
             //
             // Rule 140:  symbol_pair ::= SYMBOL SYMBOL
@@ -1855,7 +1852,7 @@ class LPGParser extends Object implements RuleAction
                                 ASTNodeToken(getRhsIToken(2)))
                 //#line 247 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 141:  recover_segment ::= %Empty
@@ -1867,7 +1864,7 @@ class LPGParser extends Object implements RuleAction
                     SYMBOLList(getLeftIToken(), getRightIToken(), true /* left recursive */)
                 //#line 250 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 142:  recover_segment ::= recover_segment recover_symbol
@@ -1875,7 +1872,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[142]=(){
                //#line 250 "LPGParser.g"
                 setResult(getRhsSym(1) as SYMBOLList);
-            
+
             };
             //
             // Rule 143:  recover_symbol ::= SYMBOL
@@ -1887,7 +1884,7 @@ class LPGParser extends Object implements RuleAction
                     recover_symbol(getRhsIToken(1))
                 //#line 252 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 144:  END_KEY_OPT ::= %Empty
@@ -1895,7 +1892,7 @@ class LPGParser extends Object implements RuleAction
              _rule_action[144]=(){
                //#line 255 "LPGParser.g"
                 setResult(null);
-            
+
             };
             //
             // Rule 145:  END_KEY_OPT ::= END_KEY
@@ -1907,7 +1904,7 @@ class LPGParser extends Object implements RuleAction
                     END_KEY_OPT(getRhsIToken(1))
                 //#line 256 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 146:  action_segment_list ::= %Empty
@@ -1919,7 +1916,7 @@ class LPGParser extends Object implements RuleAction
                     action_segmentList(getLeftIToken(), getRightIToken(), true /* left recursive */)
                 //#line 258 LPGParser.g
                 );
-            
+
             };
             //
             // Rule 147:  action_segment_list ::= action_segment_list action_segment
@@ -1927,13 +1924,14 @@ class LPGParser extends Object implements RuleAction
              _rule_action[147]=(){
                //#line 259 "LPGParser.g"
                 (getRhsSym(1) as action_segmentList).addElement(getRhsSym(2)as ASTNode);
-            
+
             };
     //#line 281 "btParserTemplateF.gi
 
     }
 
 }
+
 abstract class IRootForLPGParser
     {
          IToken getLeftIToken() ;
@@ -2535,7 +2533,7 @@ abstract class ASTNode implements IAst
           List<IToken> getPrecedingAdjuncts() { return leftIToken.getPrecedingAdjuncts(); }
           List<IToken> getFollowingAdjuncts() { return rightIToken.getFollowingAdjuncts(); }
 
-        String  toString()  
+        String  toString()
         {
           var  lex = leftIToken.getILexStream();
           if( lex != null)
@@ -2555,13 +2553,13 @@ abstract class ASTNode implements IAst
         /**
          * A list of all children of this node, excluding the null ones.
          */
-          ArrayList getChildren() 
+          ArrayList getChildren()
         {
              var list = getAllChildren() ;
             var k = -1;
             for (var i = 0; i < list.size(); i++)
             {
-                var element = list.get(i);
+                dynamic element = list.get(i);
                 if (null==element)
                 {
                     if (++k != i)
@@ -2584,13 +2582,13 @@ abstract class ASTNode implements IAst
 abstract class AbstractASTNodeList extends ASTNode implements IAbstractArrayList<ASTNode>
     {
          late bool leftRecursive  ;
-          var list  =  ArrayList();
+          var list  =  ArrayList<dynamic>();
          int size()   { return list.size(); }
          ArrayList getList(){ return list; }
          ASTNode getElementAt(int i) { return list.get(leftRecursive ? i : list.size() - 1 - i); }
          ArrayList getArrayList()
         {
-            if (! leftRecursive) // reverse the list 
+            if (! leftRecursive) // reverse the list
             {
                 for (var i = 0, n = list.size() - 1; i < n; i++, n--)
                 {
@@ -2629,7 +2627,7 @@ abstract class AbstractASTNodeList extends ASTNode implements IAbstractArrayList
          * Make a copy of the list and return it. Note that we obtain the local list by
          * invoking getArrayList so as to make sure that the list we return is in proper order.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             return getArrayList().clone();
         }
@@ -2693,7 +2691,7 @@ class LPG extends ASTNode implements ILPG
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _options_segment)  list.add(_options_segment);
@@ -2794,7 +2792,7 @@ class AliasSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _alias_segment)  list.add(_alias_segment);
@@ -2842,7 +2840,7 @@ class AstSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _ast_segment)  list.add(_ast_segment);
@@ -2890,7 +2888,7 @@ class DefineSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _define_segment)  list.add(_define_segment);
@@ -2938,7 +2936,7 @@ class EofSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _eof_segment)  list.add(_eof_segment);
@@ -2986,7 +2984,7 @@ class EolSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _eol_segment)  list.add(_eol_segment);
@@ -3034,7 +3032,7 @@ class ErrorSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _error_segment)  list.add(_error_segment);
@@ -3082,7 +3080,7 @@ class ExportSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _export_segment)  list.add(_export_segment);
@@ -3130,7 +3128,7 @@ class GlobalsSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _globals_segment)  list.add(_globals_segment);
@@ -3178,7 +3176,7 @@ class HeadersSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _headers_segment)  list.add(_headers_segment);
@@ -3226,7 +3224,7 @@ class IdentifierSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _identifier_segment)  list.add(_identifier_segment);
@@ -3274,7 +3272,7 @@ class ImportSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _import_segment)  list.add(_import_segment);
@@ -3322,7 +3320,7 @@ class IncludeSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _include_segment)  list.add(_include_segment);
@@ -3370,7 +3368,7 @@ class KeywordsSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _keywords_segment)  list.add(_keywords_segment);
@@ -3418,7 +3416,7 @@ class NamesSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _names_segment)  list.add(_names_segment);
@@ -3466,7 +3464,7 @@ class NoticeSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _notice_segment)  list.add(_notice_segment);
@@ -3514,7 +3512,7 @@ class RulesSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _rules_segment)  list.add(_rules_segment);
@@ -3562,7 +3560,7 @@ class SoftKeywordsSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _keywords_segment)  list.add(_keywords_segment);
@@ -3610,7 +3608,7 @@ class StartSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _start_segment)  list.add(_start_segment);
@@ -3658,7 +3656,7 @@ class TerminalsSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _terminals_segment)  list.add(_terminals_segment);
@@ -3706,7 +3704,7 @@ class TrailersSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _trailers_segment)  list.add(_trailers_segment);
@@ -3754,7 +3752,7 @@ class TypesSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _types_segment)  list.add(_types_segment);
@@ -3802,7 +3800,7 @@ class RecoverSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _recover_segment)  list.add(_recover_segment);
@@ -3850,7 +3848,7 @@ class PredecessorSeg extends ASTNode implements ILPG_item
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _predecessor_segment)  list.add(_predecessor_segment);
@@ -3949,7 +3947,7 @@ class option_spec extends ASTNode implements Ioption_spec
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _option_list)  list.add(_option_list);
@@ -4057,7 +4055,7 @@ class option extends ASTNode implements Ioption
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _SYMBOL)  list.add(_SYMBOL);
@@ -4297,7 +4295,7 @@ class defineSpec extends ASTNode implements IdefineSpec
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _macro_name_symbol)  list.add(_macro_name_symbol);
@@ -4484,7 +4482,7 @@ class import_segment extends ASTNode implements Iimport_segment
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _SYMBOL)  list.add(_SYMBOL);
@@ -4657,7 +4655,7 @@ class drop_rule extends ASTNode implements Idrop_rule
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _SYMBOL)  list.add(_SYMBOL);
@@ -4832,7 +4830,7 @@ class keywordSpec extends ASTNode implements IkeywordSpec
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _terminal_symbol)  list.add(_terminal_symbol);
@@ -4949,7 +4947,7 @@ class nameSpec extends ASTNode implements InameSpec
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _name)  list.add(_name);
@@ -5009,7 +5007,7 @@ class rules_segment extends ASTNode implements Irules_segment
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _action_segment_list)  list.add(_action_segment_list);
@@ -5124,7 +5122,7 @@ class nonTerm extends ASTNode implements InonTerm
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _ruleNameWithAttributes)  list.add(_ruleNameWithAttributes);
@@ -5195,7 +5193,7 @@ class RuleName extends ASTNode implements IruleNameWithAttributes
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _SYMBOL)  list.add(_SYMBOL);
@@ -5306,7 +5304,7 @@ class rule extends ASTNode implements Irule
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _symWithAttrsList)  list.add(_symWithAttrsList);
@@ -5410,7 +5408,7 @@ class symAttrs extends ASTNode implements IoptAttrList
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _MACRO_NAME)  list.add(_MACRO_NAME);
@@ -5620,7 +5618,7 @@ class terminal extends ASTNode implements Iterminal
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _terminal_symbol)  list.add(_terminal_symbol);
@@ -5682,7 +5680,7 @@ class optTerminalAlias extends ASTNode implements IoptTerminalAlias
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _produces)  list.add(_produces);
@@ -5806,7 +5804,7 @@ class type_declarations extends ASTNode implements Itype_declarations
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _SYMBOL)  list.add(_SYMBOL);
@@ -5919,7 +5917,7 @@ class symbol_pair extends ASTNode implements Isymbol_pair
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _SYMBOL)  list.add(_SYMBOL);
@@ -6025,7 +6023,7 @@ class option_value0 extends ASTNode implements Ioption_value
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _SYMBOL)  list.add(_SYMBOL);
@@ -6073,7 +6071,7 @@ class option_value1 extends ASTNode implements Ioption_value
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _symbol_list)  list.add(_symbol_list);
@@ -6133,7 +6131,7 @@ class aliasSpec0 extends ASTNode implements IaliasSpec
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _ERROR_KEY)  list.add(_ERROR_KEY);
@@ -6199,7 +6197,7 @@ class aliasSpec1 extends ASTNode implements IaliasSpec
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _EOL_KEY)  list.add(_EOL_KEY);
@@ -6265,7 +6263,7 @@ class aliasSpec2 extends ASTNode implements IaliasSpec
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _EOF_KEY)  list.add(_EOF_KEY);
@@ -6331,7 +6329,7 @@ class aliasSpec3 extends ASTNode implements IaliasSpec
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _IDENTIFIER_KEY)  list.add(_IDENTIFIER_KEY);
@@ -6397,7 +6395,7 @@ class aliasSpec4 extends ASTNode implements IaliasSpec
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _SYMBOL)  list.add(_SYMBOL);
@@ -6463,7 +6461,7 @@ class aliasSpec5 extends ASTNode implements IaliasSpec
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _alias_lhs_macro_name)  list.add(_alias_lhs_macro_name);
@@ -6748,7 +6746,7 @@ class drop_command0 extends ASTNode implements Idrop_command
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _DROPSYMBOLS_KEY)  list.add(_DROPSYMBOLS_KEY);
@@ -6806,7 +6804,7 @@ class drop_command1 extends ASTNode implements Idrop_command
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _DROPRULES_KEY)  list.add(_DROPRULES_KEY);
@@ -7142,7 +7140,7 @@ class symWithAttrs1 extends ASTNode implements IsymWithAttrs
         /**
          * A list of all children of this node, don't including the null ones.
          */
-            ArrayList getAllChildren() 
+            ArrayList getAllChildren()
         {
             var list = new ArrayList();
             if(null != _SYMBOL)  list.add(_SYMBOL);

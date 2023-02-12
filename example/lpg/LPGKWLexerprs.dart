@@ -11,6 +11,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// ignore_for_file: annotate_overrides, slash_for_doc_comments
+
 import 'LPGKWLexersym.dart';
 import 'package:lpg2/lpg2.dart';
  class LPGKWLexerprs implements ParseTable {

@@ -1,17 +1,10 @@
 name: lpg2
-description: " Dart runtime for LPG2."
 
-version: 1.0.0
-author: kuafuking <kuafuking@qq.com>
-homepage: "https://github.com/A-LPG/LPG-Dart-runtime"
-
-license: "EPL-2.0 License"
 environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   path: ^1.8.0
 
-
 dev_dependencies:
-  pedantic: ^1.10.0
+  extra_pedantic: ^3.0.0
